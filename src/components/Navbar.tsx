@@ -1,11 +1,9 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Book, Home, Search, BookOpen, TrendingUp, User, LogOut } from "lucide-react";
-import { useAuthStore } from "../store/authStore";
+import { Book, Home, Search, BookOpen, TrendingUp } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
-  const { user, logout } = useAuthStore();
 
   const navItems = [
     { path: "/", icon: Home, label: "Dashboard" },
@@ -42,25 +40,6 @@ const Navbar = () => {
                   </Link>
                 );
               })}
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <div className="text-sm text-gray-600">Level {user?.level}</div>
-              <div className="text-xs text-blue-600">{user?.xp} XP</div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                <User size={16} className="text-white" />
-              </div>
-              <button
-                onClick={logout}
-                className="p-2 text-gray-600 hover:text-red-600 transition-colors"
-                title="Logout"
-              >
-                <LogOut size={18} />
-              </button>
             </div>
           </div>
         </div>

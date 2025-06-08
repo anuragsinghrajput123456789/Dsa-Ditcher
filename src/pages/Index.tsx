@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Dashboard from "../components/Dashboard";
@@ -8,16 +7,8 @@ import ProblemAnalyzer from "../components/ProblemAnalyzer";
 import Visualizations from "../components/Visualizations";
 import Chatbot from "../components/Chatbot";
 import Roadmap from "../components/Roadmap";
-import Auth from "../components/Auth";
-import { useAuthStore } from "../store/authStore";
 
 const Index = () => {
-  const { isAuthenticated } = useAuthStore();
-
-  if (!isAuthenticated) {
-    return <Auth />;
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <Navbar />

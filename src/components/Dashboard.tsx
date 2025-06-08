@@ -2,10 +2,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Book, Search, BookOpen, TrendingUp, Star, Timer, Calendar } from "lucide-react";
-import { useAuthStore } from "../store/authStore";
 
 const Dashboard = () => {
-  const { user, updateXP } = useAuthStore();
   const [problemOfTheDay, setProblemOfTheDay] = useState({
     title: "Two Sum",
     difficulty: "Easy",
@@ -14,9 +12,9 @@ const Dashboard = () => {
 
   const quickStats = [
     { label: "Problems Solved", value: "23", icon: Star, color: "text-yellow-600" },
-    { label: "Study Streak", value: `${user?.streak || 0} days`, icon: Calendar, color: "text-green-600" },
+    { label: "Study Streak", value: "7 days", icon: Calendar, color: "text-green-600" },
     { label: "Time Studied", value: "12h 45m", icon: Timer, color: "text-blue-600" },
-    { label: "Current Level", value: user?.level || 1, icon: TrendingUp, color: "text-purple-600" },
+    { label: "Current Level", value: "3", icon: TrendingUp, color: "text-purple-600" },
   ];
 
   const quickActions = [
@@ -26,25 +24,21 @@ const Dashboard = () => {
     { title: "Learning Roadmap", description: "Follow structured learning paths", icon: TrendingUp, path: "/roadmap", color: "from-orange-500 to-orange-600" },
   ];
 
-  const handleProblemComplete = () => {
-    updateXP(50);
-  };
-
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.name}! 🚀</h1>
-        <p className="text-blue-100 text-lg">Ready to master another DSA concept today?</p>
+        <h1 className="text-3xl font-bold mb-2">Welcome to DSA Pathfinder! 🚀</h1>
+        <p className="text-blue-100 text-lg">Ready to master Data Structures and Algorithms?</p>
         <div className="mt-4 bg-white/20 rounded-lg p-4 backdrop-blur-sm">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm">Progress to Level {(user?.level || 1) + 1}</span>
-            <span className="text-sm">{user?.xp || 0} / {((user?.level || 1) + 1) * 500} XP</span>
+            <span className="text-sm">Progress to Level 4</span>
+            <span className="text-sm">1250 / 2000 XP</span>
           </div>
           <div className="w-full bg-white/20 rounded-full h-2">
             <div 
               className="bg-white rounded-full h-2 transition-all duration-500"
-              style={{ width: `${((user?.xp || 0) % 500) / 5}%` }}
+              style={{ width: "62.5%" }}
             ></div>
           </div>
         </div>
@@ -82,10 +76,7 @@ const Dashboard = () => {
             </span>
           </div>
           <p className="text-gray-600 mb-4">{problemOfTheDay.description}</p>
-          <button
-            onClick={handleProblemComplete}
-            className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:from-yellow-600 hover:to-orange-600 transition-all duration-200"
-          >
+          <button className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:from-yellow-600 hover:to-orange-600 transition-all duration-200">
             Solve Now (+50 XP)
           </button>
         </div>
