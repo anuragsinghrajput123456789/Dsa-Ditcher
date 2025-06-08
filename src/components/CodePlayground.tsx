@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Play, Save, Download, Upload, Settings, Code, Terminal } from "lucide-react";
+import { Play, Save, Download, Upload, Settings, Code, Terminal, Calculator, Lightbulb, Clock, Database } from "lucide-react";
 
 const CodePlayground = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("python");
@@ -8,6 +8,9 @@ const CodePlayground = () => {
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [savedSnippets, setSavedSnippets] = useState<any[]>([]);
+  const [showComplexityAnalysis, setShowComplexityAnalysis] = useState(false);
+  const [complexityAnalysis, setComplexityAnalysis] = useState<any>(null);
+  const [optimizationTips, setOptimizationTips] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const languages = [
@@ -223,7 +226,91 @@ print(f"Sorted: {sorted_arr}")`
     }
   ];
 
-  // Enhanced code execution simulation
+  const analyzeComplexity = (code: string, language: string) => {
+    // Analyze time and space complexity based on code patterns
+    const analysis = {
+      timeComplexity: "O(n)",
+      spaceComplexity: "O(1)",
+      explanation: "",
+      optimizations: []
+    };
+
+    const codeLines = code.toLowerCase();
+    
+    // Time complexity analysis
+    if (codeLines.includes("for") && codeLines.includes("while")) {
+      analysis.timeComplexity = "O(n²)";
+      analysis.explanation = "Nested loops detected";
+      analysis.optimizations.push("Consider using hash maps to reduce nested loops");
+    } else if (codeLines.match(/for.*for/s) || codeLines.match(/while.*while/s)) {
+      analysis.timeComplexity = "O(n²)";
+      analysis.explanation = "Nested loops detected";
+      analysis.optimizations.push("Use two pointers technique if applicable");
+    } else if (codeLines.includes("sort")) {
+      analysis.timeComplexity = "O(n log n)";
+      analysis.explanation = "Sorting operation detected";
+      analysis.optimizations.push("Consider if sorting is necessary");
+    } else if (codeLines.includes("binary_search") || codeLines.includes("binarysearch")) {
+      analysis.timeComplexity = "O(log n)";
+      analysis.explanation = "Binary search implementation";
+    } else if (codeLines.includes("for") || codeLines.includes("while")) {
+      analysis.timeComplexity = "O(n)";
+      analysis.explanation = "Single loop iteration";
+    } else {
+      analysis.timeComplexity = "O(1)";
+      analysis.explanation = "Constant time operations";
+    }
+
+    // Space complexity analysis
+    if (codeLines.includes("dp") || codeLines.includes("memo")) {
+      analysis.spaceComplexity = "O(n)";
+      analysis.optimizations.push("Consider space-optimized DP if possible");
+    } else if (codeLines.includes("recursion") || codeLines.includes("def") && codeLines.includes("return")) {
+      analysis.spaceComplexity = "O(n)";
+      analysis.explanation += " (Recursion stack space)";
+    } else if (codeLines.includes("[") && codeLines.includes("]")) {
+      analysis.spaceComplexity = "O(n)";
+      analysis.explanation += " (Additional array/list storage)";
+    }
+
+    return analysis;
+  };
+
+  const generateOptimizationTips = (code: string, language: string) => {
+    const tips = [];
+    const codeLines = code.toLowerCase();
+
+    if (codeLines.includes("for i in range(len(")) {
+      tips.push("Use enumerate() instead of range(len()) for cleaner code");
+    }
+    
+    if (codeLines.includes("if") && codeLines.includes("return") && codeLines.includes("else")) {
+      tips.push("Consider early returns to reduce nesting");
+    }
+
+    if (codeLines.includes("append") && codeLines.includes("for")) {
+      tips.push("Consider list comprehension for better performance");
+    }
+
+    if (codeLines.includes("dict") || codeLines.includes("{}")) {
+      tips.push("Good use of hash map for O(1) lookups!");
+    }
+
+    if (codeLines.includes("two_sum") || codeLines.includes("twosum")) {
+      tips.push("Classic two-sum pattern - consider the complement approach");
+    }
+
+    if (codeLines.includes("sort") && codeLines.includes("for")) {
+      tips.push("Sorting before processing can often simplify the logic");
+    }
+
+    if (tips.length === 0) {
+      tips.push("Code looks good! Consider edge cases and error handling");
+    }
+
+    return tips;
+  };
+
   const executeCode = (code: string, language: string, input: string) => {
     const lines = code.split('\n');
     const outputLines = [];
@@ -317,6 +404,14 @@ print(f"Sorted: {sorted_arr}")`
   const runCode = async () => {
     setIsRunning(true);
     
+    // Analyze complexity and generate tips
+    const analysis = analyzeComplexity(code, selectedLanguage);
+    const tips = generateOptimizationTips(code, selectedLanguage);
+    
+    setComplexityAnalysis(analysis);
+    setOptimizationTips(tips);
+    setShowComplexityAnalysis(true);
+    
     // Simulate compilation/execution time
     setTimeout(() => {
       const result = executeCode(code, selectedLanguage, input);
@@ -369,7 +464,7 @@ print(f"Sorted: {sorted_arr}")`
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-4">Code Playground</h1>
-        <p className="text-gray-600 text-lg">Practice DSA problems with multi-language support</p>
+        <p className="text-gray-600 text-lg">Practice DSA problems with multi-language support and complexity analysis</p>
       </div>
 
       {/* Controls */}
@@ -405,7 +500,15 @@ print(f"Sorted: {sorted_arr}")`
               className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center space-x-2"
             >
               <Play className="w-4 h-4" />
-              <span>{isRunning ? "Running..." : "Run Code"}</span>
+              <span>{isRunning ? "Running..." : "Run & Analyze"}</span>
+            </button>
+            
+            <button
+              onClick={() => setShowComplexityAnalysis(!showComplexityAnalysis)}
+              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
+            >
+              <Calculator className="w-4 h-4" />
+              <span>Complexity</span>
             </button>
             
             <button
@@ -469,6 +572,63 @@ print(f"Sorted: {sorted_arr}")`
             />
           </div>
 
+          {/* Complexity Analysis */}
+          {showComplexityAnalysis && complexityAnalysis && (
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <Calculator className="w-5 h-5 mr-2" />
+                Complexity Analysis
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <div className="flex items-center mb-2">
+                    <Clock className="w-4 h-4 mr-2 text-blue-600" />
+                    <span className="font-semibold text-blue-800">Time Complexity</span>
+                  </div>
+                  <div className="text-2xl font-bold text-blue-600 mb-1">{complexityAnalysis.timeComplexity}</div>
+                  <p className="text-sm text-blue-700">{complexityAnalysis.explanation}</p>
+                </div>
+                <div className="bg-green-50 rounded-lg p-4">
+                  <div className="flex items-center mb-2">
+                    <Database className="w-4 h-4 mr-2 text-green-600" />
+                    <span className="font-semibold text-green-800">Space Complexity</span>
+                  </div>
+                  <div className="text-2xl font-bold text-green-600 mb-1">{complexityAnalysis.spaceComplexity}</div>
+                  <p className="text-sm text-green-700">Additional space used</p>
+                </div>
+              </div>
+              
+              {complexityAnalysis.optimizations.length > 0 && (
+                <div className="mt-4 bg-yellow-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-yellow-800 mb-2">Optimization Suggestions:</h4>
+                  <ul className="text-sm text-yellow-700 space-y-1">
+                    {complexityAnalysis.optimizations.map((opt, index) => (
+                      <li key={index}>• {opt}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Optimization Tips */}
+          {optimizationTips.length > 0 && (
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <Lightbulb className="w-5 h-5 mr-2" />
+                Optimization Tips
+              </h3>
+              <div className="space-y-2">
+                {optimizationTips.map((tip, index) => (
+                  <div key={index} className="flex items-start space-x-2 p-3 bg-blue-50 rounded-lg">
+                    <Lightbulb className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-blue-800">{tip}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Input/Output */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
@@ -492,10 +652,10 @@ print(f"Sorted: {sorted_arr}")`
                 {isRunning ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-400 mr-2"></div>
-                    Running code...
+                    Running code and analyzing complexity...
                   </div>
                 ) : (
-                  <pre className="whitespace-pre-wrap">{output || "Click 'Run Code' to see output..."}</pre>
+                  <pre className="whitespace-pre-wrap">{output || "Click 'Run & Analyze' to see output..."}</pre>
                 )}
               </div>
             </div>
@@ -550,6 +710,33 @@ print(f"Sorted: {sorted_arr}")`
             )}
           </div>
 
+          {/* Algorithm Reference */}
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Complexity Reference</h3>
+            <div className="space-y-3 text-sm">
+              <div className="border-l-4 border-green-500 pl-3">
+                <div className="font-medium text-green-700">O(1) - Constant</div>
+                <div className="text-gray-600">Hash table lookup, array access</div>
+              </div>
+              <div className="border-l-4 border-blue-500 pl-3">
+                <div className="font-medium text-blue-700">O(log n) - Logarithmic</div>
+                <div className="text-gray-600">Binary search, balanced trees</div>
+              </div>
+              <div className="border-l-4 border-yellow-500 pl-3">
+                <div className="font-medium text-yellow-700">O(n) - Linear</div>
+                <div className="text-gray-600">Single loop, array traversal</div>
+              </div>
+              <div className="border-l-4 border-orange-500 pl-3">
+                <div className="font-medium text-orange-700">O(n log n) - Log-linear</div>
+                <div className="text-gray-600">Merge sort, heap sort</div>
+              </div>
+              <div className="border-l-4 border-red-500 pl-3">
+                <div className="font-medium text-red-700">O(n²) - Quadratic</div>
+                <div className="text-gray-600">Nested loops, bubble sort</div>
+              </div>
+            </div>
+          </div>
+
           {/* Quick Tips */}
           <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
             <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Tips</h3>
@@ -559,6 +746,8 @@ print(f"Sorted: {sorted_arr}")`
               <div>• Test with edge cases</div>
               <div>• Consider time & space complexity</div>
               <div>• Practice regularly</div>
+              <div>• Use hash maps for O(1) lookups</div>
+              <div>• Two pointers for sorted arrays</div>
             </div>
           </div>
         </div>
