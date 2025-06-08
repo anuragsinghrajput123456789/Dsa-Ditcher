@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { Play, Save, Download, Upload, Settings, Code, Terminal } from "lucide-react";
 
@@ -224,6 +223,93 @@ print(f"Sorted: {sorted_arr}")`
     }
   ];
 
+  // Enhanced code execution simulation
+  const executeCode = (code: string, language: string, input: string) => {
+    const lines = code.split('\n');
+    const outputLines = [];
+    
+    try {
+      // Simulate different outputs based on code content and language
+      if (language === "python") {
+        if (code.includes("two_sum") || code.includes("twoSum")) {
+          outputLines.push("Result: [0, 1]");
+        } else if (code.includes("binary_search")) {
+          outputLines.push("Found at index: 3");
+        } else if (code.includes("quick_sort")) {
+          outputLines.push("Sorted: [11, 12, 22, 25, 34, 64, 90]");
+        } else if (code.includes("dfs_inorder")) {
+          outputLines.push("Inorder: [2, 1, 3]");
+        } else if (code.includes("print")) {
+          // Extract print statements and simulate output
+          lines.forEach(line => {
+            if (line.includes("print(")) {
+              const match = line.match(/print\(([^)]+)\)/);
+              if (match) {
+                let printContent = match[1];
+                if (printContent.includes("f\"") || printContent.includes("f'")) {
+                  // Handle f-strings
+                  printContent = printContent.replace(/f["']/, '').replace(/["']$/, '');
+                  outputLines.push(printContent.replace(/\{[^}]+\}/g, 'value'));
+                } else {
+                  outputLines.push(printContent.replace(/["']/g, ''));
+                }
+              }
+            }
+          });
+        } else {
+          outputLines.push("Code executed successfully!");
+        }
+      } else if (language === "javascript") {
+        if (code.includes("twoSum")) {
+          outputLines.push("Result: [ 0, 1 ]");
+        } else if (code.includes("console.log")) {
+          lines.forEach(line => {
+            if (line.includes("console.log")) {
+              const match = line.match(/console\.log\(([^)]+)\)/);
+              if (match) {
+                outputLines.push(match[1].replace(/["']/g, ''));
+              }
+            }
+          });
+        } else {
+          outputLines.push("Code executed successfully!");
+        }
+      } else if (language === "java") {
+        if (code.includes("twoSum")) {
+          outputLines.push("Result: [0, 1]");
+        } else {
+          outputLines.push("Code compiled and executed successfully!");
+        }
+      } else if (language === "cpp") {
+        if (code.includes("twoSum")) {
+          outputLines.push("Result: [0, 1]");
+        } else {
+          outputLines.push("Code compiled and executed successfully!");
+        }
+      } else if (language === "c") {
+        if (code.includes("twoSum")) {
+          outputLines.push("Result: [0, 1]");
+        } else {
+          outputLines.push("Code compiled and executed successfully!");
+        }
+      }
+
+      // Add execution stats
+      outputLines.push("");
+      outputLines.push(`Execution time: ${Math.random() * 0.1 + 0.01}s`);
+      outputLines.push(`Memory used: ${Math.random() * 2 + 1.5}MB`);
+      
+      if (input.trim()) {
+        outputLines.push(`Input processed: ${input.trim()}`);
+      }
+      
+    } catch (error) {
+      outputLines.push(`Error: ${error}`);
+    }
+    
+    return outputLines.join('\n');
+  };
+
   const loadTemplate = () => {
     setCode(templates[selectedLanguage as keyof typeof templates] || "");
   };
@@ -231,20 +317,12 @@ print(f"Sorted: {sorted_arr}")`
   const runCode = async () => {
     setIsRunning(true);
     
-    // Simulate code execution
+    // Simulate compilation/execution time
     setTimeout(() => {
-      // Mock output based on the code
-      if (code.includes("two_sum") || code.includes("twoSum")) {
-        setOutput("Result: [0, 1]\nExecution time: 0.034s\nMemory used: 2.1 MB");
-      } else if (code.includes("binary_search")) {
-        setOutput("Found at index: 3\nExecution time: 0.012s\nMemory used: 1.8 MB");
-      } else if (code.includes("quick_sort")) {
-        setOutput("Sorted: [11, 12, 22, 25, 34, 64, 90]\nExecution time: 0.089s\nMemory used: 3.2 MB");
-      } else {
-        setOutput("Code executed successfully!\nExecution time: 0.025s\nMemory used: 2.0 MB");
-      }
+      const result = executeCode(code, selectedLanguage, input);
+      setOutput(result);
       setIsRunning(false);
-    }, 2000);
+    }, 1500);
   };
 
   const saveSnippet = () => {
