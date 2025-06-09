@@ -1,76 +1,106 @@
 
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Book, Home, Search, BookOpen, TrendingUp, Code, MessageSquare, Lightbulb, Map } from "lucide-react";
+import { Menu, X, Code, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
-  const navItems = [
-    { path: "/", icon: Home, label: "Dashboard" },
-    { path: "/topics", icon: Book, label: "Topics" },
-    { path: "/analyzer", icon: Search, label: "Analyzer" },
-    { path: "/visualizations", icon: BookOpen, label: "Visualizations" },
-    { path: "/roadmap", icon: TrendingUp, label: "Roadmap" },
-    { path: "/custom-roadmap", icon: Map, label: "Custom Roadmap" },
-    { path: "/chat-guide", icon: MessageSquare, label: "DSA Guide" },
-    { path: "/question-explainer", icon: Lightbulb, label: "Question Explainer" },
-    { path: "/playground", icon: Code, label: "Code Playground" },
+  const navigation = [
+    { name: "Dashboard", href: "/" },
+    { name: "Topics", href: "/topics" },
+    { name: "Analyzer", href: "/analyzer" },
+    { name: "Visualizations", href: "/visualizations" },
+    { name: "Roadmap", href: "/roadmap" },
+    { name: "Playground", href: "/playground" },
   ];
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
-    <nav className="bg-white shadow-lg border-b border-blue-100">
+    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          <div className="flex items-center space-x-8">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              DSA Pathfinder
-            </Link>
-            <div className="hidden lg:flex space-x-6">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
-                      isActive
-                        ? "bg-blue-100 text-blue-700"
-                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
-                    }`}
-                  >
-                    <Icon size={16} />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <Code className="w-5 h-5 text-white" />
             </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Mobile Navigation */}
-      <div className="lg:hidden border-t border-gray-200 bg-white">
-        <div className="grid grid-cols-3 gap-1 p-2">
-          {navItems.slice(0, 9).map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            return (
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              DSA Pathfinder
+            </span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            {navigation.map((item) => (
               <Link
-                key={item.path}
-                to={item.path}
-                className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
-                  isActive
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                key={item.name}
+                to={item.href}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive(item.href)
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 }`}
               >
-                <Icon size={16} />
-                <span className="text-xs">{item.label}</span>
+                {item.name}
               </Link>
-            );
-          })}
+            ))}
+          </div>
+
+          {/* Desktop Right Side */}
+          <div className="hidden md:flex items-center space-x-2">
+            <ThemeToggle />
+            <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Zap className="w-4 h-4 mr-2" />
+              Get Pro
+            </Button>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center space-x-2">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2"
+            >
+              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
+          </div>
         </div>
+
+        {/* Mobile Navigation */}
+        {isOpen && (
+          <div className="md:hidden pb-4">
+            <div className="space-y-1">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                    isActive(item.href)
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              <div className="pt-2">
+                <Button size="sm" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                  <Zap className="w-4 h-4 mr-2" />
+                  Get Pro
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );
