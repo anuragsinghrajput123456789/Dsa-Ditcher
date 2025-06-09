@@ -1,8 +1,9 @@
+
 import { useState, useRef } from "react";
 import { Calculator, Lightbulb } from "lucide-react";
 import CodeEditor from "./playground/CodeEditor";
 import CodeControls from "./playground/CodeControls";
-import ComplexityAnalysis from "./playground/ComplexityAnalysis";
+import ComplexityFinder from "./playground/ComplexityFinder";
 import IOPanel from "./playground/IOPanel";
 import Sidebar from "./playground/Sidebar";
 
@@ -14,7 +15,6 @@ const CodePlayground = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [savedSnippets, setSavedSnippets] = useState<any[]>([]);
   const [showComplexityAnalysis, setShowComplexityAnalysis] = useState(false);
-  const [complexityAnalysis, setComplexityAnalysis] = useState<any>(null);
   const [optimizationTips, setOptimizationTips] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -160,127 +160,6 @@ int main() {
 }`
   };
 
-  const commonSnippets = [
-    {
-      name: "Binary Search",
-      language: "python",
-      code: `def binary_search(arr, target):
-    left, right = 0, len(arr) - 1
-    
-    while left <= right:
-        mid = (left + right) // 2
-        if arr[mid] == target:
-            return mid
-        elif arr[mid] < target:
-            left = mid + 1
-        else:
-            right = mid - 1
-    
-    return -1
-
-# Test
-arr = [1, 3, 5, 7, 9, 11]
-target = 7
-result = binary_search(arr, target)
-print(f"Found at index: {result}")`
-    },
-    {
-      name: "DFS Tree Traversal",
-      language: "python",
-      code: `class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
-
-def dfs_inorder(root):
-    if not root:
-        return []
-    
-    result = []
-    result.extend(dfs_inorder(root.left))
-    result.append(root.val)
-    result.extend(dfs_inorder(root.right))
-    return result
-
-# Test
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(3)
-result = dfs_inorder(root)
-print(f"Inorder: {result}")`
-    },
-    {
-      name: "Quick Sort",
-      language: "python",
-      code: `def quick_sort(arr):
-    if len(arr) <= 1:
-        return arr
-    
-    pivot = arr[len(arr) // 2]
-    left = [x for x in arr if x < pivot]
-    middle = [x for x in arr if x == pivot]
-    right = [x for x in arr if x > pivot]
-    
-    return quick_sort(left) + middle + quick_sort(right)
-
-# Test
-arr = [64, 34, 25, 12, 22, 11, 90]
-sorted_arr = quick_sort(arr)
-print(f"Sorted: {sorted_arr}")`
-    }
-  ];
-
-  const analyzeComplexity = (code: string, language: string) => {
-    // Analyze time and space complexity based on code patterns
-    const analysis = {
-      timeComplexity: "O(n)",
-      spaceComplexity: "O(1)",
-      explanation: "",
-      optimizations: []
-    };
-
-    const codeLines = code.toLowerCase();
-    
-    // Time complexity analysis
-    if (codeLines.includes("for") && codeLines.includes("while")) {
-      analysis.timeComplexity = "O(n²)";
-      analysis.explanation = "Nested loops detected";
-      analysis.optimizations.push("Consider using hash maps to reduce nested loops");
-    } else if (codeLines.match(/for.*for/s) || codeLines.match(/while.*while/s)) {
-      analysis.timeComplexity = "O(n²)";
-      analysis.explanation = "Nested loops detected";
-      analysis.optimizations.push("Use two pointers technique if applicable");
-    } else if (codeLines.includes("sort")) {
-      analysis.timeComplexity = "O(n log n)";
-      analysis.explanation = "Sorting operation detected";
-      analysis.optimizations.push("Consider if sorting is necessary");
-    } else if (codeLines.includes("binary_search") || codeLines.includes("binarysearch")) {
-      analysis.timeComplexity = "O(log n)";
-      analysis.explanation = "Binary search implementation";
-    } else if (codeLines.includes("for") || codeLines.includes("while")) {
-      analysis.timeComplexity = "O(n)";
-      analysis.explanation = "Single loop iteration";
-    } else {
-      analysis.timeComplexity = "O(1)";
-      analysis.explanation = "Constant time operations";
-    }
-
-    // Space complexity analysis
-    if (codeLines.includes("dp") || codeLines.includes("memo")) {
-      analysis.spaceComplexity = "O(n)";
-      analysis.optimizations.push("Consider space-optimized DP if possible");
-    } else if (codeLines.includes("recursion") || codeLines.includes("def") && codeLines.includes("return")) {
-      analysis.spaceComplexity = "O(n)";
-      analysis.explanation += " (Recursion stack space)";
-    } else if (codeLines.includes("[") && codeLines.includes("]")) {
-      analysis.spaceComplexity = "O(n)";
-      analysis.explanation += " (Additional array/list storage)";
-    }
-
-    return analysis;
-  };
-
   const generateOptimizationTips = (code: string, language: string) => {
     const tips = [];
     const codeLines = code.toLowerCase();
@@ -409,10 +288,7 @@ print(f"Sorted: {sorted_arr}")`
   const runCode = async () => {
     setIsRunning(true);
     
-    const analysis = analyzeComplexity(code, selectedLanguage);
     const tips = generateOptimizationTips(code, selectedLanguage);
-    
-    setComplexityAnalysis(analysis);
     setOptimizationTips(tips);
     setShowComplexityAnalysis(true);
     
@@ -466,7 +342,9 @@ print(f"Sorted: {sorted_arr}")`
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">Code Playground</h1>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+          Code Playground
+        </h1>
         <p className="text-gray-600 text-lg">Practice DSA problems with multi-language support and complexity analysis</p>
       </div>
 
@@ -500,24 +378,21 @@ print(f"Sorted: {sorted_arr}")`
             languageName={languages.find(lang => lang.id === selectedLanguage)?.name || ""}
           />
 
-          {showComplexityAnalysis && complexityAnalysis && (
-            <ComplexityAnalysis
-              analysis={complexityAnalysis}
-              roadmapColor="from-blue-500 to-purple-500"
-            />
+          {showComplexityAnalysis && code.trim() && (
+            <ComplexityFinder code={code} language={selectedLanguage} />
           )}
 
           {optimizationTips.length > 0 && (
-            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg border border-green-200 p-6">
               <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                <Lightbulb className="w-5 h-5 mr-2" />
+                <Lightbulb className="w-5 h-5 mr-2 text-green-600" />
                 Optimization Tips
               </h3>
               <div className="space-y-2">
                 {optimizationTips.map((tip, index) => (
-                  <div key={index} className="flex items-start space-x-2 p-3 bg-blue-50 rounded-lg">
-                    <Lightbulb className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-blue-800">{tip}</span>
+                  <div key={index} className="flex items-start space-x-2 p-3 bg-white rounded-lg shadow-sm border border-green-100">
+                    <Lightbulb className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-green-800">{tip}</span>
                   </div>
                 ))}
               </div>
