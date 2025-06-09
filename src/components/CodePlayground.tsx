@@ -1,5 +1,10 @@
 import { useState, useRef } from "react";
-import { Play, Save, Download, Upload, Settings, Code, Terminal, Calculator, Lightbulb, Clock, Database } from "lucide-react";
+import { Calculator, Lightbulb } from "lucide-react";
+import CodeEditor from "./playground/CodeEditor";
+import CodeControls from "./playground/CodeControls";
+import ComplexityAnalysis from "./playground/ComplexityAnalysis";
+import IOPanel from "./playground/IOPanel";
+import Sidebar from "./playground/Sidebar";
 
 const CodePlayground = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("python");
@@ -404,7 +409,6 @@ print(f"Sorted: {sorted_arr}")`
   const runCode = async () => {
     setIsRunning(true);
     
-    // Analyze complexity and generate tips
     const analysis = analyzeComplexity(code, selectedLanguage);
     const tips = generateOptimizationTips(code, selectedLanguage);
     
@@ -412,7 +416,6 @@ print(f"Sorted: {sorted_arr}")`
     setOptimizationTips(tips);
     setShowComplexityAnalysis(true);
     
-    // Simulate compilation/execution time
     setTimeout(() => {
       const result = executeCode(code, selectedLanguage, input);
       setOutput(result);
@@ -467,151 +470,43 @@ print(f"Sorted: {sorted_arr}")`
         <p className="text-gray-600 text-lg">Practice DSA problems with multi-language support and complexity analysis</p>
       </div>
 
-      {/* Controls */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          {/* Language Selection */}
-          <div className="flex items-center space-x-4">
-            <label className="font-medium text-gray-700">Language:</label>
-            <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              {languages.map((lang) => (
-                <option key={lang.id} value={lang.id}>
-                  {lang.name}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={loadTemplate}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              Load Template
-            </button>
-          </div>
+      <CodeControls
+        selectedLanguage={selectedLanguage}
+        onLanguageChange={setSelectedLanguage}
+        onLoadTemplate={loadTemplate}
+        onRunCode={runCode}
+        onSaveSnippet={saveSnippet}
+        onDownloadCode={downloadCode}
+        onUploadFile={() => fileInputRef.current?.click()}
+        isRunning={isRunning}
+        hasCode={!!code.trim()}
+        languages={languages}
+      />
 
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={runCode}
-              disabled={isRunning || !code.trim()}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center space-x-2"
-            >
-              <Play className="w-4 h-4" />
-              <span>{isRunning ? "Running..." : "Run & Analyze"}</span>
-            </button>
-            
-            <button
-              onClick={() => setShowComplexityAnalysis(!showComplexityAnalysis)}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
-            >
-              <Calculator className="w-4 h-4" />
-              <span>Complexity</span>
-            </button>
-            
-            <button
-              onClick={saveSnippet}
-              disabled={!code.trim()}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center space-x-2"
-            >
-              <Save className="w-4 h-4" />
-              <span>Save</span>
-            </button>
-            
-            <button
-              onClick={downloadCode}
-              disabled={!code.trim()}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 flex items-center space-x-2"
-            >
-              <Download className="w-4 h-4" />
-              <span>Download</span>
-            </button>
-            
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={uploadFile}
-              accept=".py,.js,.java,.cpp,.c,.txt"
-              className="hidden"
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2"
-            >
-              <Upload className="w-4 h-4" />
-              <span>Upload</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={uploadFile}
+        accept=".py,.js,.java,.cpp,.c,.txt"
+        className="hidden"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Code Editor */}
         <div className="lg:col-span-3 space-y-6">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="bg-gray-800 text-white px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Code className="w-5 h-5" />
-                <span className="font-medium">
-                  {languages.find(lang => lang.id === selectedLanguage)?.name} Editor
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-300">Lines: {code.split('\n').length}</span>
-                <span className="text-sm text-gray-300">Chars: {code.length}</span>
-              </div>
-            </div>
-            <textarea
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder={`Write your ${languages.find(lang => lang.id === selectedLanguage)?.name} code here...`}
-              className="w-full h-96 p-4 font-mono text-sm border-none focus:outline-none resize-none bg-gray-900 text-gray-100"
-              spellCheck={false}
-            />
-          </div>
+          <CodeEditor
+            code={code}
+            onCodeChange={setCode}
+            language={selectedLanguage}
+            languageName={languages.find(lang => lang.id === selectedLanguage)?.name || ""}
+          />
 
-          {/* Complexity Analysis */}
           {showComplexityAnalysis && complexityAnalysis && (
-            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                <Calculator className="w-5 h-5 mr-2" />
-                Complexity Analysis
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <div className="flex items-center mb-2">
-                    <Clock className="w-4 h-4 mr-2 text-blue-600" />
-                    <span className="font-semibold text-blue-800">Time Complexity</span>
-                  </div>
-                  <div className="text-2xl font-bold text-blue-600 mb-1">{complexityAnalysis.timeComplexity}</div>
-                  <p className="text-sm text-blue-700">{complexityAnalysis.explanation}</p>
-                </div>
-                <div className="bg-green-50 rounded-lg p-4">
-                  <div className="flex items-center mb-2">
-                    <Database className="w-4 h-4 mr-2 text-green-600" />
-                    <span className="font-semibold text-green-800">Space Complexity</span>
-                  </div>
-                  <div className="text-2xl font-bold text-green-600 mb-1">{complexityAnalysis.spaceComplexity}</div>
-                  <p className="text-sm text-green-700">Additional space used</p>
-                </div>
-              </div>
-              
-              {complexityAnalysis.optimizations.length > 0 && (
-                <div className="mt-4 bg-yellow-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-yellow-800 mb-2">Optimization Suggestions:</h4>
-                  <ul className="text-sm text-yellow-700 space-y-1">
-                    {complexityAnalysis.optimizations.map((opt, index) => (
-                      <li key={index}>• {opt}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+            <ComplexityAnalysis
+              analysis={complexityAnalysis}
+              roadmapColor="from-blue-500 to-purple-500"
+            />
           )}
 
-          {/* Optimization Tips */}
           {optimizationTips.length > 0 && (
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
               <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
@@ -629,128 +524,19 @@ print(f"Sorted: {sorted_arr}")`
             </div>
           )}
 
-          {/* Input/Output */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gray-100 px-4 py-3 border-b border-gray-200">
-                <h3 className="font-medium text-gray-800">Input</h3>
-              </div>
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Enter input for your program..."
-                className="w-full h-32 p-4 font-mono text-sm border-none focus:outline-none resize-none"
-              />
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gray-100 px-4 py-3 border-b border-gray-200 flex items-center">
-                <Terminal className="w-4 h-4 mr-2" />
-                <h3 className="font-medium text-gray-800">Output</h3>
-              </div>
-              <div className="h-32 p-4 font-mono text-sm bg-gray-900 text-green-400 overflow-y-auto">
-                {isRunning ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-400 mr-2"></div>
-                    Running code and analyzing complexity...
-                  </div>
-                ) : (
-                  <pre className="whitespace-pre-wrap">{output || "Click 'Run & Analyze' to see output..."}</pre>
-                )}
-              </div>
-            </div>
-          </div>
+          <IOPanel
+            input={input}
+            output={output}
+            isRunning={isRunning}
+            onInputChange={setInput}
+          />
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Common Snippets */}
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Common Snippets</h3>
-            <div className="space-y-2">
-              {commonSnippets.map((snippet, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCode(snippet.code)}
-                  className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="font-medium text-gray-800">{snippet.name}</div>
-                  <div className="text-sm text-gray-600">{snippet.language}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Saved Snippets */}
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Saved Snippets</h3>
-            {savedSnippets.length === 0 ? (
-              <p className="text-gray-500 text-sm">No saved snippets yet</p>
-            ) : (
-              <div className="space-y-2">
-                {savedSnippets.map((snippet) => (
-                  <div
-                    key={snippet.id}
-                    className="p-3 border border-gray-200 rounded-lg"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="font-medium text-gray-800">{snippet.name}</div>
-                      <button
-                        onClick={() => loadSnippet(snippet)}
-                        className="text-blue-600 hover:text-blue-700 text-sm"
-                      >
-                        Load
-                      </button>
-                    </div>
-                    <div className="text-sm text-gray-600">{snippet.language}</div>
-                    <div className="text-xs text-gray-500">{snippet.timestamp}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Algorithm Reference */}
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Complexity Reference</h3>
-            <div className="space-y-3 text-sm">
-              <div className="border-l-4 border-green-500 pl-3">
-                <div className="font-medium text-green-700">O(1) - Constant</div>
-                <div className="text-gray-600">Hash table lookup, array access</div>
-              </div>
-              <div className="border-l-4 border-blue-500 pl-3">
-                <div className="font-medium text-blue-700">O(log n) - Logarithmic</div>
-                <div className="text-gray-600">Binary search, balanced trees</div>
-              </div>
-              <div className="border-l-4 border-yellow-500 pl-3">
-                <div className="font-medium text-yellow-700">O(n) - Linear</div>
-                <div className="text-gray-600">Single loop, array traversal</div>
-              </div>
-              <div className="border-l-4 border-orange-500 pl-3">
-                <div className="font-medium text-orange-700">O(n log n) - Log-linear</div>
-                <div className="text-gray-600">Merge sort, heap sort</div>
-              </div>
-              <div className="border-l-4 border-red-500 pl-3">
-                <div className="font-medium text-red-700">O(n²) - Quadratic</div>
-                <div className="text-gray-600">Nested loops, bubble sort</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Tips */}
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Tips</h3>
-            <div className="space-y-3 text-sm text-gray-600">
-              <div>• Use meaningful variable names</div>
-              <div>• Comment your complex logic</div>
-              <div>• Test with edge cases</div>
-              <div>• Consider time & space complexity</div>
-              <div>• Practice regularly</div>
-              <div>• Use hash maps for O(1) lookups</div>
-              <div>• Two pointers for sorted arrays</div>
-            </div>
-          </div>
-        </div>
+        <Sidebar
+          savedSnippets={savedSnippets}
+          onLoadSnippet={loadSnippet}
+          onCodeChange={setCode}
+        />
       </div>
     </div>
   );
