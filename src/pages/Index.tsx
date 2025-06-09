@@ -13,6 +13,7 @@ import QuestionExplainer from "../components/QuestionExplainer";
 import CodePlayground from "../components/CodePlayground";
 import ComplexityFinder from "../components/playground/ComplexityFinder";
 import RoadmapCRUD from "../components/roadmap/RoadmapCRUD";
+import ResourceManager from "../components/resources/ResourceManager";
 
 const Index = () => {
   return (
@@ -31,6 +32,7 @@ const Index = () => {
           <Route path="/question-explainer" element={<QuestionExplainer />} />
           <Route path="/playground" element={<CodePlayground />} />
           <Route path="/complexity-finder" element={<ComplexityFinder code="" language="python" />} />
+          <Route path="/resources" element={<ResourceManager topic="general" />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

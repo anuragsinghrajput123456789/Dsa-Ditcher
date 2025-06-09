@@ -32,7 +32,7 @@ const RoadmapCRUD = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    difficulty: 'Beginner' as const,
+    difficulty: 'Beginner' as 'Beginner' | 'Intermediate' | 'Advanced',
     duration: '',
     topics: ['']
   });
@@ -208,7 +208,7 @@ const RoadmapCRUD = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">Difficulty</label>
             <select
               value={formData.difficulty}
-              onChange={(e) => setFormData(prev => ({ ...prev, difficulty: e.target.value as any }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, difficulty: e.target.value as 'Beginner' | 'Intermediate' | 'Advanced' }))}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Beginner">Beginner</option>
