@@ -15,6 +15,7 @@ const Navbar = () => {
     { name: "Analyzer", href: "/analyzer" },
     { name: "Visualizations", href: "/visualizations" },
     { name: "Roadmap", href: "/roadmap" },
+    { name: "Sheets", href: "/dsa-sheets" }, // Added DSA Sheets link
     { name: "Playground", href: "/playground" },
   ];
 
