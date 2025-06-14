@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
@@ -54,19 +53,6 @@ export default function AuthPage() {
     setLoading(false);
   }
 
-  // Social login
-  async function signInWithProvider(provider: "google" | "github" | "twitter") {
-    setLoading(true);
-    setErr(null);
-    const redirectUrl = `${window.location.origin}/`;
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: redirectUrl },
-    });
-    if (error) setErr(error.message);
-    setLoading(false);
-  }
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800">
       <div className="bg-white rounded-xl shadow-2xl p-7 w-full max-w-md">
@@ -88,7 +74,7 @@ export default function AuthPage() {
           <Input
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="Set your password"
             value={form.password}
             onChange={handleInput}
             required
@@ -103,19 +89,6 @@ export default function AuthPage() {
             {authView === "signIn" ? "Sign In" : "Create Account"}
           </Button>
         </form>
-
-        <div className="py-3 text-center text-xs text-muted-foreground">or sign in with</div>
-        <div className="flex justify-center gap-2 mb-2">
-          <Button variant="outline" onClick={() => signInWithProvider("google")} disabled={loading}>
-            <Zap className="h-4 w-4 mr-2" /> Google
-          </Button>
-          <Button variant="outline" onClick={() => signInWithProvider("github")} disabled={loading}>
-            <Github className="h-4 w-4 mr-2" /> GitHub
-          </Button>
-          <Button variant="outline" onClick={() => signInWithProvider("twitter")} disabled={loading}>
-            <Twitter className="h-4 w-4 mr-2" /> Twitter
-          </Button>
-        </div>
 
         <div className="pt-5 text-center">
           {authView === "signIn" ? (
