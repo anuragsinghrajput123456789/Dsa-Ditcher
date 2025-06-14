@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAuthStore } from "../store/authStore";
 import RoadmapCard from "./roadmap/RoadmapCard";
 import RoadmapProgress from "./roadmap/RoadmapProgress";
 import RoadmapDetails from "./roadmap/RoadmapDetails";
@@ -7,7 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import CustomRoadmap from "./CustomRoadmap";
 
 const Roadmap = () => {
-  const { user, updateXP } = useAuthStore();
+  // Simulated user state since authStore is gone
+  const [user, setUser] = useState<{ level: number; xp: number }>({ level: 1, xp: 0 });
   const [selectedRoadmap, setSelectedRoadmap] = useState<string | null>(null);
 
   const roadmaps = [
@@ -200,6 +200,16 @@ const Roadmap = () => {
     }
   };
 
+  // Simulated updateXP function
+  const updateXP = (xpDelta: number) => {
+    setUser((prev) => {
+      const newXP = prev.xp + xpDelta;
+      // Simulate leveling up every 1000 XP for demo purposes.
+      const newLevel = prev.level + Math.floor(newXP / 1000);
+      return { xp: newXP % 1000, level: newLevel };
+    });
+  };
+
   const completeStep = (roadmapId: string, stepId: number) => {
     const roadmapData = roadmapDetails[roadmapId as keyof typeof roadmapDetails];
     const step = roadmapData?.steps.find(s => s.id === stepId);
@@ -239,7 +249,7 @@ const Roadmap = () => {
       
       <TabsContent value="pre-written" className="mt-6">
         <div className="space-y-6">
-          <RoadmapProgress userLevel={user?.level || 1} />
+          <RoadmapProgress userLevel={user.level} />
 
           {/* Roadmap Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
