@@ -57,6 +57,42 @@ const Roadmap = () => {
       completed: 0,
       total: 12,
     },
+    {
+      id: "sorting-searching",
+      title: "Sorting & Searching",
+      description: "Master sorting algorithms and searching techniques",
+      duration: "4 Days",
+      difficulty: "Beginner",
+      xpReward: 350,
+      color: "from-cyan-500 to-blue-600",
+      icon: "🔢",
+      completed: 1,
+      total: 6,
+    },
+    {
+      id: "hashing-basics",
+      title: "Hash Tables & Maps",
+      description: "Understand hashing, hash maps, and typical DSA problems",
+      duration: "3 Days",
+      difficulty: "Intermediate",
+      xpReward: 400,
+      color: "from-yellow-500 to-yellow-600",
+      icon: "🗃️",
+      completed: 0,
+      total: 5,
+    },
+    {
+      id: "graphs-and-trees",
+      title: "Graphs and Trees",
+      description: "Deep dive into graphs, trees, traversals, pathfinding",
+      duration: "6 Days",
+      difficulty: "Intermediate",
+      xpReward: 600,
+      color: "from-pink-500 to-purple-800",
+      icon: "🌲",
+      completed: 0,
+      total: 8,
+    },
   ];
 
   const roadmapDetails = {
@@ -124,6 +160,40 @@ const Roadmap = () => {
         { id: 10, title: "Digit DP", completed: false, xp: 80 },
         { id: 11, title: "Bitmask DP", completed: false, xp: 100 },
         { id: 12, title: "Advanced DP & Practice", completed: false, xp: 100 },
+      ]
+    },
+    "sorting-searching": {
+      title: "Sorting & Searching",
+      description: "Master sorting algorithms and searching techniques",
+      duration: "4 Days",
+      xpReward: 350,
+      steps: [
+        { id: 1, title: "Sorting Basics", completed: false, xp: 60 },
+        { id: 2, title: "Searching Techniques", completed: false, xp: 70 },
+        { id: 3, title: "Practice Problems & Assessment", completed: false, xp: 50 },
+      ]
+    },
+    "hashing-basics": {
+      title: "Hash Tables & Maps",
+      description: "Understand hashing, hash maps, and typical DSA problems",
+      duration: "3 Days",
+      xpReward: 400,
+      steps: [
+        { id: 1, title: "Hashing Basics", completed: false, xp: 60 },
+        { id: 2, title: "Hash Map Operations", completed: false, xp: 70 },
+        { id: 3, title: "Practice Problems & Assessment", completed: false, xp: 50 },
+      ]
+    },
+    "graphs-and-trees": {
+      title: "Graphs and Trees",
+      description: "Deep dive into graphs, trees, traversals, pathfinding",
+      duration: "6 Days",
+      xpReward: 600,
+      steps: [
+        { id: 1, title: "Graph Representation", completed: false, xp: 60 },
+        { id: 2, title: "Graph Traversals", completed: false, xp: 70 },
+        { id: 3, title: "Pathfinding Algorithms", completed: false, xp: 80 },
+        { id: 4, title: "Practice Problems & Assessment", completed: false, xp: 50 },
       ]
     }
   };

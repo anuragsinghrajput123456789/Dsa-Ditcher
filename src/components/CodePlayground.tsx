@@ -1,8 +1,8 @@
-
 import { useState } from "react";
 import { Play, RotateCcw, Settings, Brain, Code, Zap } from "lucide-react";
 import ComplexityFinder from "./playground/ComplexityFinder";
 import ResourceManager from "./resources/ResourceManager";
+import CodeEditor from "./playground/CodeEditor";
 
 const CodePlayground = () => {
   const [code, setCode] = useState(`def bubble_sort(arr):
@@ -89,14 +89,16 @@ print(sorted_numbers)`);
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent mb-4">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent mb-4 animate-fade-in">
           Code Playground
         </h1>
-        <p className="text-slate-600 text-lg">Write, run, and analyze your DSA code with complexity insights</p>
+        <p className="text-slate-600 text-lg">
+          Write, run, and analyze your DSA code with complexity insights and AI assistance.
+        </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200">
+      <div className="bg-white rounded-xl shadow-lg border border-slate-200 animate-fade-in">
         <div className="border-b border-slate-200">
           <nav className="flex space-x-8 px-6">
             <button
@@ -108,7 +110,7 @@ print(sorted_numbers)`);
               }`}
             >
               <Code className="w-4 h-4 inline mr-2" />
-              Code Editor
+              Code Editor (with AI!)
             </button>
             <button
               onClick={() => setActiveTab("complexity")}
@@ -186,33 +188,29 @@ print(sorted_numbers)`);
                 </div>
               </div>
 
-              {/* Code Editor */}
+              {/* New Code Editor and Output */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Code Editor</label>
-                  <div className="bg-slate-900 rounded-lg border border-slate-300 overflow-hidden">
-                    <div className="bg-slate-800 px-4 py-2 border-b border-slate-700">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                        <span className="text-slate-400 text-sm ml-2">main.{language === 'python' ? 'py' : language === 'javascript' ? 'js' : 'java'}</span>
-                      </div>
-                    </div>
-                    <textarea
-                      value={code}
-                      onChange={(e) => setCode(e.target.value)}
-                      className="w-full h-96 p-4 bg-slate-900 text-green-400 font-mono text-sm resize-none focus:outline-none"
-                      placeholder="Write your code here..."
-                      spellCheck="false"
-                    />
-                  </div>
+                  <label className="text-sm font-bold text-slate-700">Code Editor (with AI!)</label>
+                  <CodeEditor
+                    code={code}
+                    onCodeChange={setCode}
+                    language={language}
+                    languageName={
+                      language === "python"
+                        ? "Python"
+                        : language === "javascript"
+                        ? "JavaScript"
+                        : language === "java"
+                        ? "Java"
+                        : "C++"
+                    }
+                  />
                 </div>
-
                 {/* Output */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Output</label>
-                  <div className="bg-slate-100 rounded-lg border border-slate-300 overflow-hidden">
+                  <label className="text-sm font-bold text-slate-700">Output</label>
+                  <div className="bg-slate-100 rounded-lg border border-slate-300 overflow-hidden shadow-inner">
                     <div className="bg-slate-200 px-4 py-2 border-b border-slate-300">
                       <span className="text-slate-600 text-sm">Console Output</span>
                     </div>
