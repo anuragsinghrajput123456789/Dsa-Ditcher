@@ -1,5 +1,5 @@
-
-import { Brain, Clock, Database, TrendingUp, AlertCircle } from "lucide-react";
+import { useState } from "react";
+import { Brain, Clock, Database, TrendingUp, AlertCircle, Loader, Wand2 } from "lucide-react";
 
 interface ComplexityFinderProps {
   code: string;
@@ -16,107 +16,70 @@ interface ComplexityResult {
 }
 
 const ComplexityFinder = ({ code, language }: ComplexityFinderProps) => {
-  const analyzeComplexity = (code: string): ComplexityResult => {
-    const codeLines = code.toLowerCase();
-    let timeComplexity = "O(1)";
-    let spaceComplexity = "O(1)";
-    let explanation = "Constant time operations";
-    let details: string[] = [];
-    let optimizations: string[] = [];
-    let confidence: 'high' | 'medium' | 'low' = 'high';
+  const [result, setResult] = useState<ComplexityResult | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    // Advanced pattern matching for complexity analysis
-    const patterns = {
-      nestedLoops: /for[\s\S]*?for|while[\s\S]*?while|for[\s\S]*?while|while[\s\S]*?for/g,
-      singleLoop: /for\s*\(|while\s*\(|for\s+\w+\s+in/g,
-      recursion: /def\s+\w+\([\s\S]*?\)[\s\S]*?\w+\(|function\s+\w+\([\s\S]*?\)[\s\S]*?\w+\(/g,
-      sorting: /\.sort\(|sorted\(|merge_sort|quick_sort|heap_sort/g,
-      hashMap: /dict\(|{|}|\bmap\b|hashmap|set\(/g,
-      arrays: /\[|\]|array|list/g,
-      binarySearch: /binary_search|bsearch|bisect/g,
-      dpPatterns: /dp\[|memo\[|cache/g
-    };
+  const GEMINI_API_KEY = "AIzaSyBCXu4gQcNNQIF8jxqdDTfuSaOBMyBZZg4";
 
-    // Time complexity analysis
-    const nestedLoops = codeLines.match(patterns.nestedLoops);
-    const singleLoop = codeLines.match(patterns.singleLoop);
-    const sorting = codeLines.match(patterns.sorting);
-    const binarySearch = codeLines.match(patterns.binarySearch);
-    const recursion = codeLines.match(patterns.recursion);
-
-    if (nestedLoops && nestedLoops.length >= 2) {
-      timeComplexity = "O(n³)";
-      explanation = "Triple nested loops detected";
-      details.push("Multiple nested loops create cubic time complexity");
-      optimizations.push("Consider using dynamic programming or memoization");
-      confidence = 'high';
-    } else if (nestedLoops && nestedLoops.length >= 1) {
-      timeComplexity = "O(n²)";
-      explanation = "Nested loops detected";
-      details.push("Two nested loops create quadratic time complexity");
-      optimizations.push("Use hash maps or two-pointer technique to optimize");
-      confidence = 'high';
-    } else if (sorting) {
-      timeComplexity = "O(n log n)";
-      explanation = "Sorting operation present";
-      details.push("Efficient sorting algorithms have n log n complexity");
-      optimizations.push("Consider if sorting is necessary for the solution");
-      confidence = 'high';
-    } else if (binarySearch) {
-      timeComplexity = "O(log n)";
-      explanation = "Binary search implementation";
-      details.push("Binary search divides search space in half each iteration");
-      optimizations.push("Excellent time complexity for search operations");
-      confidence = 'high';
-    } else if (singleLoop) {
-      timeComplexity = "O(n)";
-      explanation = "Single loop iteration";
-      details.push("Linear traversal through data structure");
-      optimizations.push("Consider early termination conditions");
-      confidence = 'high';
-    } else if (recursion) {
-      timeComplexity = "O(2^n)";
-      explanation = "Recursive calls detected";
-      details.push("Exponential complexity due to recursive branching");
-      optimizations.push("Use memoization or dynamic programming");
-      confidence = 'medium';
+  const analyzeComplexity = async () => {
+    if (!code.trim()) {
+      setError("Code is empty. Please write some code to analyze.");
+      return;
     }
+    
+    setIsLoading(true);
+    setError(null);
+    setResult(null);
 
-    // Space complexity analysis
-    const hashMap = codeLines.match(patterns.hashMap);
-    const arrays = codeLines.match(patterns.arrays);
-    const dpPatterns = codeLines.match(patterns.dpPatterns);
+    const prompt = `Analyze the time and space complexity of the following ${language} code. Provide your answer in a valid JSON format. The JSON object must have the following keys: "timeComplexity" (e.g., "O(n^2)"), "spaceComplexity" (e.g., "O(n)"), "explanation" (a brief one-liner), "details" (an array of strings explaining the analysis), "optimizations" (an array of strings with suggestions), and "confidence" (a string which must be one of 'high', 'medium', or 'low').
 
-    if (dpPatterns) {
-      spaceComplexity = "O(n²)";
-      details.push("2D dynamic programming table used");
-    } else if (hashMap || arrays) {
-      spaceComplexity = "O(n)";
-      details.push("Additional data structures scale with input size");
-    } else if (recursion) {
-      spaceComplexity = "O(n)";
-      details.push("Recursion stack space grows with input");
-    } else {
-      spaceComplexity = "O(1)";
-      details.push("Only constant extra space used");
+Code:
+\`\`\`${language}
+${code}
+\`\`\`
+
+Your response must be only the JSON object, without any surrounding text or markdown formatting like \`\`\`json.`;
+
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            responseMimeType: "application/json",
+          }
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`API request failed with status ${res.status}`);
+      }
+      
+      const data = await res.json();
+      const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if (!responseText) {
+        throw new Error("No response from AI.");
+      }
+      
+      const parsedResult: ComplexityResult = JSON.parse(responseText);
+      setResult(parsedResult);
+
+    } catch (e: any) {
+      console.error("Complexity analysis error:", e);
+      let errorMessage = "Failed to analyze complexity. The AI might be unable to parse this code.";
+      if (e.message.includes("JSON")) {
+        errorMessage = "The AI returned an invalid response. Please try again."
+      } else if (e.message.includes("API")) {
+        errorMessage = "There was an issue connecting to the AI service."
+      }
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
-
-    // Add general optimizations
-    if (!optimizations.length) {
-      optimizations.push("Code appears to be well optimized");
-    }
-
-    return {
-      timeComplexity,
-      spaceComplexity,
-      explanation,
-      details,
-      optimizations,
-      confidence
-    };
   };
-
-  const result = analyzeComplexity(code);
 
   const getComplexityColor = (complexity: string) => {
     if (complexity.includes("O(1)")) return "from-green-500 to-emerald-500";
@@ -137,68 +100,104 @@ const ComplexityFinder = ({ code, language }: ComplexityFinderProps) => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-lg border border-blue-100 p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-lg border border-blue-100 p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <h3 className="text-xl font-bold text-gray-800 flex items-center">
           <Brain className="w-6 h-6 mr-2 text-blue-600" />
-          Complexity Analysis
+          AI Complexity Analysis
         </h3>
-        <div className={`px-3 py-1 rounded-full text-sm font-medium ${getConfidenceColor(result.confidence)}`}>
-          {result.confidence} confidence
-        </div>
+        <button
+          onClick={analyzeComplexity}
+          disabled={isLoading}
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 flex items-center space-x-2"
+        >
+          {isLoading ? <Loader className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+          <span>{isLoading ? "Analyzing..." : "Analyze with AI"}</span>
+        </button>
       </div>
+      
+      {isLoading && (
+        <div className="flex justify-center items-center p-10 bg-white/50 rounded-lg">
+          <Loader className="w-8 h-8 animate-spin text-blue-600 mr-4" />
+          <span className="text-lg text-gray-700">AI is thinking...</span>
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className={`bg-gradient-to-r ${getComplexityColor(result.timeComplexity)} rounded-lg p-4 text-white`}>
-          <div className="flex items-center mb-2">
-            <Clock className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Time Complexity</span>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+          <strong className="font-bold">Analysis Failed: </strong>
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
+
+      {!isLoading && !error && !result && (
+        <div className="text-center p-10 bg-white rounded-lg border border-dashed border-slate-300">
+          <Brain className="w-12 h-12 mx-auto text-slate-400 mb-3" />
+          <p className="text-slate-600 font-medium">Ready to analyze your code!</p>
+          <p className="text-sm text-slate-500">Click the "Analyze with AI" button to get complexity insights.</p>
+        </div>
+      )}
+
+      {result && (
+        <div className="animate-fade-in space-y-6">
+          <div className="flex items-center justify-end">
+              <div className={`px-3 py-1 rounded-full text-sm font-medium ${getConfidenceColor(result.confidence)}`}>
+                {result.confidence.charAt(0).toUpperCase() + result.confidence.slice(1)} confidence
+              </div>
           </div>
-          <div className="text-3xl font-bold mb-1">{result.timeComplexity}</div>
-          <p className="text-sm opacity-90">{result.explanation}</p>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className={`bg-gradient-to-r ${getComplexityColor(result.timeComplexity)} rounded-lg p-4 text-white shadow-lg`}>
+              <div className="flex items-center mb-2">
+                <Clock className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Time Complexity</span>
+              </div>
+              <div className="text-3xl font-bold mb-1">{result.timeComplexity}</div>
+              <p className="text-sm opacity-90">{result.explanation}</p>
+            </div>
 
-        <div className={`bg-gradient-to-r ${getComplexityColor(result.spaceComplexity)} rounded-lg p-4 text-white`}>
-          <div className="flex items-center mb-2">
-            <Database className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Space Complexity</span>
+            <div className={`bg-gradient-to-r ${getComplexityColor(result.spaceComplexity)} rounded-lg p-4 text-white shadow-lg`}>
+              <div className="flex items-center mb-2">
+                <Database className="w-5 h-5 mr-2" />
+                <span className="font-semibold">Space Complexity</span>
+              </div>
+              <div className="text-3xl font-bold mb-1">{result.spaceComplexity}</div>
+              <p className="text-sm opacity-90">Memory usage analysis</p>
+            </div>
           </div>
-          <div className="text-3xl font-bold mb-1">{result.spaceComplexity}</div>
-          <p className="text-sm opacity-90">Memory usage</p>
-        </div>
-      </div>
 
-      <div className="space-y-4">
-        <div className="bg-white rounded-lg p-4 border border-blue-200">
-          <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
-            <TrendingUp className="w-4 h-4 mr-2 text-blue-600" />
-            Analysis Details
-          </h4>
-          <ul className="text-sm text-gray-600 space-y-1">
-            {result.details.map((detail, index) => (
-              <li key={index} className="flex items-start">
-                <span className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                {detail}
-              </li>
-            ))}
-          </ul>
-        </div>
+          <div className="space-y-4">
+            <div className="bg-white rounded-lg p-4 border border-blue-200">
+              <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
+                <TrendingUp className="w-4 h-4 mr-2 text-blue-600" />
+                Analysis Details
+              </h4>
+              <ul className="text-sm text-gray-600 space-y-1 pl-1">
+                {result.details.map((detail, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="w-2 h-2 bg-blue-400 rounded-full mt-[6px] mr-2 flex-shrink-0"></span>
+                    <span>{detail}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
-          <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
-            <AlertCircle className="w-4 h-4 mr-2 text-green-600" />
-            Optimization Suggestions
-          </h4>
-          <ul className="text-sm text-green-700 space-y-1">
-            {result.optimizations.map((optimization, index) => (
-              <li key={index} className="flex items-start">
-                <span className="w-2 h-2 bg-green-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                {optimization}
-              </li>
-            ))}
-          </ul>
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+              <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
+                <AlertCircle className="w-4 h-4 mr-2 text-green-600" />
+                Optimization Suggestions
+              </h4>
+              <ul className="text-sm text-green-700 space-y-1 pl-1">
+                {result.optimizations.map((optimization, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="w-2 h-2 bg-green-400 rounded-full mt-[6px] mr-2 flex-shrink-0"></span>
+                    <span>{optimization}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
