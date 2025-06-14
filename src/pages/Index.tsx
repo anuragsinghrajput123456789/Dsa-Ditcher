@@ -9,8 +9,6 @@ import Chatbot from "../components/Chatbot";
 import Roadmap from "../components/Roadmap";
 import CustomRoadmap from "../components/CustomRoadmap";
 import DSAChatGuide from "../components/DSAChatGuide";
-import QuestionExplainer from "../components/QuestionExplainer";
-import QuestionAnalyzer from "../components/QuestionAnalyzer";
 import CodePlayground from "../components/CodePlayground";
 import ComplexityFinder from "../components/playground/ComplexityFinder";
 import RoadmapCRUD from "../components/roadmap/RoadmapCRUD";
@@ -30,8 +28,6 @@ const Index = () => {
           <Route path="/roadmap-crud" element={<RoadmapCRUD />} />
           <Route path="/custom-roadmap" element={<CustomRoadmap />} />
           <Route path="/chat-guide" element={<DSAChatGuide />} />
-          <Route path="/question-explainer" element={<QuestionExplainer />} />
-          <Route path="/question-analyzer" element={<QuestionAnalyzer />} />
           <Route path="/playground" element={<CodePlayground />} />
           <Route path="/complexity-finder" element={<ComplexityFinder code="" language="python" />} />
           <Route path="/resources" element={<ResourceManager topic="general" />} />
