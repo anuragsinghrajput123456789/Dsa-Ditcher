@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Play, RotateCcw, Settings, Brain, Code, Zap } from "lucide-react";
 import ComplexityFinder from "./playground/ComplexityFinder";
@@ -26,42 +27,50 @@ print(sorted_numbers)`);
 
   const handleRunCode = () => {
     setIsRunning(true);
-    // Simulate code execution based on a hardcoded example
+    setOutput("");
+
+    // Simulate execution with a timeout for better UX
     setTimeout(() => {
       try {
-        // This is a simulation with a hardcoded array. For a real app, you'd send the code to a backend execution environment.
-        const numbers = [64, 34, 25, 12, 22, 11, 90];
-        
-        // Simple bubble sort logic for demonstration, mimics the Python/JS examples
-        for (let i = 0; i < numbers.length; i++) {
-          for (let j = 0; j < numbers.length - i - 1; j++) {
-            if (numbers[j] > numbers[j + 1]) {
-              [numbers[j], numbers[j + 1]] = [numbers[j + 1], numbers[j]];
-            }
+        if (language === "javascript") {
+          let capturedOutput = "";
+          const originalConsoleLog = console.log;
+          
+          // Override console.log to capture output
+          console.log = (...args) => {
+            capturedOutput += args.map(arg => {
+              if (typeof arg === 'object' && arg !== null) {
+                return JSON.stringify(arg);
+              }
+              return String(arg);
+            }).join(' ') + '\n';
+          };
+
+          try {
+            // Use Function constructor for safer execution than eval
+            new Function(code)();
+            setOutput(capturedOutput.trim() || "Code executed with no output.");
+          } catch (e: any) {
+            setOutput(`Error: ${e.message}`);
+          } finally {
+            // Restore original console.log
+            console.log = originalConsoleLog;
           }
+        } else {
+          // For other languages, run the hardcoded simulation
+          const simulatedOutput = `[11, 12, 22, 25, 34, 64, 90]`;
+          setOutput(`${simulatedOutput}\n\nNote: This is a simulated execution for ${language}. Only JavaScript code can be run in this playground.`);
         }
-        setOutput(`Sorted array: [${numbers.join(', ')}]\n\nNote: This is a simulated execution for demonstration purposes.`);
       } catch (error) {
-        setOutput("An error occurred during simulated execution.");
+        setOutput("An unexpected error occurred during execution.");
       } finally {
         setIsRunning(false);
       }
-    }, 1500);
+    }, 1000);
   };
 
   const handleResetCode = () => {
-    setCode(`def bubble_sort(arr):
-    n = len(arr)
-    for i in range(n):
-        for j in range(0, n - i - 1):
-            if arr[j] > arr[j + 1]:
-                arr[j], arr[j + 1] = arr[j + 1], arr[j]
-    return arr
-
-# Example usage
-numbers = [64, 34, 25, 12, 22, 11, 90]
-sorted_numbers = bubble_sort(numbers)
-print(sorted_numbers)`);
+    setCode(languageExamples[language as keyof typeof languageExamples] || "");
     setOutput("");
   };
 
@@ -72,7 +81,12 @@ print(sorted_numbers)`);
         for j in range(0, n - i - 1):
             if arr[j] > arr[j + 1]:
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
-    return arr`,
+    return arr
+
+# Example usage
+numbers = [64, 34, 25, 12, 22, 11, 90]
+sorted_numbers = bubble_sort(numbers)
+print(sorted_numbers)`,
     javascript: `function bubbleSort(arr) {
     let n = arr.length;
     for (let i = 0; i < n; i++) {
@@ -83,18 +97,60 @@ print(sorted_numbers)`);
         }
     }
     return arr;
-}`,
-    java: `public static void bubbleSort(int[] arr) {
-    int n = arr.length;
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
+}
+
+// Example usage
+const numbers = [64, 34, 25, 12, 22, 11, 90];
+const sortedNumbers = bubbleSort(numbers);
+console.log(sortedNumbers);`,
+    java: `import java.util.Arrays;
+
+class BubbleSort {
+    public static void bubbleSort(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
             }
         }
     }
+
+    public static void main(String[] args) {
+        int[] numbers = {64, 34, 25, 12, 22, 11, 90};
+        bubbleSort(numbers);
+        System.out.println("Sorted array: " + Arrays.toString(numbers));
+    }
+}`,
+    cpp: `#include <iostream>
+#include <vector>
+#include <algorithm>
+
+void bubble_sort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                std::swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
+
+int main() {
+    std::vector<int> numbers = {64, 34, 25, 12, 22, 11, 90};
+    bubble_sort(numbers);
+    
+    std::cout << "Sorted array: [";
+    for (size_t i = 0; i < numbers.size(); ++i) {
+        std::cout << numbers[i] << (i == numbers.size() - 1 ? "" : ", ");
+    }
+    std::cout << "]" << std::endl;
+    
+    return 0;
 }`
   };
 
