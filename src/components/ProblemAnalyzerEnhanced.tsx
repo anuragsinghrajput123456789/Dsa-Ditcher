@@ -158,7 +158,7 @@ const ProblemAnalyzerEnhanced = () => {
         "You are an expert DSA mentor. Analyze and answer the following question from the user. Explain step by step, use DSA patterns, and help the user understand fundamental concepts where appropriate. Always be interactive and friendly.\n\n" +
         userInput;
 
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

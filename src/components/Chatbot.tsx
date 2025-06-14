@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { MessageSquare, Send, Minimize2, Maximize2, Bot, User } from "lucide-react";
 
@@ -44,7 +45,7 @@ const Chatbot = () => {
         "Answer the user's question clearly and with step-by-step reasoning, as if you are helping them get unstuck, and refer to DSA concepts and patterns when relevant.\n\n" +
         "User: " + inputMessage;
 
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
