@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 type AuthView = "signIn" | "signUp";
 
 export default function AuthPage() {
-  const [authView, setAuthView] = useState<AuthView>("signIn");
+  const [authView, setAuthView] = useState<AuthView>("signUp");
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
