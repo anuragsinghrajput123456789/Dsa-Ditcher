@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Dashboard from "../components/Dashboard";
@@ -15,6 +16,8 @@ import ResourceManager from "../components/resources/ResourceManager";
 import DsaSheetManager from "../components/DsaSheetManager";
 import AuthPage from "@/components/auth/AuthPage";
 import { SupabaseAuthProvider, useSupabaseAuth } from "@/hooks/useSupabaseAuth";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 // Add Account page placeholder
 function AccountPage() {

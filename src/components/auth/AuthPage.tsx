@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Github, Twitter, Mail, LogIn, UserPlus, Google } from "lucide-react";
+import { Loader2, Github, Twitter, Mail, LogIn, UserPlus, Zap } from "lucide-react"; // Replacing Google icon with Zap
 import { useNavigate } from "react-router-dom";
 
 type AuthView = "signIn" | "signUp";
@@ -43,7 +43,6 @@ export default function AuthPage() {
       });
       if (error) setErr(error.message);
     } else {
-      // Email redirect is required for Supabase
       const redirectUrl = `${window.location.origin}/`;
       const { error } = await supabase.auth.signUp({
         email: form.email,
@@ -108,7 +107,7 @@ export default function AuthPage() {
         <div className="py-3 text-center text-xs text-muted-foreground">or sign in with</div>
         <div className="flex justify-center gap-2 mb-2">
           <Button variant="outline" onClick={() => signInWithProvider("google")} disabled={loading}>
-            <Google className="h-4 w-4 mr-2" /> Google
+            <Zap className="h-4 w-4 mr-2" /> Google
           </Button>
           <Button variant="outline" onClick={() => signInWithProvider("github")} disabled={loading}>
             <Github className="h-4 w-4 mr-2" /> GitHub
