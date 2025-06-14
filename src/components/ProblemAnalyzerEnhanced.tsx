@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Send, Bot, User, BookOpen, ExternalLink, Loader, FileText } from "lucide-react";
 
@@ -172,7 +171,7 @@ Problem: ${problemText}`;
           value={problemText}
           onChange={(e) => setProblemText(e.target.value)}
           placeholder="Paste your DSA problem here...&#10;&#10;For example: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.'"
-          className="w-full h-40 p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none bg-white"
+          className="w-full h-40 p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none bg-white text-gray-900"
         />
         <div className="flex justify-between items-center mt-4">
           <span className="text-sm text-gray-500">{problemText.length} characters</span>
@@ -269,7 +268,7 @@ Problem: ${problemText}`;
                 onChange={(e) => setUserInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Ask about any DSA problem or concept..."
-                className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900"
               />
               <button
                 onClick={handleSendMessage}

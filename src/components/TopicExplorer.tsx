@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Search, BookOpen, Clock, CheckCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -77,6 +78,50 @@ const TopicExplorer = () => {
       concepts: ["BFS", "DFS", "Shortest Path", "MST"],
       estimatedTime: "10-14 days",
       prerequisites: ["Trees", "Queues", "Stacks"],
+    },
+    {
+      id: "hashing",
+      name: "Hash Tables",
+      description: "Efficient data retrieval using key-value pairs and hash functions.",
+      difficulty: "Intermediate",
+      color: "from-pink-500 to-pink-600",
+      icon: "🔑",
+      concepts: ["Hashing Functions", "Collision Resolution", "HashMap", "HashSet"],
+      estimatedTime: "4-6 days",
+      prerequisites: ["Arrays"],
+    },
+    {
+      id: "heaps",
+      name: "Heaps & Priority Queues",
+      description: "Tree-based structure for efficient min/max element retrieval.",
+      difficulty: "Intermediate",
+      color: "from-orange-500 to-orange-600",
+      icon: "🔺",
+      concepts: ["Min-Heap", "Max-Heap", "Heapify", "Applications"],
+      estimatedTime: "3-5 days",
+      prerequisites: ["Trees"],
+    },
+    {
+      id: "recursion",
+      name: "Recursion & Backtracking",
+      description: "Solving problems by exploring all possible solutions recursively.",
+      difficulty: "Intermediate",
+      color: "from-teal-500 to-teal-600",
+      icon: "🔄",
+      concepts: ["Base Case", "Recursive Step", "State-space tree", "Pruning"],
+      estimatedTime: "5-7 days",
+      prerequisites: ["Stacks", "Basic Programming"],
+    },
+    {
+      id: "dp",
+      name: "Dynamic Programming",
+      description: "Solving complex problems by breaking them into simpler subproblems.",
+      difficulty: "Advanced",
+      color: "from-cyan-500 to-cyan-600",
+      icon: "🧩",
+      concepts: ["Memoization", "Tabulation", "Optimal Substructure", "Overlapping Subproblems"],
+      estimatedTime: "12-18 days",
+      prerequisites: ["Recursion", "Arrays"],
     },
   ];
 
