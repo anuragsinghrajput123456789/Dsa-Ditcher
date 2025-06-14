@@ -1,13 +1,7 @@
 
-import AceEditor from "react-ace";
+import { useRef, useEffect } from "react";
+import MonacoEditor, { OnChange, loader } from "@monaco-editor/react";
 import { Code } from "lucide-react";
-import "ace-builds/src-noconflict/ext-language_tools";
-import "ace-builds/src-noconflict/theme-monokai";
-import "ace-builds/src-noconflict/theme-github";
-import "ace-builds/src-noconflict/mode-python";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/mode-java";
-import "ace-builds/src-noconflict/mode-c_cpp";
 
 interface CodeEditorProps {
   code: string;
@@ -16,21 +10,39 @@ interface CodeEditorProps {
   languageName: string;
 }
 
-const languageToAceMode: Record<string, string> = {
+const languageToMonacoMode: Record<string, string> = {
   python: "python",
   javascript: "javascript",
   java: "java",
-  cpp: "c_cpp",
+  cpp: "cpp"
+};
+
+const themeMap: Record<string, string> = {
+  dark: "vs-dark",
+  light: "vs-light",
 };
 
 const CodeEditor = ({
   code,
   onCodeChange,
   language,
-  languageName
+  languageName,
 }: CodeEditorProps) => {
+  // Detect system theme for Monaco, fallback to light
+  const theme =
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "vs-dark"
+      : "vs-light";
+
+  // Editor height responsive to viewport on mobile, fixed on desktop
+  const editorHeight =
+    typeof window !== "undefined" && window.innerWidth < 640
+      ? "320px"
+      : "28rem";
+
   return (
-    <div className="rounded-xl overflow-hidden shadow-xl border border-gray-200 bg-gradient-to-b from-neutral-900 via-slate-900 to-neutral-800">
+    <div className="rounded-xl overflow-hidden shadow-xl border border-slate-200 dark:border-neutral-700 bg-slate-100 dark:bg-neutral-900 transition-colors">
       <div className="bg-gradient-to-r from-indigo-700 via-emerald-800 to-slate-900 text-white flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-2">
           <Code className="w-5 h-5" />
@@ -41,27 +53,35 @@ const CodeEditor = ({
           <span>Chars: {code.length}</span>
         </div>
       </div>
-      <AceEditor
-        mode={languageToAceMode[language] || "python"}
-        theme="monokai"
-        name="playground-ace"
+      <MonacoEditor
         value={code}
-        onChange={onCodeChange}
-        width="100%"
-        height="28rem"
-        fontSize={15}
-        showPrintMargin={false}
-        showGutter={true}
-        highlightActiveLine={true}
-        setOptions={{
-          enableBasicAutocompletion: true,
-          enableLiveAutocompletion: true,
-          enableSnippets: true,
-          showLineNumbers: true,
-          tabSize: 2,
+        language={languageToMonacoMode[language] || "python"}
+        theme={theme}
+        options={{
+          fontSize: 15,
+          fontFamily: "Fira Mono, Inconsolata, Menlo, monospace",
+          roundedSelection: true,
+          cursorSmoothCaretAnimation: true,
+          smoothScrolling: true,
+          lineNumbers: "on",
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false,
+          scrollbar: {
+            verticalSliderSize: 8,
+            horizontalSliderSize: 8,
+          },
+          renderLineHighlight: "all",
+          automaticLayout: true,
+          wordWrap: "on",
+          bracketPairColorization: { enabled: true },
+          colorDecorators: true,
+          formatOnType: true,
+          formatOnPaste: true,
         }}
-        className="!rounded-b-xl !bg-transparent"
-        editorProps={{ $blockScrolling: true }}
+        height={editorHeight}
+        width="100%"
+        className="!rounded-b-xl"
+        onChange={(val) => onCodeChange(val || "")}
       />
     </div>
   );
