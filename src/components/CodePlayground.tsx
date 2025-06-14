@@ -3,6 +3,7 @@ import { Play, RotateCcw, Settings, Brain, Code, Zap } from "lucide-react";
 import ComplexityFinder from "./playground/ComplexityFinder";
 import ResourceManager from "./resources/ResourceManager";
 import CodeEditor from "./playground/CodeEditor";
+import IOPanel from "./playground/IOPanel";
 
 const CodePlayground = () => {
   const [code, setCode] = useState(`def bubble_sort(arr):
@@ -18,6 +19,7 @@ numbers = [64, 34, 25, 12, 22, 11, 90]
 sorted_numbers = bubble_sort(numbers)
 print(sorted_numbers)`);
   
+  const [input, setInput] = useState("64, 34, 25, 12, 22, 11, 90");
   const [language, setLanguage] = useState("python");
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
@@ -25,10 +27,27 @@ print(sorted_numbers)`);
 
   const handleRunCode = () => {
     setIsRunning(true);
-    // Simulate code execution
+    // Simulate code execution based on input
     setTimeout(() => {
-      setOutput("[11, 12, 22, 25, 34, 64, 90]\nCode executed successfully!");
-      setIsRunning(false);
+      try {
+        // This is a simulation. For a real app, you'd send the code and input to a backend execution environment.
+        // Here, we just simulate the bubble sort for the default example code.
+        const numbers = input.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        
+        // Simple bubble sort logic for demonstration, mimics the Python/JS examples
+        for (let i = 0; i < numbers.length; i++) {
+          for (let j = 0; j < numbers.length - i - 1; j++) {
+            if (numbers[j] > numbers[j + 1]) {
+              [numbers[j], numbers[j + 1]] = [numbers[j + 1], numbers[j]];
+            }
+          }
+        }
+        setOutput(`Sorted array: [${numbers.join(', ')}]\n\nNote: This is a simulated execution for demonstration purposes.`);
+      } catch (error) {
+        setOutput("An error occurred during simulated execution. Please check your input format.");
+      } finally {
+        setIsRunning(false);
+      }
     }, 1500);
   };
 
@@ -46,6 +65,7 @@ numbers = [64, 34, 25, 12, 22, 11, 90]
 sorted_numbers = bubble_sort(numbers)
 print(sorted_numbers)`);
     setOutput("");
+    setInput("64, 34, 25, 12, 22, 11, 90");
   };
 
   const languageExamples = {
@@ -188,41 +208,28 @@ print(sorted_numbers)`);
                 </div>
               </div>
 
-              {/* New Code Editor and Output */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700">Code Editor (with AI!)</label>
-                  <CodeEditor
-                    code={code}
-                    onCodeChange={setCode}
-                    language={language}
-                    languageName={
-                      language === "python"
-                        ? "Python"
-                        : language === "javascript"
-                        ? "JavaScript"
-                        : language === "java"
-                        ? "Java"
-                        : "C++"
-                    }
-                  />
-                </div>
-                {/* Output */}
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700">Output</label>
-                  <div className="bg-slate-100 rounded-lg border border-slate-300 overflow-hidden shadow-inner">
-                    <div className="bg-slate-200 px-4 py-2 border-b border-slate-300">
-                      <span className="text-slate-600 text-sm">Console Output</span>
-                    </div>
-                    <div className="p-4 h-96 overflow-y-auto">
-                      {output ? (
-                        <pre className="text-slate-800 font-mono text-sm whitespace-pre-wrap">{output}</pre>
-                      ) : (
-                        <p className="text-slate-500 text-sm">Click "Run Code" to see the output here</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
+              {/* Code Editor and IO Panel */}
+              <div className="space-y-6">
+                <CodeEditor
+                  code={code}
+                  onCodeChange={setCode}
+                  language={language}
+                  languageName={
+                    language === "python"
+                      ? "Python"
+                      : language === "javascript"
+                      ? "JavaScript"
+                      : language === "java"
+                      ? "Java"
+                      : "C++"
+                  }
+                />
+                <IOPanel
+                  input={input}
+                  onInputChange={setInput}
+                  output={output}
+                  isRunning={isRunning}
+                />
               </div>
             </div>
           )}
