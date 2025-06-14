@@ -1,8 +1,6 @@
-
 import { useState } from "react";
-import { Play, RotateCcw, Settings, Brain, Code, Zap } from "lucide-react";
+import { Play, RotateCcw, Settings, Brain, Code } from "lucide-react";
 import ComplexityFinder from "./playground/ComplexityFinder";
-import ResourceManager from "./resources/ResourceManager";
 import CodeEditor from "./playground/CodeEditor";
 import IOPanel from "./playground/IOPanel";
 
@@ -110,17 +108,6 @@ console.log(sortedNumbers);`;
               <Brain className="w-4 h-4 inline mr-2" />
               Complexity Analysis
             </button>
-            <button
-              onClick={() => setActiveTab("resources")}
-              className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === "resources"
-                  ? "border-emerald-500 text-emerald-600"
-                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
-              }`}
-            >
-              <Zap className="w-4 h-4 inline mr-2" />
-              Resources
-            </button>
           </nav>
         </div>
 
@@ -183,10 +170,6 @@ console.log(sortedNumbers);`;
 
           {activeTab === "complexity" && (
             <ComplexityFinder code={code} language={language} />
-          )}
-
-          {activeTab === "resources" && (
-            <ResourceManager topic="general" />
           )}
         </div>
       </div>
