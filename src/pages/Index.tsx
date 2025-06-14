@@ -1,4 +1,3 @@
-
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Dashboard from "../components/Dashboard";
@@ -14,10 +13,9 @@ import ComplexityFinder from "../components/playground/ComplexityFinder";
 import RoadmapCRUD from "../components/roadmap/RoadmapCRUD";
 import ResourceManager from "../components/resources/ResourceManager";
 import DsaSheetManager from "../components/DsaSheetManager";
-import AuthPage from "@/components/auth/AuthPage";
-import { SupabaseAuthProvider, useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 
 // Add Account page placeholder
 function AccountPage() {
@@ -43,39 +41,35 @@ function AccountPage() {
 
 const Index = () => {
   return (
-    <SupabaseAuthProvider>
-      <Routes>
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/account" element={<AccountPage />} />
-        {/* Protected Routes: check auth in child components */}
-        <Route path="/*" element={
-          <>
-            <div className="min-h-screen bg-background">
-              <Navbar />
-              <div className="container mx-auto px-4 py-4 sm:py-8">
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/topics" element={<TopicExplorer />} />
-                  <Route path="/analyzer" element={<ProblemAnalyzerEnhanced />} />
-                  <Route path="/visualizations" element={<VisualizationsFixed />} />
-                  <Route path="/roadmap" element={<Roadmap />} />
-                  <Route path="/roadmap-crud" element={<RoadmapCRUD />} />
-                  <Route path="/custom-roadmap" element={<CustomRoadmap />} />
-                  <Route path="/chat-guide" element={<DSAChatGuide />} />
-                  <Route path="/playground" element={<CodePlayground />} />
-                  <Route path="/complexity-finder" element={<ComplexityFinder code="" language="python" />} />
-                  <Route path="/resources" element={<ResourceManager topic="general" />} />
-                  <Route path="/dsa-sheets" element={<DsaSheetManager />} />
-                  <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-              </div>
-              <Chatbot />
+    <Routes>
+      {/* Removed auth and account routes */}
+      <Route path="/*" element={
+        <>
+          <div className="min-h-screen bg-background">
+            <Navbar />
+            <div className="container mx-auto px-4 py-4 sm:py-8">
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/topics" element={<TopicExplorer />} />
+                <Route path="/analyzer" element={<ProblemAnalyzerEnhanced />} />
+                <Route path="/visualizations" element={<VisualizationsFixed />} />
+                <Route path="/roadmap" element={<Roadmap />} />
+                <Route path="/roadmap-crud" element={<RoadmapCRUD />} />
+                <Route path="/custom-roadmap" element={<CustomRoadmap />} />
+                <Route path="/chat-guide" element={<DSAChatGuide />} />
+                <Route path="/playground" element={<CodePlayground />} />
+                <Route path="/complexity-finder" element={<ComplexityFinder code="" language="python" />} />
+                <Route path="/resources" element={<ResourceManager topic="general" />} />
+                <Route path="/dsa-sheets" element={<DsaSheetManager />} />
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
             </div>
-          </>
-        } />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </SupabaseAuthProvider>
+            <Chatbot />
+          </div>
+        </>
+      } />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
   );
 };
 

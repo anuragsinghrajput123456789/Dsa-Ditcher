@@ -18,7 +18,7 @@ const Navbar = () => {
     { name: "Analyzer", href: "/analyzer" },
     { name: "Visualizations", href: "/visualizations" },
     { name: "Roadmap", href: "/roadmap" },
-    { name: "Sheets", href: "/dsa-sheets" }, // Added DSA Sheets link
+    { name: "Sheets", href: "/dsa-sheets" },
     { name: "Playground", href: "/playground" },
   ];
 
@@ -58,37 +58,7 @@ const Navbar = () => {
           {/* Desktop Right Side */}
           <div className="hidden md:flex items-center space-x-2">
             <ThemeToggle />
-            {authLoading ? null : user ? (
-              <>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => navigate("/account")}
-                  className="flex items-center gap-1"
-                >
-                  <UserCircle2 className="w-4 h-4 mr-1" />
-                  {profile?.username || user.email?.split("@")[0]}
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={signOut}
-                  aria-label="Log out"
-                  className="ml-1"
-                >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </>
-            ) : (
-              <Button
-                size="sm"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                onClick={() => navigate("/auth")}
-              >
-                <LogIn className="w-4 h-4 mr-2" />
-                Sign In
-              </Button>
-            )}
+            {/* Removed auth buttons */}
           </div>
 
           {/* Mobile menu button */}
@@ -123,38 +93,7 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
-              <div className="pt-2">
-                {authLoading ? null : user ? (
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => { setIsOpen(false); navigate("/account"); }}
-                      className="w-full flex items-center"
-                    >
-                      <UserCircle2 className="w-4 h-4 mr-1" />
-                      {profile?.username || user.email?.split("@")[0]}
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={signOut}
-                      aria-label="Log out"
-                    >
-                      <LogOut className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    size="sm"
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    onClick={() => { setIsOpen(false); navigate("/auth"); }}
-                  >
-                    <LogIn className="w-4 h-4 mr-2" />
-                    Sign In
-                  </Button>
-                )}
-              </div>
+              {/* Removed mobile auth buttons */}
             </div>
           </div>
         )}
