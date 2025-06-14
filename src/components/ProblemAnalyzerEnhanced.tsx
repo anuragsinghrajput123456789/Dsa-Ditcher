@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Send, Bot, User, BookOpen, ExternalLink, Loader, FileText } from "lucide-react";
+import { Send, Bot, User, BookOpen, ExternalLink, Loader, FileText, Lightbulb, ArrowRight } from "lucide-react";
 
 interface ChatMessage {
   id: string;
@@ -8,10 +8,16 @@ interface ChatMessage {
   timestamp: Date;
 }
 
+interface AnalysisResult {
+  summary: string;
+  hints: string[];
+}
+
 const ProblemAnalyzerEnhanced = () => {
   const [problemText, setProblemText] = useState("");
-  const [analysis, setAnalysis] = useState<{ summary: string } | null>(null);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
+  const [visibleHintIndex, setVisibleHintIndex] =useState(-1);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -46,6 +52,7 @@ const ProblemAnalyzerEnhanced = () => {
     
     setLoadingAnalysis(true);
     setAnalysis(null);
+    setVisibleHintIndex(-1);
     try {
       const prompt = `Analyze the following DSA problem and provide a detailed explanation with:
 1. Simple summary for beginners
@@ -53,6 +60,8 @@ const ProblemAnalyzerEnhanced = () => {
 3. Two approaches (brute force and optimal) with time/space complexity
 4. Edge cases to consider
 5. Similar problems
+
+Additionally, provide 3-5 progressive hints to solve the problem. Each hint should be on a new line and must start with the prefix "HINT:".
 
 Problem: ${problemText}`;
 
@@ -67,11 +76,20 @@ Problem: ${problemText}`;
       const data = await res.json();
       const response = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't analyze your problem.";
       
-      setAnalysis({ summary: response });
+      const lines = response.split('\n');
+      const hints = lines
+        .filter(line => line.startsWith("HINT:"))
+        .map(hint => hint.replace("HINT:", "").trim());
+      const summary = lines
+        .filter(line => !line.startsWith("HINT:"))
+        .join('\n');
+
+      setAnalysis({ summary, hints });
     } catch (error) {
       console.error("Analysis error:", error);
       setAnalysis({
         summary: "Error: Could not analyze the problem. Please try again.",
+        hints: [],
       });
     }
     setLoadingAnalysis(false);
@@ -201,6 +219,42 @@ Problem: ${problemText}`;
             AI Analysis
           </h3>
           <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">{analysis.summary}</div>
+        </div>
+      )}
+
+      {/* Hints Section */}
+      {analysis && !loadingAnalysis && analysis.hints.length > 0 && (
+        <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 shadow-lg border border-yellow-200 mt-6">
+          <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center">
+            <Lightbulb className="w-6 h-6 mr-2 text-yellow-600" />
+            Hints
+          </h3>
+          {visibleHintIndex === -1 ? (
+            <button
+              onClick={() => setVisibleHintIndex(0)}
+              className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center space-x-2"
+            >
+              <span>Show First Hint</span>
+            </button>
+          ) : (
+            <div className="space-y-4">
+              {analysis.hints.slice(0, visibleHintIndex + 1).map((hint, index) => (
+                <div key={index} className="bg-white p-4 rounded-lg border border-yellow-300">
+                  <p className="font-semibold text-slate-800 mb-2">Hint {index + 1}</p>
+                  <p className="text-sm text-slate-600">{hint}</p>
+                </div>
+              ))}
+              {visibleHintIndex < analysis.hints.length - 1 && (
+                <button
+                  onClick={() => setVisibleHintIndex(prev => prev + 1)}
+                  className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center space-x-2 mt-4"
+                >
+                  <span>Next Hint</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
 
