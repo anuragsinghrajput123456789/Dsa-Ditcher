@@ -137,6 +137,8 @@ const ProblemAnalyzerEnhanced = () => {
 
   const selectedProblemData = problems.find(p => p.id === selectedProblem);
 
+  const GEMINI_API_KEY = "AIzaSyAFn4XlGGFr2KGpfIQolxPPFjKbI7pG52o";
+
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
 
@@ -151,17 +153,43 @@ const ProblemAnalyzerEnhanced = () => {
     setUserInput("");
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const prompt =
+        "You are an expert DSA mentor. Analyze and answer the following question from the user. Explain step by step, use DSA patterns, and help the user understand fundamental concepts where appropriate. Always be interactive and friendly.\n\n" +
+        userInput;
+
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        }),
+      });
+      const data = await res.json();
+      const answer =
+        data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "Sorry, I couldn't process your request. Try again!";
+
       const aiResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: generateAIResponse(userInput),
+        content: answer,
         timestamp: new Date()
       };
       setChatMessages(prev => [...prev, aiResponse]);
       setIsLoading(false);
-    }, 1500);
+    } catch {
+      setChatMessages(prev => [
+        ...prev,
+        {
+          id: (Date.now() + 2).toString(),
+          type: 'ai',
+          content: "Error: Could not fetch a response from Gemini AI.",
+          timestamp: new Date()
+        }
+      ]);
+      setIsLoading(false);
+    }
   };
 
   const generateAIResponse = (question: string): string => {

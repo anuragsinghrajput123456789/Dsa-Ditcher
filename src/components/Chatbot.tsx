@@ -2,6 +2,8 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageSquare, Send, Minimize2, Maximize2, Bot, User } from "lucide-react";
 
+const GEMINI_API_KEY = "AIzaSyAFn4XlGGFr2KGpfIQolxPPFjKbI7pG52o";
+
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -23,15 +25,6 @@ const Chatbot = () => {
     scrollToBottom();
   }, [messages]);
 
-  const mockResponses = [
-    "Great question! For array problems, I always recommend starting with the two-pointer technique. It's efficient and elegant for many scenarios.",
-    "That's a classic dynamic programming problem! Try breaking it down into smaller subproblems and think about what information you need to store.",
-    "For tree traversals, remember: Inorder (Left-Root-Right), Preorder (Root-Left-Right), Postorder (Left-Right-Root). Each has specific use cases!",
-    "Binary search is powerful when your data is sorted. The key insight is to eliminate half the search space in each iteration.",
-    "Graph algorithms can be tricky! Start with BFS for shortest paths in unweighted graphs, and DFS for exploring all possibilities.",
-    "Time complexity matters! Always analyze your solution: O(1) is best, O(log n) is great, O(n) is good, O(n²) might need optimization.",
-  ];
-
   const sendMessage = async () => {
     if (!inputMessage.trim()) return;
 
@@ -45,17 +38,42 @@ const Chatbot = () => {
     setInputMessage("");
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+    // Call Gemini API for real DSA assistant responses
+    try {
+      const prompt =
+        "You are an expert coding mentor specialized in Data Structures and Algorithms (DSA). " +
+        "Answer the user's question clearly and with step-by-step reasoning, as if you are helping them get unstuck, and refer to DSA concepts and patterns when relevant.\n\n" +
+        "User: " + inputMessage;
+
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        }),
+      });
+      const data = await res.json();
+      const answer =
+        data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "Sorry, I couldn't process your request. Try again!";
+
       const botMessage = {
         type: "bot",
-        content: randomResponse,
+        content: answer,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, botMessage]);
-      setIsTyping(false);
-    }, 1500);
+    } catch (err) {
+      setMessages(prev => [
+        ...prev,
+        {
+          type: "bot",
+          content: "Error: Could not fetch a response from AI.",
+          timestamp: new Date()
+        }
+      ]);
+    }
+    setIsTyping(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -106,7 +124,7 @@ const Chatbot = () => {
                 }`}>
                   <div className="flex items-start space-x-2">
                     {message.type === 'bot' && <Bot className="w-4 h-4 mt-0.5 text-blue-600" />}
-                    <p className="text-sm">{message.content}</p>
+                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                     {message.type === 'user' && <User className="w-4 h-4 mt-0.5" />}
                   </div>
                 </div>
@@ -157,3 +175,4 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
+
