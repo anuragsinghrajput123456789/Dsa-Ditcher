@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, Lightbulb, Target, Clock, Brain, HelpCircle, ChevronDown, ChevronRight, Send, Bot, User, BookOpen, ExternalLink } from "lucide-react";
 
@@ -233,13 +232,13 @@ What specific linked list concept would you like me to explain further?`;
 3. **Postorder:** Left → Right → Root
 
 **Example Tree:**
-```
+\`\`\`
     1
    / \\
   2   3
  / \\
 4   5
-```
+\`\`\`
 
 **Inorder traversal:** 4, 2, 5, 1, 3
 
