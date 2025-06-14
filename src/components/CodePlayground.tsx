@@ -19,7 +19,6 @@ numbers = [64, 34, 25, 12, 22, 11, 90]
 sorted_numbers = bubble_sort(numbers)
 print(sorted_numbers)`);
   
-  const [input, setInput] = useState("64, 34, 25, 12, 22, 11, 90");
   const [language, setLanguage] = useState("python");
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
@@ -27,12 +26,11 @@ print(sorted_numbers)`);
 
   const handleRunCode = () => {
     setIsRunning(true);
-    // Simulate code execution based on input
+    // Simulate code execution based on a hardcoded example
     setTimeout(() => {
       try {
-        // This is a simulation. For a real app, you'd send the code and input to a backend execution environment.
-        // Here, we just simulate the bubble sort for the default example code.
-        const numbers = input.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        // This is a simulation with a hardcoded array. For a real app, you'd send the code to a backend execution environment.
+        const numbers = [64, 34, 25, 12, 22, 11, 90];
         
         // Simple bubble sort logic for demonstration, mimics the Python/JS examples
         for (let i = 0; i < numbers.length; i++) {
@@ -44,7 +42,7 @@ print(sorted_numbers)`);
         }
         setOutput(`Sorted array: [${numbers.join(', ')}]\n\nNote: This is a simulated execution for demonstration purposes.`);
       } catch (error) {
-        setOutput("An error occurred during simulated execution. Please check your input format.");
+        setOutput("An error occurred during simulated execution.");
       } finally {
         setIsRunning(false);
       }
@@ -65,7 +63,6 @@ numbers = [64, 34, 25, 12, 22, 11, 90]
 sorted_numbers = bubble_sort(numbers)
 print(sorted_numbers)`);
     setOutput("");
-    setInput("64, 34, 25, 12, 22, 11, 90");
   };
 
   const languageExamples = {
@@ -225,8 +222,6 @@ print(sorted_numbers)`);
                   }
                 />
                 <IOPanel
-                  input={input}
-                  onInputChange={setInput}
                   output={output}
                   isRunning={isRunning}
                 />
