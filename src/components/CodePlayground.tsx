@@ -7,87 +7,7 @@ import CodeEditor from "./playground/CodeEditor";
 import IOPanel from "./playground/IOPanel";
 
 const CodePlayground = () => {
-  const [code, setCode] = useState(`def bubble_sort(arr):
-    n = len(arr)
-    for i in range(n):
-        for j in range(0, n - i - 1):
-            if arr[j] > arr[j + 1]:
-                arr[j], arr[j + 1] = arr[j + 1], arr[j]
-    return arr
-
-# Example usage
-numbers = [64, 34, 25, 12, 22, 11, 90]
-sorted_numbers = bubble_sort(numbers)
-print(sorted_numbers)`);
-  
-  const [language, setLanguage] = useState("python");
-  const [output, setOutput] = useState("");
-  const [isRunning, setIsRunning] = useState(false);
-  const [activeTab, setActiveTab] = useState("editor");
-
-  const handleRunCode = () => {
-    setIsRunning(true);
-    setOutput("");
-
-    // Simulate execution with a timeout for better UX
-    setTimeout(() => {
-      try {
-        if (language === "javascript") {
-          let capturedOutput = "";
-          const originalConsoleLog = console.log;
-          
-          // Override console.log to capture output
-          console.log = (...args) => {
-            capturedOutput += args.map(arg => {
-              if (typeof arg === 'object' && arg !== null) {
-                return JSON.stringify(arg);
-              }
-              return String(arg);
-            }).join(' ') + '\n';
-          };
-
-          try {
-            // Use Function constructor for safer execution than eval
-            new Function(code)();
-            setOutput(capturedOutput.trim() || "Code executed with no output.");
-          } catch (e: any) {
-            setOutput(`Error: ${e.message}`);
-          } finally {
-            // Restore original console.log
-            console.log = originalConsoleLog;
-          }
-        } else {
-          // For other languages, run the hardcoded simulation
-          const simulatedOutput = `[11, 12, 22, 25, 34, 64, 90]`;
-          setOutput(`${simulatedOutput}\n\nNote: This is a simulated execution for ${language}. Only JavaScript code can be run in this playground.`);
-        }
-      } catch (error) {
-        setOutput("An unexpected error occurred during execution.");
-      } finally {
-        setIsRunning(false);
-      }
-    }, 1000);
-  };
-
-  const handleResetCode = () => {
-    setCode(languageExamples[language as keyof typeof languageExamples] || "");
-    setOutput("");
-  };
-
-  const languageExamples = {
-    python: `def bubble_sort(arr):
-    n = len(arr)
-    for i in range(n):
-        for j in range(0, n - i - 1):
-            if arr[j] > arr[j + 1]:
-                arr[j], arr[j + 1] = arr[j + 1], arr[j]
-    return arr
-
-# Example usage
-numbers = [64, 34, 25, 12, 22, 11, 90]
-sorted_numbers = bubble_sort(numbers)
-print(sorted_numbers)`,
-    javascript: `function bubbleSort(arr) {
+  const javascriptExample = `function bubbleSort(arr) {
     let n = arr.length;
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n - i - 1; j++) {
@@ -102,61 +22,55 @@ print(sorted_numbers)`,
 // Example usage
 const numbers = [64, 34, 25, 12, 22, 11, 90];
 const sortedNumbers = bubbleSort(numbers);
-console.log(sortedNumbers);`,
-    java: `import java.util.Arrays;
+console.log(sortedNumbers);`;
 
-class BubbleSort {
-    public static void bubbleSort(int[] arr) {
-        int n = arr.length;
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                if (arr[j] > arr[j + 1]) {
-                    int temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                }
+  const [code, setCode] = useState(javascriptExample);
+  const language = "javascript";
+  const [output, setOutput] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const [activeTab, setActiveTab] = useState("editor");
+
+  const handleRunCode = () => {
+    setIsRunning(true);
+    setOutput("");
+
+    // Simulate execution with a timeout for better UX
+    setTimeout(() => {
+      try {
+        let capturedOutput = "";
+        const originalConsoleLog = console.log;
+        
+        // Override console.log to capture output
+        console.log = (...args) => {
+          capturedOutput += args.map(arg => {
+            if (typeof arg === 'object' && arg !== null) {
+              return JSON.stringify(arg);
             }
+            return String(arg);
+          }).join(' ') + '\n';
+        };
+
+        try {
+          // Use Function constructor for safer execution than eval
+          new Function(code)();
+          setOutput(capturedOutput.trim() || "Code executed with no output.");
+        } catch (e: any) {
+          setOutput(`Error: ${e.message}`);
+        } finally {
+          // Restore original console.log
+          console.log = originalConsoleLog;
         }
-    }
-
-    public static void main(String[] args) {
-        int[] numbers = {64, 34, 25, 12, 22, 11, 90};
-        bubbleSort(numbers);
-        System.out.println("Sorted array: " + Arrays.toString(numbers));
-    }
-}`,
-    cpp: `#include <iostream>
-#include <vector>
-#include <algorithm>
-
-void bubble_sort(std::vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                std::swap(arr[j], arr[j + 1]);
-            }
-        }
-    }
-}
-
-int main() {
-    std::vector<int> numbers = {64, 34, 25, 12, 22, 11, 90};
-    bubble_sort(numbers);
-    
-    std::cout << "Sorted array: [";
-    for (size_t i = 0; i < numbers.size(); ++i) {
-        std::cout << numbers[i] << (i == numbers.size() - 1 ? "" : ", ");
-    }
-    std::cout << "]" << std::endl;
-    
-    return 0;
-}`
+      } catch (error) {
+        setOutput("An unexpected error occurred during execution.");
+      } finally {
+        setIsRunning(false);
+      }
+    }, 1000);
   };
 
-  const handleLanguageChange = (newLanguage: string) => {
-    setLanguage(newLanguage);
-    setCode(languageExamples[newLanguage as keyof typeof languageExamples] || "");
+  const handleResetCode = () => {
+    setCode(javascriptExample);
+    setOutput("");
   };
 
   return (
@@ -166,7 +80,7 @@ int main() {
           Code Playground
         </h1>
         <p className="text-slate-600 text-lg">
-          Write, run, and analyze your DSA code with complexity insights and AI assistance.
+          Write, run, and analyze your JavaScript code with complexity insights and AI assistance.
         </p>
       </div>
 
@@ -218,17 +132,7 @@ int main() {
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <Settings className="w-4 h-4 text-slate-600" />
-                    <span className="text-sm font-medium text-slate-700">Language:</span>
-                    <select
-                      value={language}
-                      onChange={(e) => handleLanguageChange(e.target.value)}
-                      className="px-3 py-1 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white"
-                    >
-                      <option value="python">Python</option>
-                      <option value="javascript">JavaScript</option>
-                      <option value="java">Java</option>
-                      <option value="cpp">C++</option>
-                    </select>
+                    <span className="text-sm font-medium text-slate-700">Language: JavaScript</span>
                   </div>
                 </div>
                 
@@ -267,15 +171,7 @@ int main() {
                   code={code}
                   onCodeChange={setCode}
                   language={language}
-                  languageName={
-                    language === "python"
-                      ? "Python"
-                      : language === "javascript"
-                      ? "JavaScript"
-                      : language === "java"
-                      ? "Java"
-                      : "C++"
-                  }
+                  languageName={"JavaScript"}
                 />
                 <IOPanel
                   output={output}
@@ -309,7 +205,7 @@ int main() {
           </div>
           <div className="bg-white p-4 rounded-lg border border-cyan-200">
             <h4 className="font-semibold text-slate-800 mb-2">🔧 Debug</h4>
-            <p className="text-sm text-slate-600">Use console.log() or print() statements to debug your code step by step.</p>
+            <p className="text-sm text-slate-600">Use console.log() to debug your code step by step.</p>
           </div>
         </div>
       </div>
