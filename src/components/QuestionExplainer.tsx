@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Bot, User, Send } from "lucide-react";
 
-const GEMINI_API_KEY = "AIzaSyAFn4XlGGFr2KGpfIQolxPPFjKbI7pG52o";
+const GEMINI_API_KEY = "AIzaSyBCXu4gQcNNQIF8jxqdDTfuSaOBMyBZZg4";
 
 const QuestionExplainer = () => {
   const [input, setInput] = useState("");

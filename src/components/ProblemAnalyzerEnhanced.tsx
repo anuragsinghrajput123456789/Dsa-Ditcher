@@ -137,7 +137,7 @@ const ProblemAnalyzerEnhanced = () => {
 
   const selectedProblemData = problems.find(p => p.id === selectedProblem);
 
-  const GEMINI_API_KEY = "AIzaSyAFn4XlGGFr2KGpfIQolxPPFjKbI7pG52o";
+  const GEMINI_API_KEY = "AIzaSyBCXu4gQcNNQIF8jxqdDTfuSaOBMyBZZg4";
 
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
