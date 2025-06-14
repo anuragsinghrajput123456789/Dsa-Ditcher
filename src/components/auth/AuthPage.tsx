@@ -86,7 +86,7 @@ export default function AuthPage() {
           <Button className="w-full flex justify-center" type="submit" disabled={loading}>
             {loading && <Loader2 className="mr-2 animate-spin" />}
             {authView === "signIn" ? <LogIn className="mr-2" /> : <UserPlus className="mr-2" />}
-            {authView === "signIn" ? "Sign In" : "Create Account"}
+            {authView === "signIn" ? "Sign In" : "Sign Up"}
           </Button>
         </form>
 
