@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,7 +5,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from '@/components/ui/sheet';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Edit, Trash2, Download, Upload, ClipboardCopy } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, ClipboardCopy } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { prewrittenDsaSheets, PrewrittenDsaSheet } from '@/data/prewritten-dsa-sheets';
 
 interface DsaSheet {
   id: string;
@@ -92,57 +93,101 @@ const DsaSheetManager = () => {
       toast({ title: "Import failed", description: "Invalid JSON or sheet format.", variant: "destructive" });
     }
   };
+
+  const handleAddPrewrittenSheet = (sheetData: PrewrittenDsaSheet) => {
+    const newSheet: DsaSheet = { ...sheetData, id: Date.now().toString() };
+    setSheets(prevSheets => [newSheet, ...prevSheets]);
+    toast({ title: "Success", description: `"${sheetData.title}" has been added to your sheets.` });
+  };
   
   return (
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">My DSA Sheets</h1>
-          <p className="text-muted-foreground">Create and manage your personalized DSA practice sheets.</p>
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={() => setIsImporting(s => !s)} variant="outline"><Upload className="mr-2 h-4 w-4" /> Import</Button>
-          <Button onClick={() => handleOpenForm(null)}><Plus className="mr-2 h-4 w-4" /> Create Sheet</Button>
+          <h1 className="text-3xl font-bold">DSA Sheets</h1>
+          <p className="text-muted-foreground">Create, manage, and explore DSA practice sheets.</p>
         </div>
       </div>
       
-      {isImporting && (
-        <div className="space-y-4 p-4 border rounded-lg">
-          <Label htmlFor="import-area">Paste sheet JSON here</Label>
-          <Textarea 
-            id="import-area"
-            value={sheetToImport}
-            onChange={(e) => setSheetToImport(e.target.value)}
-            placeholder='{ "title": "My Sheet", ... }'
-            rows={5}
-          />
-          <div className="flex gap-2">
-            <Button onClick={handleImportSheet}>Import Sheet</Button>
-            <Button onClick={() => setIsImporting(false)} variant="ghost">Cancel</Button>
-          </div>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sheets.map(sheet => (
-          <div key={sheet.id} className="border rounded-lg p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+      <Tabs defaultValue="my-sheets" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="my-sheets">My Sheets</TabsTrigger>
+          <TabsTrigger value="popular-sheets">Popular Sheets</TabsTrigger>
+        </TabsList>
+        <TabsContent value="my-sheets" className="mt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h2 className="text-xl font-semibold mb-2">{sheet.title}</h2>
-              <p className="text-muted-foreground text-sm mb-4">{sheet.description}</p>
+              <h2 className="text-2xl font-bold">My Custom Sheets</h2>
+              <p className="text-muted-foreground">Your personal collection of DSA sheets.</p>
             </div>
-            <div className="flex gap-2 mt-4">
-              <Button size="sm" variant="outline" onClick={() => handleOpenForm(sheet)}><Edit className="h-3 w-3 mr-1" /> Edit</Button>
-              <Button size="sm" variant="destructive" onClick={() => handleDeleteSheet(sheet.id)}><Trash2 className="h-3 w-3 mr-1" /> Delete</Button>
-              <Button size="sm" variant="secondary" onClick={() => handleExportSheet(sheet)}><ClipboardCopy className="h-3 w-3 mr-1" /> Export</Button>
+            <div className="flex gap-2">
+              <Button onClick={() => setIsImporting(s => !s)} variant="outline"><Upload className="mr-2 h-4 w-4" /> Import</Button>
+              <Button onClick={() => handleOpenForm(null)}><Plus className="mr-2 h-4 w-4" /> Create Sheet</Button>
             </div>
           </div>
-        ))}
-         {sheets.length === 0 && !isImporting && (
-          <div className="col-span-full text-center py-12">
-            <p className="text-muted-foreground">No sheets yet. Create your first one!</p>
+          
+          {isImporting && (
+            <div className="space-y-4 p-4 border rounded-lg mb-6">
+              <Label htmlFor="import-area">Paste sheet JSON here</Label>
+              <Textarea 
+                id="import-area"
+                value={sheetToImport}
+                onChange={(e) => setSheetToImport(e.target.value)}
+                placeholder='{ "title": "My Sheet", ... }'
+                rows={5}
+              />
+              <div className="flex gap-2">
+                <Button onClick={handleImportSheet}>Import Sheet</Button>
+                <Button onClick={() => setIsImporting(false)} variant="ghost">Cancel</Button>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sheets.map(sheet => (
+              <div key={sheet.id} className="border rounded-lg p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">{sheet.title}</h2>
+                  <p className="text-muted-foreground text-sm mb-4">{sheet.description}</p>
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <Button size="sm" variant="outline" onClick={() => handleOpenForm(sheet)}><Edit className="h-3 w-3 mr-1" /> Edit</Button>
+                  <Button size="sm" variant="destructive" onClick={() => handleDeleteSheet(sheet.id)}><Trash2 className="h-3 w-3 mr-1" /> Delete</Button>
+                  <Button size="sm" variant="secondary" onClick={() => handleExportSheet(sheet)}><ClipboardCopy className="h-3 w-3 mr-1" /> Export</Button>
+                </div>
+              </div>
+            ))}
+            {sheets.length === 0 && !isImporting && (
+              <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground">No sheets yet. Create your first one or add one from the 'Popular Sheets' tab!</p>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </TabsContent>
+        <TabsContent value="popular-sheets" className="mt-6">
+           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div>
+              <h2 className="text-2xl font-bold">Popular Sheets</h2>
+              <p className="text-muted-foreground">Well-known DSA sheets from the community to kickstart your practice.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {prewrittenDsaSheets.map((sheet, index) => (
+              <div key={index} className="border rounded-lg p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">{sheet.title}</h2>
+                  <p className="text-muted-foreground text-sm mb-4">{sheet.description}</p>
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <Button size="sm" onClick={() => handleAddPrewrittenSheet(sheet)}>
+                    <Plus className="h-3 w-3 mr-1" /> Add to My Sheets
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
 
       <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
         <SheetContent>
