@@ -2,52 +2,78 @@
 import { useState } from "react";
 import { Send, Loader, FileText, Clock, Zap, Target, AlertCircle, Link as LinkIcon } from "lucide-react";
 
+const GEMINI_API_KEY = "AIzaSyBCXu4gQcNNQIF8jxqdDTfuSaOBMyBZZg4";
+
 const ProblemAnalyzer = () => {
   const [problemText, setProblemText] = useState("");
   const [analysis, setAnalysis] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  const mockAnalysis = {
-    simpleSummary: "This is a classic 'Two Sum' problem. You have a list of numbers and a target number. Your job is to find two numbers in the list that add up to the target. It's like finding two puzzle pieces that fit together perfectly!",
-    inputOutput: {
-      input: "Array of integers: [2, 7, 11, 15], Target: 9",
-      output: "Indices of two numbers that sum to target: [0, 1]",
-      explanation: "Because nums[0] + nums[1] = 2 + 7 = 9"
-    },
-    approaches: {
-      bruteForce: {
-        hint: "Check every possible pair of numbers",
-        timeComplexity: "O(n²)",
-        spaceComplexity: "O(1)",
-        description: "Use two nested loops to check all combinations"
-      },
-      optimal: {
-        hint: "Use a hash map to store visited numbers",
-        timeComplexity: "O(n)",
-        spaceComplexity: "O(n)",
-        description: "Store numbers as you iterate and check if complement exists"
-      }
-    },
-    edgeCases: [
-      "Array with only two elements",
-      "No solution exists",
-      "Multiple valid solutions",
-      "Duplicate numbers in array"
-    ],
-    similarProblems: [
-      { title: "3Sum", platform: "LeetCode", difficulty: "Medium", url: "https://leetcode.com/problems/3sum/" },
-      { title: "Two Sum II", platform: "LeetCode", difficulty: "Easy", url: "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" },
-      { title: "4Sum", platform: "LeetCode", difficulty: "Medium", url: "https://leetcode.com/problems/4sum/" }
-    ]
-  };
-
   const analyzeProblem = async () => {
     if (!problemText.trim()) return;
     
     setLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setAnalysis(mockAnalysis);
+    try {
+      const prompt = `Analyze the following DSA problem and provide a detailed explanation with:
+1. Simple summary for beginners
+2. Input/Output examples with explanation
+3. Two approaches (brute force and optimal) with time/space complexity
+4. Edge cases to consider
+5. Similar problems
+
+Problem: ${problemText}`;
+
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      });
+
+      const data = await res.json();
+      const response = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't analyze your problem.";
+      
+      // Parse the response and create structured analysis
+      const structuredAnalysis = {
+        simpleSummary: response,
+        inputOutput: {
+          input: "Check the AI response above for input details",
+          output: "Check the AI response above for output details", 
+          explanation: "Detailed explanation provided in the AI response above"
+        },
+        approaches: {
+          bruteForce: {
+            hint: "See AI response for brute force approach",
+            timeComplexity: "Check AI response",
+            spaceComplexity: "Check AI response",
+            description: "Brute force approach details in AI response"
+          },
+          optimal: {
+            hint: "See AI response for optimal approach", 
+            timeComplexity: "Check AI response",
+            spaceComplexity: "Check AI response",
+            description: "Optimal approach details in AI response"
+          }
+        },
+        edgeCases: ["Check AI response for edge cases"],
+        similarProblems: []
+      };
+      
+      setAnalysis(structuredAnalysis);
+    } catch (error) {
+      console.error("Analysis error:", error);
+      setAnalysis({
+        simpleSummary: "Error: Could not analyze the problem. Please try again.",
+        inputOutput: { input: "", output: "", explanation: "" },
+        approaches: { 
+          bruteForce: { hint: "", timeComplexity: "", spaceComplexity: "", description: "" },
+          optimal: { hint: "", timeComplexity: "", spaceComplexity: "", description: "" }
+        },
+        edgeCases: [],
+        similarProblems: []
+      });
+    }
     setLoading(false);
   };
 
@@ -85,118 +111,13 @@ For example: 'Given an array of integers nums and an integer target, return indi
       {/* Analysis Results */}
       {analysis && (
         <div className="space-y-6">
-          {/* Simple Summary */}
+          {/* AI Response */}
           <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 border border-green-200">
             <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center">
               <FileText className="w-6 h-6 text-green-600 mr-2" />
-              Simple Summary
+              AI Analysis
             </h3>
-            <p className="text-gray-700 leading-relaxed">{analysis.simpleSummary}</p>
-          </div>
-
-          {/* Input/Output */}
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-              <Target className="w-6 h-6 text-blue-600 mr-2" />
-              Input & Output
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h4 className="font-semibold text-blue-800 mb-2">Input</h4>
-                <p className="text-blue-700">{analysis.inputOutput.input}</p>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <h4 className="font-semibold text-green-800 mb-2">Output</h4>
-                <p className="text-green-700">{analysis.inputOutput.output}</p>
-              </div>
-            </div>
-            <div className="mt-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h4 className="font-semibold text-gray-800 mb-2">Explanation</h4>
-              <p className="text-gray-700">{analysis.inputOutput.explanation}</p>
-            </div>
-          </div>
-
-          {/* Approaches */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                <Clock className="w-5 h-5 text-orange-500 mr-2" />
-                Brute Force Approach
-              </h3>
-              <div className="space-y-3">
-                <p className="text-gray-600">{analysis.approaches.bruteForce.description}</p>
-                <div className="bg-orange-50 p-3 rounded-lg border border-orange-200">
-                  <p className="font-medium text-orange-800">Hint: {analysis.approaches.bruteForce.hint}</p>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Time: {analysis.approaches.bruteForce.timeComplexity}</span>
-                  <span className="text-gray-600">Space: {analysis.approaches.bruteForce.spaceComplexity}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                <Zap className="w-5 h-5 text-green-500 mr-2" />
-                Optimal Approach
-              </h3>
-              <div className="space-y-3">
-                <p className="text-gray-600">{analysis.approaches.optimal.description}</p>
-                <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-                  <p className="font-medium text-green-800">Hint: {analysis.approaches.optimal.hint}</p>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Time: {analysis.approaches.optimal.timeComplexity}</span>
-                  <span className="text-gray-600">Space: {analysis.approaches.optimal.spaceComplexity}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Edge Cases */}
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-              <AlertCircle className="w-6 h-6 text-yellow-600 mr-2" />
-              Edge Cases to Consider
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {analysis.edgeCases.map((edgeCase: string, index: number) => (
-                <div key={index} className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-                  <p className="text-yellow-800">{edgeCase}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Similar Problems */}
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-              <LinkIcon className="w-6 h-6 text-purple-600 mr-2" />
-              Similar Problems
-            </h3>
-            <div className="space-y-3">
-              {analysis.similarProblems.map((problem: any, index: number) => (
-                <a
-                  key={index}
-                  href={problem.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
-                >
-                  <div>
-                    <h4 className="font-medium text-gray-800 group-hover:text-blue-600">{problem.title}</h4>
-                    <p className="text-sm text-gray-600">{problem.platform}</p>
-                  </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    problem.difficulty === 'Easy' ? 'bg-green-100 text-green-800' :
-                    problem.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {problem.difficulty}
-                  </span>
-                </a>
-              ))}
-            </div>
+            <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">{analysis.simpleSummary}</div>
           </div>
         </div>
       )}
