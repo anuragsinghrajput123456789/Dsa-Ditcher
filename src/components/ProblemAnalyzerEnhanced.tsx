@@ -45,7 +45,7 @@ const ProblemAnalyzerEnhanced = () => {
     }
   ];
 
-  const GEMINI_API_KEY = "AIzaSyBCXu4gQcNNQIF8jxqdDTfuSaOBMyBZZg4";
+  const GEMINI_API_KEY = "AIzaSyAHI6dEYABoLBXht70PtS97_fPFruDipH8";
 
   const analyzeProblem = async () => {
     if (!problemText.trim()) return;
