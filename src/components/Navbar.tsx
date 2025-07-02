@@ -1,16 +1,13 @@
+
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Code, Zap, UserCircle2, LogOut, LogIn } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const { user, profile, signOut, loading: authLoading } = useSupabaseAuth();
 
   const navigation = [
     { name: "Dashboard", href: "/" },
@@ -58,7 +55,6 @@ const Navbar = () => {
           {/* Desktop Right Side */}
           <div className="hidden md:flex items-center space-x-2">
             <ThemeToggle />
-            {/* Removed auth buttons */}
           </div>
 
           {/* Mobile menu button */}
@@ -93,7 +89,6 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
-              {/* Removed mobile auth buttons */}
             </div>
           </div>
         )}
