@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import RoadmapCard from "./roadmap/RoadmapCard";
 import RoadmapProgress from "./roadmap/RoadmapProgress";
@@ -39,8 +40,8 @@ const Roadmap = () => {
   return (
     <Tabs defaultValue="pre-written" className="w-full">
       <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">Learning Roadmaps</h1>
-        <p className="text-gray-600 text-lg">Follow structured paths or create your own to master DSA concepts.</p>
+        <h1 className="text-3xl font-bold text-foreground mb-4">Learning Roadmaps</h1>
+        <p className="text-muted-foreground text-lg">Follow structured paths or create your own to master DSA concepts.</p>
       </div>
 
       <TabsList className="grid w-full grid-cols-2">

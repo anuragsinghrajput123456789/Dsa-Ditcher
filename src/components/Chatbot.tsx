@@ -1,5 +1,6 @@
+
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, Send, Minimize2, Maximize2, Bot, User } from "lucide-react";
+import { MessageSquare, Send, Minimize2, Bot, User, X } from "lucide-react";
 
 const GEMINI_API_KEY = "AIzaSyAHI6dEYABoLBXht70PtS97_fPFruDipH8";
 
@@ -37,7 +38,6 @@ const Chatbot = () => {
     setInputMessage("");
     setIsTyping(true);
 
-    // Call Gemini API for real DSA assistant responses
     try {
       const prompt =
         "You are an expert coding mentor specialized in Data Structures and Algorithms (DSA). " +
@@ -94,7 +94,7 @@ const Chatbot = () => {
 
       {/* Chatbot Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-80 h-96 bg-white rounded-xl shadow-2xl border border-gray-200 flex flex-col z-50">
+        <div className="fixed bottom-24 right-6 w-80 h-96 bg-card rounded-xl shadow-2xl border border-border flex flex-col z-50">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-t-xl flex justify-between items-center">
             <div className="flex items-center space-x-2">
@@ -105,7 +105,7 @@ const Chatbot = () => {
               onClick={() => setIsOpen(false)}
               className="text-white hover:text-gray-200 transition-colors"
             >
-              <Minimize2 className="w-4 h-4" />
+              <X className="w-4 h-4" />
             </button>
           </div>
 
@@ -118,11 +118,11 @@ const Chatbot = () => {
               >
                 <div className={`max-w-[80%] p-3 rounded-lg ${
                   message.type === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-800'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground'
                 }`}>
                   <div className="flex items-start space-x-2">
-                    {message.type === 'bot' && <Bot className="w-4 h-4 mt-0.5 text-blue-600" />}
+                    {message.type === 'bot' && <Bot className="w-4 h-4 mt-0.5 text-primary" />}
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                     {message.type === 'user' && <User className="w-4 h-4 mt-0.5" />}
                   </div>
@@ -132,13 +132,13 @@ const Chatbot = () => {
             
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 text-gray-800 p-3 rounded-lg">
+                <div className="bg-muted text-muted-foreground p-3 rounded-lg">
                   <div className="flex items-center space-x-2">
-                    <Bot className="w-4 h-4 text-blue-600" />
+                    <Bot className="w-4 h-4 text-primary" />
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     </div>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ const Chatbot = () => {
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-border">
             <div className="flex space-x-2">
               <input
                 type="text"
@@ -156,12 +156,12 @@ const Chatbot = () => {
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask me about DSA..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="flex-1 px-3 py-2 border border-input bg-background rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent text-sm"
               />
               <button
                 onClick={sendMessage}
                 disabled={!inputMessage.trim()}
-                className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="bg-primary text-primary-foreground p-2 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
               </button>
