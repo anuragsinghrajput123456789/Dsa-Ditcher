@@ -66,141 +66,149 @@ const Visualizations = () => {
   }, [isPlaying, currentStep, speed]);
 
   const getBarColor = (index: number) => {
-    if (swapping.includes(index)) return "bg-red-500";
-    if (comparing.includes(index)) return "bg-yellow-500";
-    return "bg-blue-500";
+    if (swapping.includes(index)) return "bg-red-500 dark:bg-red-400";
+    if (comparing.includes(index)) return "bg-yellow-500 dark:bg-yellow-400";
+    return "bg-blue-500 dark:bg-blue-400";
   };
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">Algorithm Visualizations</h1>
-        <p className="text-gray-600 text-lg">Watch algorithms come to life with interactive animations</p>
-      </div>
-
-      {/* Algorithm Selection */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Choose Algorithm</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {algorithms.map((algo) => (
-            <button
-              key={algo.id}
-              onClick={() => setSelectedAlgorithm(algo.id)}
-              className={`p-4 rounded-lg border-2 transition-all duration-200 text-center ${
-                selectedAlgorithm === algo.id
-                  ? "border-blue-500 bg-blue-50 text-blue-700"
-                  : "border-gray-200 hover:border-gray-300 text-gray-700"
-              }`}
-            >
-              <div className="font-medium">{algo.name}</div>
-              <div className="text-sm text-gray-500">{algo.category}</div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Visualization Area */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">Bubble Sort Visualization</h2>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Settings className="w-4 h-4 text-gray-600" />
-              <span className="text-sm text-gray-600">Speed:</span>
-              <input
-                type="range"
-                min="100"
-                max="1000"
-                value={speed}
-                onChange={(e) => setSpeed(Number(e.target.value))}
-                className="w-20"
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={togglePlayPause}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-              >
-                {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                <span>{isPlaying ? "Pause" : "Play"}</span>
-              </button>
-              <button
-                onClick={resetVisualization}
-                className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2"
-              >
-                <RotateCcw className="w-4 h-4" />
-                <span>Reset</span>
-              </button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-foreground mb-4 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+            Algorithm Visualizations
+          </h1>
+          <p className="text-muted-foreground text-lg">Watch algorithms come to life with interactive animations</p>
         </div>
 
-        {/* Array Visualization */}
-        <div className="mb-6">
-          <div className="flex items-end justify-center space-x-2 h-64 bg-gray-50 rounded-lg p-4">
-            {array.map((value, index) => (
-              <div key={index} className="flex flex-col items-center space-y-2">
-                <div
-                  className={`${getBarColor(index)} rounded-t transition-all duration-300 min-w-[40px] flex items-end justify-center text-white font-bold pb-2`}
-                  style={{ height: `${(value / Math.max(...array)) * 200}px` }}
-                >
-                  {value}
-                </div>
-                <div className="text-sm text-gray-600">{index}</div>
-              </div>
+        {/* Algorithm Selection */}
+        <div className="bg-card dark:bg-card rounded-xl p-6 shadow-lg border border-border">
+          <h2 className="text-xl font-bold text-card-foreground mb-4">Choose Algorithm</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {algorithms.map((algo) => (
+              <button
+                key={algo.id}
+                onClick={() => setSelectedAlgorithm(algo.id)}
+                className={`p-4 rounded-lg border-2 transition-all duration-200 text-center hover:scale-105 ${
+                  selectedAlgorithm === algo.id
+                    ? "border-primary bg-primary/10 text-primary shadow-lg"
+                    : "border-border hover:border-primary/50 text-card-foreground hover:bg-accent/50"
+                }`}
+              >
+                <div className="font-medium">{algo.name}</div>
+                <div className="text-sm text-muted-foreground">{algo.category}</div>
+              </button>
             ))}
           </div>
         </div>
 
-        {/* Step Description */}
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="font-semibold text-gray-800 mb-2">Current Step: {currentStep + 1}</h3>
-          <p className="text-gray-600">
-            {currentStep < bubbleSortSteps.length 
-              ? bubbleSortSteps[currentStep]?.description || "Starting bubble sort..."
-              : "Sorting complete! The array is now sorted in ascending order."
-            }
-          </p>
+        {/* Visualization Area */}
+        <div className="bg-card dark:bg-card rounded-xl p-6 shadow-lg border border-border">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <h2 className="text-xl font-bold text-card-foreground">Bubble Sort Visualization</h2>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <div className="flex items-center space-x-2">
+                <Settings className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Speed:</span>
+                <input
+                  type="range"
+                  min="100"
+                  max="1000"
+                  value={speed}
+                  onChange={(e) => setSpeed(Number(e.target.value))}
+                  className="w-20 accent-primary"
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={togglePlayPause}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2 hover:scale-105 shadow-lg"
+                >
+                  {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                  <span>{isPlaying ? "Pause" : "Play"}</span>
+                </button>
+                <button
+                  onClick={resetVisualization}
+                  className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2 hover:scale-105 shadow-md"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Reset</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Array Visualization */}
+          <div className="mb-6">
+            <div className="flex items-end justify-center space-x-2 h-64 bg-muted/30 dark:bg-muted/20 rounded-lg p-4 border border-border/50">
+              {array.map((value, index) => (
+                <div key={index} className="flex flex-col items-center space-y-2">
+                  <div
+                    className={`${getBarColor(index)} rounded-t transition-all duration-300 min-w-[40px] flex items-end justify-center text-white dark:text-white font-bold pb-2 shadow-lg animate-pulse`}
+                    style={{ height: `${(value / Math.max(...array)) * 200}px` }}
+                  >
+                    {value}
+                  </div>
+                  <div className="text-sm text-muted-foreground font-medium">{index}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Step Description */}
+          <div className="bg-muted/50 dark:bg-muted/30 rounded-lg p-4 border border-border/50">
+            <h3 className="font-semibold text-card-foreground mb-2">
+              Current Step: {currentStep + 1} of {bubbleSortSteps.length}
+            </h3>
+            <p className="text-muted-foreground">
+              {currentStep < bubbleSortSteps.length 
+                ? bubbleSortSteps[currentStep]?.description || "Starting bubble sort..."
+                : "Sorting complete! The array is now sorted in ascending order. 🎉"
+              }
+            </p>
+          </div>
+
+          {/* Legend */}
+          <div className="mt-4 flex flex-wrap justify-center gap-6">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-blue-500 dark:bg-blue-400 rounded"></div>
+              <span className="text-sm text-muted-foreground">Default</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-yellow-500 dark:bg-yellow-400 rounded"></div>
+              <span className="text-sm text-muted-foreground">Comparing</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-red-500 dark:bg-red-400 rounded"></div>
+              <span className="text-sm text-muted-foreground">Swapping</span>
+            </div>
+          </div>
         </div>
 
-        {/* Legend */}
-        <div className="mt-4 flex justify-center space-x-6">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-blue-500 rounded"></div>
-            <span className="text-sm text-gray-600">Default</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-            <span className="text-sm text-gray-600">Comparing</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-red-500 rounded"></div>
-            <span className="text-sm text-gray-600">Swapping</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Algorithm Info */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">About Bubble Sort</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <h4 className="font-semibold text-gray-800 mb-2">How it works</h4>
-            <p className="text-gray-600 text-sm">
-              Bubble sort repeatedly steps through the list, compares adjacent elements and swaps them if they're in the wrong order.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-semibold text-gray-800 mb-2">Time Complexity</h4>
-            <p className="text-gray-600 text-sm">
-              Best: O(n) | Average: O(n²) | Worst: O(n²)
-            </p>
-          </div>
-          <div>
-            <h4 className="font-semibold text-gray-800 mb-2">Space Complexity</h4>
-            <p className="text-gray-600 text-sm">
-              O(1) - Only uses a constant amount of additional memory space.
-            </p>
+        {/* Algorithm Info */}
+        <div className="bg-card dark:bg-card rounded-xl p-6 shadow-lg border border-border">
+          <h3 className="text-xl font-bold text-card-foreground mb-4">About Bubble Sort</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-4 bg-muted/30 dark:bg-muted/20 rounded-lg border border-border/50">
+              <h4 className="font-semibold text-card-foreground mb-2 text-primary">How it works</h4>
+              <p className="text-muted-foreground text-sm">
+                Bubble sort repeatedly steps through the list, compares adjacent elements and swaps them if they're in the wrong order.
+              </p>
+            </div>
+            <div className="p-4 bg-muted/30 dark:bg-muted/20 rounded-lg border border-border/50">
+              <h4 className="font-semibold text-card-foreground mb-2 text-primary">Time Complexity</h4>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-green-600 dark:text-green-400">Best: O(n)</span> | 
+                <span className="text-yellow-600 dark:text-yellow-400"> Average: O(n²)</span> | 
+                <span className="text-red-600 dark:text-red-400"> Worst: O(n²)</span>
+              </p>
+            </div>
+            <div className="p-4 bg-muted/30 dark:bg-muted/20 rounded-lg border border-border/50">
+              <h4 className="font-semibold text-card-foreground mb-2 text-primary">Space Complexity</h4>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-green-600 dark:text-green-400">O(1)</span> - Only uses a constant amount of additional memory space.
+              </p>
+            </div>
           </div>
         </div>
       </div>
