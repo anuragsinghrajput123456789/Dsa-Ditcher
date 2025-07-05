@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -134,16 +133,9 @@ const DsaSheetManager = () => {
     }
   };
 
+  // Dummy function for compatibility - not used anymore
   const handleAddPrewrittenSheet = (sheetData: PrewrittenDsaSheet) => {
-    const newSheet: DsaSheet = {
-      ...sheetData,
-      id: Date.now().toString(),
-    };
-    setSheets((prevSheets) => [newSheet, ...prevSheets]);
-    toast({
-      title: "Success",
-      description: `"${sheetData.title}" has been added to your sheets.`,
-    });
+    // This function is no longer used since we redirect to external URLs
   };
 
   return (
@@ -157,9 +149,9 @@ const DsaSheetManager = () => {
         </div>
       </div>
       <Tabs defaultValue="my-sheets" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="my-sheets">My Sheets</TabsTrigger>
-          <TabsTrigger value="popular-sheets">Popular Sheets</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 bg-muted">
+          <TabsTrigger value="my-sheets" className="data-[state=active]:bg-background">My Sheets</TabsTrigger>
+          <TabsTrigger value="popular-sheets" className="data-[state=active]:bg-background">Popular Sheets</TabsTrigger>
         </TabsList>
         <TabsContent value="my-sheets" className="mt-6">
           <CustomSheetList
@@ -172,7 +164,7 @@ const DsaSheetManager = () => {
             onSetIsImporting={setIsImporting}
           />
           {isImporting && (
-            <div className="space-y-4 p-4 border rounded-lg mb-6">
+            <div className="space-y-4 p-4 border rounded-lg mb-6 bg-card">
               <Label htmlFor="import-area">Paste sheet JSON here</Label>
               <Textarea
                 id="import-area"
@@ -196,10 +188,10 @@ const DsaSheetManager = () => {
             {sheets.map((sheet) => (
               <div
                 key={sheet.id}
-                className="border rounded-lg p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow"
+                className="border rounded-lg p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow bg-card"
               >
                 <div>
-                  <h2 className="text-xl font-semibold mb-2">{sheet.title}</h2>
+                  <h2 className="text-xl font-semibold mb-2 text-card-foreground">{sheet.title}</h2>
                   <p className="text-muted-foreground text-sm mb-4">
                     {sheet.description}
                   </p>
@@ -232,7 +224,7 @@ const DsaSheetManager = () => {
             {sheets.length === 0 && !isImporting && (
               <div className="col-span-full text-center py-12">
                 <p className="text-muted-foreground">
-                  No sheets yet. Create your first one or add one from the
+                  No sheets yet. Create your first one or check out the
                   'Popular Sheets' tab!
                 </p>
               </div>
@@ -253,9 +245,9 @@ const DsaSheetManager = () => {
         </TabsContent>
       </Tabs>
       <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <SheetContent>
+        <SheetContent className="bg-card">
           <SheetHeader>
-            <SheetTitle>
+            <SheetTitle className="text-card-foreground">
               {editingSheet ? "Edit Sheet" : "Create New Sheet"}
             </SheetTitle>
             <SheetDescription>

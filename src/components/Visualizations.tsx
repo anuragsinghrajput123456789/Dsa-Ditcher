@@ -82,7 +82,7 @@ const Visualizations = () => {
         </div>
 
         {/* Algorithm Selection */}
-        <div className="bg-card dark:bg-card rounded-xl p-6 shadow-lg border border-border">
+        <div className="bg-card rounded-xl p-6 shadow-lg border border-border">
           <h2 className="text-xl font-bold text-card-foreground mb-4">Choose Algorithm</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {algorithms.map((algo) => (
@@ -103,7 +103,7 @@ const Visualizations = () => {
         </div>
 
         {/* Visualization Area */}
-        <div className="bg-card dark:bg-card rounded-xl p-6 shadow-lg border border-border">
+        <div className="bg-card rounded-xl p-6 shadow-lg border border-border">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <h2 className="text-xl font-bold text-card-foreground">Bubble Sort Visualization</h2>
             <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -140,11 +140,11 @@ const Visualizations = () => {
 
           {/* Array Visualization */}
           <div className="mb-6">
-            <div className="flex items-end justify-center space-x-2 h-64 bg-muted/30 dark:bg-muted/20 rounded-lg p-4 border border-border/50">
+            <div className="flex items-end justify-center space-x-2 h-64 bg-muted/30 rounded-lg p-4 border border-border/50">
               {array.map((value, index) => (
                 <div key={index} className="flex flex-col items-center space-y-2">
                   <div
-                    className={`${getBarColor(index)} rounded-t transition-all duration-300 min-w-[40px] flex items-end justify-center text-white dark:text-white font-bold pb-2 shadow-lg animate-pulse`}
+                    className={`${getBarColor(index)} rounded-t transition-all duration-300 min-w-[40px] flex items-end justify-center text-white font-bold pb-2 shadow-lg animate-pulse`}
                     style={{ height: `${(value / Math.max(...array)) * 200}px` }}
                   >
                     {value}
@@ -156,7 +156,7 @@ const Visualizations = () => {
           </div>
 
           {/* Step Description */}
-          <div className="bg-muted/50 dark:bg-muted/30 rounded-lg p-4 border border-border/50">
+          <div className="bg-muted/50 rounded-lg p-4 border border-border/50">
             <h3 className="font-semibold text-card-foreground mb-2">
               Current Step: {currentStep + 1} of {bubbleSortSteps.length}
             </h3>
@@ -186,16 +186,16 @@ const Visualizations = () => {
         </div>
 
         {/* Algorithm Info */}
-        <div className="bg-card dark:bg-card rounded-xl p-6 shadow-lg border border-border">
+        <div className="bg-card rounded-xl p-6 shadow-lg border border-border">
           <h3 className="text-xl font-bold text-card-foreground mb-4">About Bubble Sort</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 bg-muted/30 dark:bg-muted/20 rounded-lg border border-border/50">
+            <div className="p-4 bg-muted/30 rounded-lg border border-border/50">
               <h4 className="font-semibold text-card-foreground mb-2 text-primary">How it works</h4>
               <p className="text-muted-foreground text-sm">
                 Bubble sort repeatedly steps through the list, compares adjacent elements and swaps them if they're in the wrong order.
               </p>
             </div>
-            <div className="p-4 bg-muted/30 dark:bg-muted/20 rounded-lg border border-border/50">
+            <div className="p-4 bg-muted/30 rounded-lg border border-border/50">
               <h4 className="font-semibold text-card-foreground mb-2 text-primary">Time Complexity</h4>
               <p className="text-muted-foreground text-sm">
                 <span className="text-green-600 dark:text-green-400">Best: O(n)</span> | 
@@ -203,7 +203,7 @@ const Visualizations = () => {
                 <span className="text-red-600 dark:text-red-400"> Worst: O(n²)</span>
               </p>
             </div>
-            <div className="p-4 bg-muted/30 dark:bg-muted/20 rounded-lg border border-border/50">
+            <div className="p-4 bg-muted/30 rounded-lg border border-border/50">
               <h4 className="font-semibold text-card-foreground mb-2 text-primary">Space Complexity</h4>
               <p className="text-muted-foreground text-sm">
                 <span className="text-green-600 dark:text-green-400">O(1)</span> - Only uses a constant amount of additional memory space.

@@ -3,317 +3,246 @@ export interface PrewrittenDsaSheet {
   title: string;
   description: string;
   problems: string;
+  url?: string;
 }
 
 export const prewrittenDsaSheets: PrewrittenDsaSheet[] = [
   {
     title: "Striver's SDE Sheet",
-    description: "A curated list of problems to prepare for software development engineer roles, created by Striver.",
-    problems: `Arrays Part-I
-Set Matrix Zeroes
-Pascal's Triangle
-Next Permutation
-Kadane's Algorithm
-Sort an array of 0's 1's and 2's
-Stock Buy and Sell
+    description: "Most popular DSA sheet with 191 problems covering all important topics for software engineering interviews.",
+    problems: `Arrays:
+1. Set Matrix Zero
+2. Pascal Triangle
+3. Next Permutation
+4. Maximum Subarray
+5. Sort 0s 1s and 2s
 
-Arrays Part-II
-Rotate Matrix
-Merge Overlapping Subintervals
-Merge two sorted Arrays without extra space
-Find the duplicate in an array of N+1 integers.
-Repeat and Missing Number
-Inversion of Array (Pre-req: Merge Sort)
+Linked List:
+1. Reverse Linked List
+2. Middle of Linked List
+3. Merge Two Sorted Lists
+4. Remove Nth Node
+5. Add Two Numbers
 
-Arrays Part-III
-Search in a 2d Matrix
-Pow(X,n)
-Majority Element (>N/2 times)
-Majority Element (>N/3 times)
-Grid Unique Paths
-Reverse Pairs (Hard)`
-  },
-  {
-    title: "LeetCode 150",
-    description: "A collection of 150 most common interview questions from LeetCode.",
-    problems: `Two Sum
-Valid Anagram
-Contains Duplicate
-Group Anagrams
-Top K Frequent Elements
-Product of Array Except Self
-Valid Sudoku
-Encode and Decode Strings
-Longest Consecutive Sequence
-Valid Palindrome
-Two Sum II - Input Array Is Sorted
-3Sum
-Container With Most Water
-Trapping Rain Water
-Best Time to Buy and Sell Stock
-Longest Substring Without Repeating Characters`
+Dynamic Programming:
+1. Climbing Stairs
+2. Frog Jump
+3. House Robber
+4. Coin Change
+5. Longest Common Subsequence
+
+And many more...`,
+    url: "https://takeuforward.org/interviews/strivers-sde-sheet-top-coding-interview-problems/"
   },
   {
     title: "Blind 75",
-    description: "75 essential coding interview questions covering all important patterns and concepts.",
-    problems: `Array
-Two Sum
-Best Time to Buy and Sell Stock
-Contains Duplicate
-Product of Array Except Self
-Maximum Subarray
-Maximum Product Subarray
-Find Minimum in Rotated Sorted Array
-Search in Rotated Sorted Array
-3Sum
-Container With Most Water
+    description: "Curated list of 75 essential LeetCode problems that cover the most important patterns for coding interviews.",
+    problems: `Array:
+1. Two Sum
+2. Best Time to Buy and Sell Stock
+3. Contains Duplicate
+4. Product of Array Except Self
+5. Maximum Subarray
 
-Binary
-Sum of Two Integers
-Number of 1 Bits
-Counting Bits
-Missing Number
-Reverse Bits
+String:
+1. Valid Anagram
+2. Valid Parentheses
+3. Valid Palindrome
+4. Longest Substring Without Repeating Characters
+5. Longest Palindromic Substring
 
-Dynamic Programming
-Climbing Stairs
-Coin Change
-Longest Increasing Subsequence
-Longest Common Subsequence
-Word Break Problem
-Combination Sum
-House Robber
-House Robber II
-Decode Ways
-Unique Paths
-Jump Game`
+Linked List:
+1. Reverse Linked List
+2. Detect Cycle in Linked List
+3. Merge Two Sorted Lists
+4. Merge k Sorted Lists
+5. Remove Nth Node From End
+
+Tree:
+1. Maximum Depth of Binary Tree
+2. Same Tree
+3. Invert Binary Tree
+4. Binary Tree Maximum Path Sum
+5. Serialize and Deserialize Binary Tree
+
+And 55 more problems...`,
+    url: "https://leetcode.com/discuss/general-discussion/460599/blind-75-leetcode-questions"
   },
   {
-    title: "Neetcode 150",
-    description: "Comprehensive list of 150 problems organized by patterns, perfect for systematic preparation.",
-    problems: `Arrays & Hashing
-Contains Duplicate
-Valid Anagram
-Two Sum
-Group Anagrams
-Top K Frequent Elements
-Encode and Decode Strings
-Product of Array Except Self
-Valid Sudoku
-Longest Consecutive Sequence
+    title: "NeetCode 150",
+    description: "Extended version of Blind 75 with 150 problems, organized by patterns with video explanations.",
+    problems: `Arrays & Hashing:
+1. Contains Duplicate
+2. Valid Anagram
+3. Two Sum
+4. Group Anagrams
+5. Top K Frequent Elements
 
-Two Pointers
-Valid Palindrome
-Two Sum II - Input Array Is Sorted
-3Sum
-Container With Most Water
-Trapping Rain Water
+Two Pointers:
+1. Valid Palindrome
+2. Two Sum II
+3. 3Sum
+4. Container With Most Water
+5. Trapping Rain Water
 
-Sliding Window
-Best Time to Buy and Sell Stock
-Longest Substring Without Repeating Characters
-Longest Repeating Character Replacement
-Permutation in String
-Minimum Window Substring
-Sliding Window Maximum`
+Sliding Window:
+1. Best Time to Buy and Sell Stock
+2. Longest Substring Without Repeating Characters
+3. Longest Repeating Character Replacement
+4. Permutation in String
+5. Minimum Window Substring
+
+Stack:
+1. Valid Parentheses
+2. Min Stack
+3. Evaluate Reverse Polish Notation
+4. Generate Parentheses
+5. Daily Temperatures
+
+And 130 more problems...`,
+    url: "https://neetcode.io/practice"
   },
   {
     title: "Love Babbar 450",
-    description: "Comprehensive DSA sheet with 450 problems covering all important topics and difficulty levels.",
-    problems: `Array (36 Problems)
-Reverse the array
-Find the maximum and minimum element in an array
-Find the "Kth" max and min element of an array
-Given an array which consists of only 0, 1 and 2. Sort the array without using any sorting algo
-Move all the negative elements to one side of the array
-Find the Union and Intersection of the two sorted arrays
-Write a program to cyclically rotate an array by one
-Find Largest sum contiguous Subarray [V. IMP]
-Minimise the maximum difference between heights [V.IMP]
-Minimum no. of Jumps to reach end of an array
-Find duplicate in an array of N+1 Integers
-Merge 2 sorted arrays without using Extra space
+    description: "Comprehensive DSA sheet with 450 problems covering all data structures and algorithms for placement preparation.",
+    problems: `Array:
+1. Reverse the array
+2. Find maximum and minimum element
+3. Kth smallest element
+4. Sort 0s, 1s and 2s
+5. Move negative numbers to one side
 
-String (43 Problems)
-Reverse a String
-Check whether a String is Palindrome or not
-Find Duplicate characters in a string
-Why strings are immutable in Java?
-Write a Code to check whether one string is a rotation of another
-Write a Program to check whether a string is a valid shuffle of two strings or not
-Count and Say problem
-Write a program to find the longest Palindrome in a string.[Longest palindromic Substring]
-Find Longest Recurring Subsequence in String
-Print all Subsequences of a string
-Print all the permutations of the given string
+String:
+1. Reverse a string
+2. Check palindrome
+3. Find duplicate characters
+4. Check rotation
+5. Longest palindrome
 
-Searching & Sorting (36 Problems)
-Find first and last positions of an element in a sorted array
-Find a Fixed Point (Value equal to index) in a given array
-Search in a rotated sorted array
-Square root of an integer
-Maximum and minimum of an array using minimum number of comparisons
-Optimum location of point to minimize total distance
-Find the repeating and the missing
-Find majority element
-Searching in an array where adjacent differ by at most k
-Find a pair with a given difference
-Find four elements that sum to a given value`
+Searching & Sorting:
+1. Binary Search
+2. Search in rotated sorted array
+3. Square root using binary search
+4. Bubble Sort
+5. Selection Sort
+
+Linked List:
+1. Reverse linked list
+2. Detect loop
+3. Find middle element
+4. Merge sorted lists
+5. Add two numbers
+
+And 430 more problems...`,
+    url: "https://www.geeksforgeeks.org/dsa-sheet-by-love-babbar/"
   },
   {
     title: "LeetCode Top Interview Questions",
-    description: "Most frequently asked questions in technical interviews at top tech companies.",
-    problems: `Easy Collection
-Two Sum
-Reverse Integer
-Palindrome Number
-Roman to Integer
-Longest Common Prefix
-Valid Parentheses
-Merge Two Sorted Lists
-Remove Duplicates from Sorted Array
-Remove Element
-Implement strStr()
-Search Insert Position
-Maximum Subarray
-Length of Last Word
-Plus One
-Add Binary
-Sqrt(x)
-Climbing Stairs
-Remove Duplicates from Sorted List
-Merge Sorted Array
-Same Tree
-Symmetric Tree
-Maximum Depth of Binary Tree
+    description: "LeetCode's official collection of most frequently asked interview questions from top tech companies.",
+    problems: `Easy Collection:
+1. Two Sum
+2. Reverse Integer
+3. Palindrome Number
+4. Roman to Integer
+5. Longest Common Prefix
 
-Medium Collection
-Add Two Numbers
-Longest Substring Without Repeating Characters
-Longest Palindromic Substring
-ZigZag Conversion
-Reverse Integer
-String to Integer (atoi)
-Container With Most Water
-Integer to Roman
-3Sum
-3Sum Closest
-Letter Combinations of a Phone Number
-4Sum
-Remove Nth Node From End of List
-Valid Parentheses
-Generate Parentheses
-Merge k Sorted Lists
-Swap Nodes in Pairs
-Reverse Nodes in k-Group`
+Medium Collection:
+1. Add Two Numbers
+2. Longest Substring Without Repeating Characters
+3. Longest Palindromic Substring
+4. ZigZag Conversion
+5. Reverse Integer
+
+Hard Collection:
+1. Median of Two Sorted Arrays
+2. Regular Expression Matching
+3. Merge k Sorted Lists
+4. Reverse Nodes in k-Group
+5. Substring with Concatenation of All Words
+
+Plus many more categorized by difficulty...`,
+    url: "https://leetcode.com/explore/interview/card/top-interview-questions-easy/"
   },
   {
     title: "Company-Wise Questions",
-    description: "Popular DSA questions asked by FAANG and other top tech companies.",
-    problems: `Google
-Longest Substring Without Repeating Characters
-Add Two Numbers
-Container With Most Water
-3Sum
-Remove Nth Node From End of List
-Valid Parentheses
-Merge Two Sorted Lists
-Generate Parentheses
-Next Permutation
-Search in Rotated Sorted Array
-Find First and Last Position of Element in Sorted Array
-Combination Sum
-Permutations
-Rotate Image
-Group Anagrams
+    description: "Problems frequently asked by specific companies like Google, Amazon, Microsoft, Facebook, and more.",
+    problems: `Google:
+1. Two Sum
+2. Longest Substring Without Repeating Characters
+3. Median of Two Sorted Arrays
+4. Trapping Rain Water
+5. Valid Parentheses
 
-Amazon
-Two Sum
-Add Two Numbers
-Longest Substring Without Repeating Characters
-Median of Two Sorted Arrays
-Longest Palindromic Substring
-ZigZag Conversion
-Reverse Integer
-String to Integer (atoi)
-Palindrome Number
-Regular Expression Matching
-Container With Most Water
-Integer to Roman
-Roman to Integer
-Longest Common Prefix
-3Sum
+Amazon:
+1. Two Sum
+2. Add Two Numbers
+3. Longest Palindromic Substring
+4. ZigZag Conversion
+5. Reverse Integer
 
-Microsoft
-Reverse Integer
-Palindrome Number
-Roman to Integer
-Longest Common Prefix
-Valid Parentheses
-Merge Two Sorted Lists
-Remove Duplicates from Sorted Array
-Remove Element
-Implement strStr()
-Search Insert Position
-Length of Last Word
-Plus One
-Add Binary
-Sqrt(x)
-Climbing Stairs`
+Microsoft:
+1. Reverse Integer
+2. Palindrome Number
+3. Roman to Integer
+4. Longest Common Prefix
+5. Valid Parentheses
+
+Facebook:
+1. Two Sum
+2. Add Two Numbers
+3. Longest Substring Without Repeating Characters
+4. Median of Two Sorted Arrays
+5. Longest Palindromic Substring
+
+And many more from other top companies...`,
+    url: "https://leetcode.com/explore/interview/"
   },
   {
     title: "Data Structures Fundamentals",
-    description: "Essential problems covering all fundamental data structures.",
-    problems: `Arrays
-Two Sum
-Best Time to Buy and Sell Stock
-Contains Duplicate
-Product of Array Except Self
-Maximum Subarray
-Maximum Product Subarray
-Find Minimum in Rotated Sorted Array
-Search in Rotated Sorted Array
-3Sum
-Container With Most Water
+    description: "Essential problems to master fundamental data structures like arrays, linked lists, stacks, queues, trees, and graphs.",
+    problems: `Arrays:
+1. Linear Search
+2. Binary Search
+3. Insertion Sort
+4. Selection Sort
+5. Bubble Sort
 
-Linked Lists
-Reverse Linked List
-Detect Cycle in a Linked List
-Merge Two Sorted Lists
-Remove Nth Node From End of List
-Reorder List
-Merge k Sorted Lists
-Add Two Numbers
-Copy List with Random Pointer
-Intersection of Two Linked Lists
-Palindrome Linked List
+Linked Lists:
+1. Singly Linked List Implementation
+2. Doubly Linked List Implementation
+3. Circular Linked List
+4. Stack using Linked List
+5. Queue using Linked List
 
-Stacks and Queues
-Valid Parentheses
-Implement Queue using Stacks
-Implement Stack using Queues
-Min Stack
-Evaluate Reverse Polish Notation
-Generate Parentheses
-Daily Temperatures
-Largest Rectangle in Histogram
-Sliding Window Maximum
-Basic Calculator
+Stacks:
+1. Stack Implementation using Array
+2. Balanced Parentheses
+3. Infix to Postfix
+4. Next Greater Element
+5. Largest Rectangle in Histogram
 
-Trees
-Maximum Depth of Binary Tree
-Same Tree
-Invert Binary Tree
-Binary Tree Maximum Path Sum
-Binary Tree Level Order Traversal
-Serialize and Deserialize Binary Tree
-Subtree of Another Tree
-Construct Binary Tree from Preorder and Inorder Traversal
-Validate Binary Search Tree
-Kth Smallest Element in a BST
-Lowest Common Ancestor of a Binary Search Tree
-Implement Trie (Prefix Tree)
-Add and Search Word
-Word Search II`
+Queues:
+1. Queue Implementation using Array
+2. Circular Queue
+3. Priority Queue
+4. Deque Implementation
+5. Queue using Stacks
+
+Trees:
+1. Binary Tree Implementation
+2. Binary Search Tree
+3. Tree Traversals (Inorder, Preorder, Postorder)
+4. Level Order Traversal
+5. Height of Binary Tree
+
+Graphs:
+1. Graph Representation
+2. BFS Traversal
+3. DFS Traversal
+4. Shortest Path Algorithms
+5. Minimum Spanning Tree
+
+And many more fundamental problems...`,
+    url: "https://www.geeksforgeeks.org/data-structures/"
   }
 ];
