@@ -1,20 +1,56 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Book, Search, BookOpen, TrendingUp, Star, Timer, Calendar, Code, MessageSquare, Lightbulb, Map, Play, Target, Sparkles, Zap, Award, Trophy, Heart, Rocket } from "lucide-react";
+import { Book, Search, BookOpen, TrendingUp, Star, Timer, Calendar, Code, MessageSquare, Lightbulb, Map, Play, Target, Sparkles, Zap, Award, Trophy, Heart, Rocket, Clock, Pause } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const [problemOfTheDay, setProblemOfTheDay] = useState({
     title: "Two Sum",
-    difficulty: "Easy",
+    difficulty: "Easy", 
     description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target."
   });
 
+  // Timer state
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [studyTime, setStudyTime] = useState(0); // in seconds
+
+  // Timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setStudyTime(prev => prev + 1);
+      }, 1000);
+    }
+    return() => clearInterval(interval);
+  }, [isTimerRunning]);
+
+  // Format time function
+  const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${secs}s`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${secs}s`;
+    } else {
+      return `${secs}s`;
+    }
+  };
+
   const quickStats = [
     { label: "Problems Solved", value: "23", icon: Star, color: "text-yellow-500", bgColor: "bg-yellow-50 dark:bg-yellow-900/20", borderColor: "border-yellow-200 dark:border-yellow-700" },
-    { label: "Study Streak", value: "7 days", icon: Calendar, color: "text-green-500", bgColor: "bg-green-50 dark:bg-green-900/20", borderColor: "border-green-200 dark:border-green-700" },
-    { label: "Time Studied", value: "12h 45m", icon: Timer, color: "text-blue-500", bgColor: "bg-blue-50 dark:bg-blue-900/20", borderColor: "border-blue-200 dark:border-blue-700" },
-    { label: "Current Level", value: "3", icon: TrendingUp, color: "text-purple-500", bgColor: "bg-purple-50 dark:bg-purple-900/20", borderColor: "border-purple-200 dark:border-purple-700" },
+    { 
+      label: "Study Timer", 
+      value: formatTime(studyTime), 
+      icon: Clock, 
+      color: "text-blue-500", 
+      bgColor: "bg-blue-50 dark:bg-blue-900/20", 
+      borderColor: "border-blue-200 dark:border-blue-700",
+      isTimer: true
+    },
   ];
 
   const quickActions = [
@@ -118,13 +154,13 @@ const Dashboard = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {quickStats.map((stat, index) => {
           const Icon = stat.icon;
           return (
             <div key={index} className={`${stat.bgColor} ${stat.borderColor} rounded-2xl p-6 shadow-lg border-2 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-scale-in group`} style={{animationDelay: `${index * 0.1}s`}}>
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex-1">
                   <p className="text-muted-foreground text-sm font-medium">{stat.label}</p>
                   <p className="text-3xl font-bold text-foreground mt-1">{stat.value}</p>
                 </div>
@@ -132,6 +168,44 @@ const Dashboard = () => {
                   <Icon className={`w-8 h-8 ${stat.color}`} />
                 </div>
               </div>
+              
+              {/* Timer Controls */}
+              {stat.isTimer && (
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setIsTimerRunning(!isTimerRunning)}
+                    size="sm"
+                    className={`flex items-center gap-2 ${
+                      isTimerRunning 
+                        ? 'bg-red-500 hover:bg-red-600 text-white' 
+                        : 'bg-green-500 hover:bg-green-600 text-white'
+                    }`}
+                  >
+                    {isTimerRunning ? (
+                      <>
+                        <Pause className="w-4 h-4" />
+                        Pause
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-4 h-4" />
+                        Start
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setStudyTime(0);
+                      setIsTimerRunning(false);
+                    }}
+                    size="sm"
+                    variant="outline"
+                    className="text-sm"
+                  >
+                    Reset
+                  </Button>
+                </div>
+              )}
             </div>
           );
         })}
