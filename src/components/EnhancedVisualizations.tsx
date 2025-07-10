@@ -15,24 +15,47 @@ const EnhancedVisualizations = () => {
   const [swapping, setSwapping] = useState<number[]>([]);
   const [sorted, setSorted] = useState<number[]>([]);
 
+  // Binary search state
+  const [searchArray, setSearchArray] = useState([11, 12, 22, 25, 34, 64, 90]);
+  const [searchTarget, setSearchTarget] = useState(25);
+  const [searchLeft, setSearchLeft] = useState(0);
+  const [searchRight, setSearchRight] = useState(6);
+  const [searchMid, setSearchMid] = useState(-1);
+  const [searchFound, setSearchFound] = useState(false);
+
   // Tree visualization state
   const [treeNodes, setTreeNodes] = useState([
-    { id: 1, value: 50, x: 300, y: 50, visited: false, current: false },
-    { id: 2, value: 30, x: 200, y: 150, visited: false, current: false },
-    { id: 3, value: 70, x: 400, y: 150, visited: false, current: false },
-    { id: 4, value: 20, x: 150, y: 250, visited: false, current: false },
-    { id: 5, value: 40, x: 250, y: 250, visited: false, current: false },
+    { id: 1, value: 50, x: 300, y: 50, visited: false, current: false, level: 0 },
+    { id: 2, value: 30, x: 200, y: 150, visited: false, current: false, level: 1 },
+    { id: 3, value: 70, x: 400, y: 150, visited: false, current: false, level: 1 },
+    { id: 4, value: 20, x: 150, y: 250, visited: false, current: false, level: 2 },
+    { id: 5, value: 40, x: 250, y: 250, visited: false, current: false, level: 2 },
+    { id: 6, value: 60, x: 350, y: 250, visited: false, current: false, level: 2 },
+    { id: 7, value: 80, x: 450, y: 250, visited: false, current: false, level: 2 },
   ]);
-  const [treeStep, setTreeStep] = useState(0);
 
   // Graph visualization state
   const [graphNodes, setGraphNodes] = useState([
-    { id: 'A', x: 100, y: 100, visited: false, current: false },
-    { id: 'B', x: 300, y: 100, visited: false, current: false },
-    { id: 'C', x: 200, y: 200, visited: false, current: false },
-    { id: 'D', x: 400, y: 200, visited: false, current: false },
+    { id: 'A', x: 100, y: 100, visited: false, current: false, distance: Infinity },
+    { id: 'B', x: 300, y: 100, visited: false, current: false, distance: Infinity },
+    { id: 'C', x: 200, y: 200, visited: false, current: false, distance: Infinity },
+    { id: 'D', x: 400, y: 200, visited: false, current: false, distance: Infinity },
+    { id: 'E', x: 150, y: 300, visited: false, current: false, distance: Infinity },
+    { id: 'F', x: 350, y: 300, visited: false, current: false, distance: Infinity },
   ]);
-  const [graphStep, setGraphStep] = useState(0);
+
+  // Queue for BFS
+  const [queue, setQueue] = useState<string[]>([]);
+  const [stack, setStack] = useState<string[]>([]);
+
+  // Hash map state
+  const [hashMap, setHashMap] = useState([
+    { bucket: 0, items: [{ key: 'apple', value: 5, hash: 0 }] },
+    { bucket: 1, items: [{ key: 'banana', value: 3, hash: 1 }] },
+    { bucket: 2, items: [{ key: 'orange', value: 8, hash: 2 }, { key: 'grape', value: 2, hash: 2 }] },
+    { bucket: 3, items: [] },
+  ]);
+  const [hashOperation, setHashOperation] = useState({ type: '', key: '', value: '', highlight: -1 });
 
   const algorithmCategories = {
     sorting: [
@@ -43,9 +66,9 @@ const EnhancedVisualizations = () => {
       { id: "selection-sort", name: "Selection Sort", complexity: "O(n²)" },
     ],
     trees: [
-      { id: "binary-search", name: "Binary Search Tree", complexity: "O(log n)" },
-      { id: "tree-traversal", name: "Tree Traversal (DFS)", complexity: "O(n)" },
-      { id: "bfs-tree", name: "Tree Traversal (BFS)", complexity: "O(n)" },
+      { id: "binary-search-tree", name: "Binary Search Tree", complexity: "O(log n)" },
+      { id: "tree-traversal-dfs", name: "Tree Traversal (DFS)", complexity: "O(n)" },
+      { id: "tree-traversal-bfs", name: "Tree Traversal (BFS)", complexity: "O(n)" },
       { id: "avl-rotation", name: "AVL Tree Rotation", complexity: "O(log n)" },
     ],
     graphs: [
@@ -62,106 +85,118 @@ const EnhancedVisualizations = () => {
     ],
     hashing: [
       { id: "hash-insert", name: "Hash Table Insert", complexity: "O(1)" },
+      { id: "hash-search", name: "Hash Table Search", complexity: "O(1)" },
       { id: "collision-resolution", name: "Collision Resolution", complexity: "O(1)" },
       { id: "rehashing", name: "Rehashing", complexity: "O(n)" },
     ]
   };
 
-  // Enhanced algorithm steps for different algorithms
+  // Get algorithm steps based on selected algorithm
   const getAlgorithmSteps = () => {
     switch (selectedAlgorithm) {
       case "bubble-sort":
         return [
-          { comparing: [0, 1], swapping: [], description: "Compare elements at positions 0 and 1", action: "compare" },
+          { comparing: [0, 1], swapping: [], description: "Compare elements at positions 0 and 1 (64 vs 34)", action: "compare" },
           { comparing: [0, 1], swapping: [0, 1], description: "Swap 64 and 34 since 64 > 34", action: "swap" },
-          { comparing: [1, 2], swapping: [], description: "Compare elements at positions 1 and 2", action: "compare" },
+          { comparing: [1, 2], swapping: [], description: "Compare elements at positions 1 and 2 (64 vs 25)", action: "compare" },
           { comparing: [1, 2], swapping: [1, 2], description: "Swap 64 and 25 since 64 > 25", action: "swap" },
-          { comparing: [2, 3], swapping: [], description: "Compare elements at positions 2 and 3", action: "compare" },
+          { comparing: [2, 3], swapping: [], description: "Compare elements at positions 2 and 3 (64 vs 12)", action: "compare" },
           { comparing: [2, 3], swapping: [2, 3], description: "Swap 64 and 12 since 64 > 12", action: "swap" },
-          { comparing: [3, 4], swapping: [], description: "Compare elements at positions 3 and 4", action: "compare" },
+          { comparing: [3, 4], swapping: [], description: "Compare elements at positions 3 and 4 (64 vs 22)", action: "compare" },
           { comparing: [3, 4], swapping: [3, 4], description: "Swap 64 and 22 since 64 > 22", action: "swap" },
-          { comparing: [4, 5], swapping: [], description: "Compare elements at positions 4 and 5", action: "compare" },
+          { comparing: [4, 5], swapping: [], description: "Compare elements at positions 4 and 5 (64 vs 11)", action: "compare" },
           { comparing: [4, 5], swapping: [4, 5], description: "Swap 64 and 11 since 64 > 11", action: "swap" },
-          { comparing: [5, 6], swapping: [], description: "Compare elements at positions 5 and 6", action: "compare" },
-          { comparing: [5, 6], swapping: [5, 6], description: "Swap 64 and 90 since 64 < 90", action: "swap" },
-          { comparing: [], swapping: [], description: "First pass complete. Largest element is in place.", action: "complete" },
+          { comparing: [5, 6], swapping: [], description: "Compare elements at positions 5 and 6 (64 vs 90)", action: "compare" },
+          { comparing: [], swapping: [], description: "No swap needed. First pass complete - largest element (90) is in place!", action: "complete" },
         ];
-      case "selection-sort":
+      case "binary-search-array":
         return [
-          { comparing: [0, 1], swapping: [], description: "Find minimum element from position 0 onwards", action: "compare" },
-          { comparing: [0, 2], swapping: [], description: "Continue searching for minimum", action: "compare" },
-          { comparing: [0, 5], swapping: [0, 5], description: "Swap minimum (11) with element at position 0", action: "swap" },
-          { comparing: [1, 2], swapping: [], description: "Find minimum from position 1 onwards", action: "compare" },
-          { comparing: [1, 3], swapping: [1, 3], description: "Swap minimum (12) with element at position 1", action: "swap" },
+          { description: `Searching for ${searchTarget} in sorted array. Initialize left=0, right=6`, action: "init" },
+          { description: `Calculate mid = (0 + 6) / 2 = 3. Check array[3] = 25`, action: "calculate" },
+          { description: `Found target ${searchTarget} at index 3!`, action: "found" },
         ];
-      default:
+      case "tree-traversal-dfs":
         return [
-          { comparing: [0, 1], swapping: [], description: "Starting algorithm visualization", action: "compare" },
-        ];
-    }
-  };
-
-  const getTreeSteps = () => {
-    switch (selectedAlgorithm) {
-      case "binary-search":
-        return [
-          { nodeId: 1, description: "Starting at root node (50)", action: "visit" },
-          { nodeId: 2, description: "Searching for 30, go left since 30 < 50", action: "visit" },
-          { nodeId: 2, description: "Found target node (30)!", action: "found" },
-        ];
-      case "tree-traversal":
-        return [
-          { nodeId: 1, description: "Visit root (50)", action: "visit" },
-          { nodeId: 2, description: "Go to left child (30)", action: "visit" },
-          { nodeId: 4, description: "Go to left child (20)", action: "visit" },
+          { nodeId: 1, description: "Start DFS from root (50)", action: "visit" },
+          { nodeId: 2, description: "Visit left child (30)", action: "visit" },
+          { nodeId: 4, description: "Visit left child (20)", action: "visit" },
           { nodeId: 5, description: "Backtrack and visit right child (40)", action: "visit" },
           { nodeId: 3, description: "Backtrack to root and visit right child (70)", action: "visit" },
+          { nodeId: 6, description: "Visit left child (60)", action: "visit" },
+          { nodeId: 7, description: "Visit right child (80)", action: "visit" },
         ];
-      default:
+      case "tree-traversal-bfs":
         return [
-          { nodeId: 1, description: "Starting tree algorithm", action: "visit" },
+          { nodeId: 1, description: "Start BFS from root (50). Add to queue: [50]", action: "visit" },
+          { nodeId: 2, description: "Process 50, add children to queue: [30, 70]", action: "visit" },
+          { nodeId: 3, description: "Process 30, add children to queue: [70, 20, 40]", action: "visit" },
+          { nodeId: 4, description: "Process 70, add children to queue: [20, 40, 60, 80]", action: "visit" },
+          { nodeId: 5, description: "Process remaining nodes: 20, 40, 60, 80", action: "visit" },
+          { nodeId: 6, description: "Continue BFS traversal", action: "visit" },
+          { nodeId: 7, description: "BFS traversal complete", action: "visit" },
         ];
-    }
-  };
-
-  const getGraphSteps = () => {
-    switch (selectedAlgorithm) {
       case "dfs-graph":
         return [
-          { nodeId: 'A', description: "Start DFS from node A", action: "visit" },
-          { nodeId: 'B', description: "Visit neighbor B", action: "visit" },
-          { nodeId: 'D', description: "Visit neighbor D", action: "visit" },
+          { nodeId: 'A', description: "Start DFS from node A. Push A to stack", action: "visit" },
+          { nodeId: 'B', description: "Visit unvisited neighbor B. Push B to stack", action: "visit" },
+          { nodeId: 'D', description: "Visit unvisited neighbor D. Push D to stack", action: "visit" },
+          { nodeId: 'F', description: "Visit unvisited neighbor F. Push F to stack", action: "visit" },
           { nodeId: 'C', description: "Backtrack and visit C", action: "visit" },
+          { nodeId: 'E', description: "Visit remaining node E", action: "visit" },
         ];
       case "bfs-graph":
         return [
-          { nodeId: 'A', description: "Start BFS from node A", action: "visit" },
-          { nodeId: 'B', description: "Add B to queue", action: "visit" },
-          { nodeId: 'C', description: "Add C to queue", action: "visit" },
-          { nodeId: 'D', description: "Visit D from B", action: "visit" },
+          { nodeId: 'A', description: "Start BFS from node A. Add A to queue: [A]", action: "visit" },
+          { nodeId: 'B', description: "Process A, add neighbors to queue: [B, C]", action: "visit" },
+          { nodeId: 'C', description: "Process B, add neighbors to queue: [C, D]", action: "visit" },
+          { nodeId: 'D', description: "Process C, add neighbors to queue: [D, E]", action: "visit" },
+          { nodeId: 'E', description: "Process D, add neighbors to queue: [E, F]", action: "visit" },
+          { nodeId: 'F', description: "Process remaining nodes in queue", action: "visit" },
+        ];
+      case "hash-insert":
+        return [
+          { description: "Insert key 'mango' with value 6", action: "insert", key: "mango", value: 6 },
+          { description: "Calculate hash: 'mango'.length % 4 = 5 % 4 = 1", action: "hash" },
+          { description: "Insert into bucket 1 (collision with 'banana')", action: "collision" },
+          { description: "Use chaining to resolve collision", action: "resolve" },
+        ];
+      case "hash-search":
+        return [
+          { description: "Search for key 'orange'", action: "search", key: "orange" },
+          { description: "Calculate hash: 'orange'.length % 4 = 6 % 4 = 2", action: "hash" },
+          { description: "Check bucket 2", action: "check" },
+          { description: "Found 'orange' with value 8", action: "found" },
         ];
       default:
         return [
-          { nodeId: 'A', description: "Starting graph algorithm", action: "visit" },
+          { description: "Select an algorithm to see step-by-step visualization", action: "start" },
         ];
     }
   };
 
   const resetVisualization = () => {
     setArray([64, 34, 25, 12, 22, 11, 90]);
+    setSearchArray([11, 12, 22, 25, 34, 64, 90]);
     setCurrentStep(0);
-    setTreeStep(0);
-    setGraphStep(0);
     setComparing([]);
     setSwapping([]);
     setSorted([]);
     setIsPlaying(false);
+    setSearchLeft(0);
+    setSearchRight(6);
+    setSearchMid(-1);
+    setSearchFound(false);
+    setQueue([]);
+    setStack([]);
     
     // Reset tree nodes
     setTreeNodes(prev => prev.map(node => ({ ...node, visited: false, current: false })));
     
     // Reset graph nodes
-    setGraphNodes(prev => prev.map(node => ({ ...node, visited: false, current: false })));
+    setGraphNodes(prev => prev.map(node => ({ ...node, visited: false, current: false, distance: Infinity })));
+    
+    // Reset hash operation
+    setHashOperation({ type: '', key: '', value: '', highlight: -1 });
   };
 
   const togglePlayPause = () => {
@@ -174,57 +209,78 @@ const EnhancedVisualizations = () => {
     
     if (isPlaying) {
       interval = setTimeout(() => {
-        if (selectedCategory === "sorting") {
-          const steps = getAlgorithmSteps();
-          if (currentStep < steps.length) {
-            const step = steps[currentStep];
-            setComparing(step.comparing);
-            setSwapping(step.swapping);
+        const steps = getAlgorithmSteps();
+        
+        if (currentStep < steps.length) {
+          const step = steps[currentStep];
+          
+          if (selectedCategory === "sorting") {
+            if (step.comparing) setComparing(step.comparing);
+            if (step.swapping) setSwapping(step.swapping);
             
-            if (step.action === "swap" && step.swapping.length === 2) {
+            if (step.action === "swap" && step.swapping && step.swapping.length === 2) {
               const newArray = [...array];
               const [i, j] = step.swapping;
               [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
               setArray(newArray);
             }
-            
-            setCurrentStep(currentStep + 1);
-          } else {
-            setIsPlaying(false);
+          } else if (selectedCategory === "arrays" && selectedAlgorithm === "binary-search-array") {
+            if (step.action === "calculate") {
+              const mid = Math.floor((searchLeft + searchRight) / 2);
+              setSearchMid(mid);
+              if (searchArray[mid] === searchTarget) {
+                setSearchFound(true);
+              } else if (searchArray[mid] < searchTarget) {
+                setSearchLeft(mid + 1);
+              } else {
+                setSearchRight(mid - 1);
+              }
+            }
+          } else if (selectedCategory === "trees") {
+            if (step.nodeId) {
+              setTreeNodes(prev => prev.map(node => ({
+                ...node,
+                current: node.id === step.nodeId,
+                visited: node.id === step.nodeId ? true : node.visited
+              })));
+            }
+          } else if (selectedCategory === "graphs") {
+            if (step.nodeId) {
+              setGraphNodes(prev => prev.map(node => ({
+                ...node,
+                current: node.id === step.nodeId,
+                visited: node.id === step.nodeId ? true : node.visited
+              })));
+              
+              if (selectedAlgorithm === "bfs-graph") {
+                setQueue(prev => [...prev, step.nodeId]);
+              } else if (selectedAlgorithm === "dfs-graph") {
+                setStack(prev => [...prev, step.nodeId]);
+              }
+            }
+          } else if (selectedCategory === "hashing") {
+            if (step.key) {
+              setHashOperation({
+                type: step.action,
+                key: step.key,
+                value: step.value || '',
+                highlight: step.key.length % 4
+              });
+            }
+          }
+          
+          setCurrentStep(currentStep + 1);
+        } else {
+          setIsPlaying(false);
+          if (selectedCategory === "sorting") {
             setSorted(Array.from({length: array.length}, (_, i) => i));
-          }
-        } else if (selectedCategory === "trees") {
-          const steps = getTreeSteps();
-          if (treeStep < steps.length) {
-            const step = steps[treeStep];
-            setTreeNodes(prev => prev.map(node => ({
-              ...node,
-              current: node.id === step.nodeId,
-              visited: node.id === step.nodeId ? true : node.visited
-            })));
-            setTreeStep(treeStep + 1);
-          } else {
-            setIsPlaying(false);
-          }
-        } else if (selectedCategory === "graphs") {
-          const steps = getGraphSteps();
-          if (graphStep < steps.length) {
-            const step = steps[graphStep];
-            setGraphNodes(prev => prev.map(node => ({
-              ...node,
-              current: node.id === step.nodeId,
-              visited: node.id === step.nodeId ? true : node.visited
-            })));
-            setGraphStep(graphStep + 1);
-          } else {
-            setIsPlaying(false);
           }
         }
       }, speed);
     }
     
     return () => clearTimeout(interval);
-  }, [isPlaying, currentStep, treeStep, graphStep, speed, selectedCategory, selectedAlgorithm, array]);
+  }, [isPlaying, currentStep, speed, selectedCategory, selectedAlgorithm, array, searchLeft, searchRight, searchTarget, searchArray]);
 
   // Reset when algorithm changes
   useEffect(() => {
@@ -238,9 +294,15 @@ const EnhancedVisualizations = () => {
     return "bg-blue-500";
   };
 
+  const getSearchBarColor = (index: number) => {
+    if (searchFound && index === searchMid) return "bg-green-500";
+    if (index === searchMid) return "bg-yellow-500";
+    if (index < searchLeft || index > searchRight) return "bg-gray-300";
+    return "bg-blue-500";
+  };
+
   const renderSortingVisualization = () => (
     <div className="space-y-6">
-      {/* Array Visualization */}
       <div className="bg-gray-50 rounded-lg p-6">
         <div className="flex items-end justify-center space-x-2 h-64">
           {array.map((value, index) => (
@@ -259,16 +321,33 @@ const EnhancedVisualizations = () => {
           ))}
         </div>
       </div>
+    </div>
+  );
 
-      {/* Step Description */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <h3 className="font-semibold text-gray-800 mb-2">Step: {currentStep + 1}</h3>
-        <p className="text-gray-600">
-          {currentStep < getAlgorithmSteps().length 
-            ? getAlgorithmSteps()[currentStep]?.description || "Starting sorting..."
-            : "Sorting complete! The array is now sorted in ascending order."
-          }
-        </p>
+  const renderBinarySearchVisualization = () => (
+    <div className="space-y-6">
+      <div className="bg-gray-50 rounded-lg p-6">
+        <div className="mb-4 text-center">
+          <p className="text-lg font-semibold">Searching for: {searchTarget}</p>
+          <p className="text-sm text-gray-600">Left: {searchLeft}, Right: {searchRight}, Mid: {searchMid >= 0 ? searchMid : 'N/A'}</p>
+        </div>
+        <div className="flex items-end justify-center space-x-2 h-32">
+          {searchArray.map((value, index) => (
+            <div key={index} className="flex flex-col items-center space-y-2">
+              <div
+                className={`${getSearchBarColor(index)} rounded transition-all duration-500 min-w-[50px] h-16 flex items-center justify-center text-white font-bold`}
+              >
+                {value}
+              </div>
+              <div className="text-sm text-gray-600">{index}</div>
+            </div>
+          ))}
+        </div>
+        {searchFound && (
+          <div className="mt-4 text-center text-green-600 font-bold">
+            Target {searchTarget} found at index {searchMid}!
+          </div>
+        )}
       </div>
     </div>
   );
@@ -277,13 +356,15 @@ const EnhancedVisualizations = () => {
     <div className="space-y-6">
       <div className="bg-gray-50 rounded-lg p-6 h-80 relative overflow-hidden">
         <svg width="100%" height="100%" className="absolute inset-0">
-          {/* Tree edges with animation */}
-          <line x1="300" y1="50" x2="200" y2="150" stroke="#e5e7eb" strokeWidth="2" className="transition-all duration-300" />
-          <line x1="300" y1="50" x2="400" y2="150" stroke="#e5e7eb" strokeWidth="2" className="transition-all duration-300" />
-          <line x1="200" y1="150" x2="150" y2="250" stroke="#e5e7eb" strokeWidth="2" className="transition-all duration-300" />
-          <line x1="200" y1="150" x2="250" y2="250" stroke="#e5e7eb" strokeWidth="2" className="transition-all duration-300" />
+          {/* Tree edges */}
+          <line x1="300" y1="50" x2="200" y2="150" stroke="#e5e7eb" strokeWidth="2" />
+          <line x1="300" y1="50" x2="400" y2="150" stroke="#e5e7eb" strokeWidth="2" />
+          <line x1="200" y1="150" x2="150" y2="250" stroke="#e5e7eb" strokeWidth="2" />
+          <line x1="200" y1="150" x2="250" y2="250" stroke="#e5e7eb" strokeWidth="2" />
+          <line x1="400" y1="150" x2="350" y2="250" stroke="#e5e7eb" strokeWidth="2" />
+          <line x1="400" y1="150" x2="450" y2="250" stroke="#e5e7eb" strokeWidth="2" />
           
-          {/* Tree nodes with enhanced animations */}
+          {/* Tree nodes */}
           {treeNodes.map((node) => (
             <g key={node.id} className="transition-all duration-500">
               <circle
@@ -294,32 +375,18 @@ const EnhancedVisualizations = () => {
                 stroke="#ffffff"
                 strokeWidth="3"
                 className={`transition-all duration-500 ${node.current ? 'animate-pulse' : ''}`}
-                style={{
-                  filter: node.current ? 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.6))' : 'none'
-                }}
               />
               <text
                 x={node.x}
                 y={node.y + 5}
                 textAnchor="middle"
-                className="text-white font-bold text-sm transition-all duration-300"
+                className="text-white font-bold text-sm"
               >
                 {node.value}
               </text>
             </g>
           ))}
         </svg>
-      </div>
-      
-      {/* Tree Step Description */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <h3 className="font-semibold text-gray-800 mb-2">Step: {treeStep + 1}</h3>
-        <p className="text-gray-600">
-          {treeStep < getTreeSteps().length 
-            ? getTreeSteps()[treeStep]?.description || "Starting tree traversal..."
-            : "Tree algorithm complete!"
-          }
-        </p>
       </div>
     </div>
   );
@@ -328,13 +395,15 @@ const EnhancedVisualizations = () => {
     <div className="space-y-6">
       <div className="bg-gray-50 rounded-lg p-6 h-80 relative overflow-hidden">
         <svg width="100%" height="100%" className="absolute inset-0">
-          {/* Graph edges with hover effects */}
-          <line x1="100" y1="100" x2="300" y2="100" stroke="#e5e7eb" strokeWidth="3" className="transition-all duration-300 hover:stroke-blue-400" />
-          <line x1="100" y1="100" x2="200" y2="200" stroke="#e5e7eb" strokeWidth="3" className="transition-all duration-300 hover:stroke-blue-400" />
-          <line x1="300" y1="100" x2="400" y2="200" stroke="#e5e7eb" strokeWidth="3" className="transition-all duration-300 hover:stroke-blue-400" />
-          <line x1="200" y1="200" x2="400" y2="200" stroke="#e5e7eb" strokeWidth="3" className="transition-all duration-300 hover:stroke-blue-400" />
+          {/* Graph edges */}
+          <line x1="100" y1="100" x2="300" y2="100" stroke="#e5e7eb" strokeWidth="3" />
+          <line x1="100" y1="100" x2="200" y2="200" stroke="#e5e7eb" strokeWidth="3" />
+          <line x1="300" y1="100" x2="400" y2="200" stroke="#e5e7eb" strokeWidth="3" />
+          <line x1="200" y1="200" x2="400" y2="200" stroke="#e5e7eb" strokeWidth="3" />
+          <line x1="200" y1="200" x2="150" y2="300" stroke="#e5e7eb" strokeWidth="3" />
+          <line x1="400" y1="200" x2="350" y2="300" stroke="#e5e7eb" strokeWidth="3" />
           
-          {/* Graph nodes with enhanced animations */}
+          {/* Graph nodes */}
           {graphNodes.map((node) => (
             <g key={node.id} className="transition-all duration-500">
               <circle
@@ -344,49 +413,30 @@ const EnhancedVisualizations = () => {
                 fill={node.current ? "#ef4444" : node.visited ? "#10b981" : "#3b82f6"}
                 stroke="#ffffff"
                 strokeWidth="4"
-                className={`transition-all duration-500 cursor-pointer ${node.current ? 'animate-pulse' : ''}`}
-                style={{
-                  filter: node.current ? 'drop-shadow(0 0 15px rgba(239, 68, 68, 0.6))' : 'none'
-                }}
+                className={`transition-all duration-500 ${node.current ? 'animate-pulse' : ''}`}
               />
               <text
                 x={node.x}
                 y={node.y + 5}
                 textAnchor="middle"
-                className="text-white font-bold text-lg transition-all duration-300"
+                className="text-white font-bold text-lg"
               >
                 {node.id}
               </text>
             </g>
           ))}
         </svg>
-      </div>
-      
-      {/* Graph Step Description */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <h3 className="font-semibold text-gray-800 mb-2">Step: {graphStep + 1}</h3>
-        <p className="text-gray-600">
-          {graphStep < getGraphSteps().length 
-            ? getGraphSteps()[graphStep]?.description || "Starting graph traversal..."
-            : "Graph algorithm complete!"
-          }
-        </p>
-      </div>
-    </div>
-  );
-
-  const renderArrayVisualization = () => (
-    <div className="space-y-6">
-      <div className="bg-gray-50 rounded-lg p-6 h-80 flex items-center justify-center">
-        <div className="text-center">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Array Operations</h3>
-          <p className="text-gray-600">Select a specific array algorithm to see visualization</p>
-          <div className="mt-6 flex justify-center space-x-4">
-            {[1, 3, 5, 7, 9, 11].map((value, index) => (
-              <div key={index} className="bg-blue-500 text-white w-12 h-12 flex items-center justify-center rounded font-bold">
-                {value}
-              </div>
-            ))}
+        
+        {/* Queue/Stack display */}
+        <div className="absolute bottom-4 left-4 bg-white p-2 rounded shadow">
+          <div className="text-sm font-semibold">
+            {selectedAlgorithm === "bfs-graph" ? "Queue:" : "Stack:"}
+          </div>
+          <div className="text-sm">
+            {selectedAlgorithm === "bfs-graph" 
+              ? `[${queue.join(', ')}]` 
+              : `[${stack.join(', ')}]`
+            }
           </div>
         </div>
       </div>
@@ -395,36 +445,67 @@ const EnhancedVisualizations = () => {
 
   const renderHashingVisualization = () => (
     <div className="space-y-6">
-      <div className="bg-gray-50 rounded-lg p-6 h-80 flex items-center justify-center">
-        <div className="text-center">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Hash Table Operations</h3>
-          <p className="text-gray-600">Select a specific hashing algorithm to see visualization</p>
-          <div className="mt-6 grid grid-cols-4 gap-2 max-w-md mx-auto">
-            {Array(8).fill(null).map((_, index) => (
-              <div key={index} className="bg-gray-300 h-12 flex items-center justify-center rounded font-bold text-gray-600">
-                {index}
+      <div className="bg-gray-50 rounded-lg p-6 h-80">
+        <div className="grid grid-cols-4 gap-4 h-full">
+          {hashMap.map((bucket, index) => (
+            <div 
+              key={index} 
+              className={`bg-white rounded-lg border-2 p-3 transition-all duration-300 ${
+                hashOperation.highlight === index ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300'
+              }`}
+            >
+              <div className="text-center font-bold mb-2 text-gray-700">Bucket {index}</div>
+              <div className="space-y-2">
+                {bucket.items.length > 0 ? (
+                  bucket.items.map((item, itemIndex) => (
+                    <div key={itemIndex} className="bg-blue-100 p-2 rounded text-xs">
+                      <div className="font-mono">key: "{item.key}"</div>
+                      <div className="font-mono">val: {item.value}</div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-gray-400 text-xs text-center">empty</div>
+                )}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
+        
+        {/* Hash operation display */}
+        {hashOperation.type && (
+          <div className="mt-4 bg-white p-3 rounded border">
+            <div className="text-sm font-semibold">Current Operation:</div>
+            <div className="text-sm">
+              {hashOperation.type === 'insert' && `Inserting "${hashOperation.key}" with value ${hashOperation.value}`}
+              {hashOperation.type === 'search' && `Searching for "${hashOperation.key}"`}
+              {hashOperation.type === 'hash' && `Hash function: "${hashOperation.key}".length % 4 = ${hashOperation.key.length} % 4 = ${hashOperation.highlight}`}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 
   const renderVisualization = () => {
-    switch (selectedCategory) {
-      case "sorting":
-        return renderSortingVisualization();
-      case "trees":
-        return renderTreeVisualization();
-      case "graphs":
-        return renderGraphVisualization();
-      case "arrays":
-        return renderArrayVisualization();
-      case "hashing":
-        return renderHashingVisualization();
-      default:
-        return renderSortingVisualization();
+    if (selectedCategory === "sorting") {
+      return renderSortingVisualization();
+    } else if (selectedCategory === "arrays" && selectedAlgorithm === "binary-search-array") {
+      return renderBinarySearchVisualization();
+    } else if (selectedCategory === "trees") {
+      return renderTreeVisualization();
+    } else if (selectedCategory === "graphs") {
+      return renderGraphVisualization();
+    } else if (selectedCategory === "hashing") {
+      return renderHashingVisualization();
+    } else {
+      return (
+        <div className="bg-gray-50 rounded-lg p-6 h-80 flex items-center justify-center">
+          <div className="text-center">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Algorithm Visualization</h3>
+            <p className="text-gray-600">Select a specific algorithm to see step-by-step visualization</p>
+          </div>
+        </div>
+      );
     }
   };
 
@@ -517,6 +598,20 @@ const EnhancedVisualizations = () => {
 
         {renderVisualization()}
 
+        {/* Step Description */}
+        <div className="mt-6 bg-gray-50 rounded-lg p-4">
+          <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
+            <ChevronRight className="w-4 h-4 mr-1 text-blue-600" />
+            Step {currentStep + 1}: Current Operation
+          </h3>
+          <p className="text-gray-600">
+            {currentStep < getAlgorithmSteps().length 
+              ? getAlgorithmSteps()[currentStep]?.description || "Starting algorithm..."
+              : "Algorithm complete!"
+            }
+          </p>
+        </div>
+
         {/* Enhanced Legend */}
         <div className="mt-6 flex justify-center space-x-6">
           <div className="flex items-center space-x-2">
@@ -525,15 +620,19 @@ const EnhancedVisualizations = () => {
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-            <span className="text-sm text-gray-600">Comparing</span>
+            <span className="text-sm text-gray-600">Comparing/Current</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-4 h-4 bg-red-500 rounded animate-pulse"></div>
-            <span className="text-sm text-gray-600">Current/Swapping</span>
+            <span className="text-sm text-gray-600">Active/Swapping</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-4 h-4 bg-green-500 rounded"></div>
-            <span className="text-sm text-gray-600">Visited/Sorted</span>
+            <span className="text-sm text-gray-600">Visited/Sorted/Found</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-gray-300 rounded"></div>
+            <span className="text-sm text-gray-600">Inactive/Out of range</span>
           </div>
         </div>
       </div>
@@ -545,19 +644,31 @@ const EnhancedVisualizations = () => {
           <div>
             <h4 className="font-semibold text-gray-800 mb-2">How it works</h4>
             <p className="text-gray-600 text-sm">
-              This algorithm demonstrates the step-by-step process of solving the problem with visual feedback and smooth animations.
+              {selectedAlgorithm === 'bubble-sort' && "Bubble sort repeatedly compares adjacent elements and swaps them if they're in wrong order."}
+              {selectedAlgorithm === 'binary-search-array' && "Binary search finds target by repeatedly dividing sorted array in half."}
+              {selectedAlgorithm === 'tree-traversal-dfs' && "DFS explores tree depth-first using recursion or stack."}
+              {selectedAlgorithm === 'tree-traversal-bfs' && "BFS explores tree level-by-level using a queue."}
+              {selectedAlgorithm === 'dfs-graph' && "DFS explores graph depth-first, going as deep as possible before backtracking."}
+              {selectedAlgorithm === 'bfs-graph' && "BFS explores graph level-by-level, visiting all neighbors before moving deeper."}
+              {selectedAlgorithm.includes('hash') && "Hash table uses hash function to map keys to array indices for fast lookup."}
+              {!selectedAlgorithm.includes('bubble') && !selectedAlgorithm.includes('binary') && !selectedAlgorithm.includes('tree') && !selectedAlgorithm.includes('graph') && !selectedAlgorithm.includes('hash') && "This algorithm demonstrates step-by-step problem solving with visual feedback."}
             </p>
           </div>
           <div>
             <h4 className="font-semibold text-gray-800 mb-2">Time Complexity</h4>
             <p className="text-gray-600 text-sm">
-              {algorithmCategories[selectedCategory as keyof typeof algorithmCategories]?.find(a => a.id === selectedAlgorithm)?.complexity}
+              {algorithmCategories[selectedCategory as keyof typeof algorithmCategories]?.find(a => a.id === selectedAlgorithm)?.complexity || "N/A"}
             </p>
           </div>
           <div>
             <h4 className="font-semibold text-gray-800 mb-2">Use Cases</h4>
             <p className="text-gray-600 text-sm">
-              Understanding when and where to apply this algorithm in real-world scenarios with optimal performance.
+              {selectedAlgorithm === 'bubble-sort' && "Educational purposes, small datasets where simplicity matters."}
+              {selectedAlgorithm === 'binary-search-array' && "Searching in sorted arrays, finding insertion points."}
+              {selectedAlgorithm.includes('tree') && "File systems, expression parsing, database indexing."}
+              {selectedAlgorithm.includes('graph') && "Social networks, shortest paths, connected components."}
+              {selectedAlgorithm.includes('hash') && "Caching, database indexing, fast lookups."}
+              {!selectedAlgorithm.includes('bubble') && !selectedAlgorithm.includes('binary') && !selectedAlgorithm.includes('tree') && !selectedAlgorithm.includes('graph') && !selectedAlgorithm.includes('hash') && "Understanding algorithmic thinking and problem-solving patterns."}
             </p>
           </div>
         </div>
