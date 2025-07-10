@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Send, Bot, User, BookOpen, ExternalLink, Loader, FileText, Lightbulb, ArrowRight, Sparkles, Zap, Brain, Code2, Rocket } from "lucide-react";
 
@@ -17,7 +18,7 @@ const ProblemAnalyzerEnhanced = () => {
   const [problemText, setProblemText] = useState("");
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
-  const [visibleHintIndex, setVisibleHintIndex] =useState(-1);
+  const [visibleHintIndex, setVisibleHintIndex] = useState(-1);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -114,13 +115,23 @@ Problem: ${problemText}`;
     };
 
     setChatMessages(prev => [...prev, userMessage]);
+    const currentInput = userInput;
     setUserInput("");
     setIsLoading(true);
 
     try {
-      const prompt =
-        "You are an expert DSA mentor. Analyze and answer the following question from the user. Explain step by step, use DSA patterns, and help the user understand fundamental concepts where appropriate. Always be interactive and friendly.\n\n" +
-        userInput;
+      const prompt = `You are an expert DSA mentor specializing in Data Structures and Algorithms. Help the user understand concepts step by step with clear explanations. 
+
+User question: ${currentInput}
+
+Please provide:
+1. A clear explanation of the concept
+2. Step-by-step approach if it's a problem
+3. Time and space complexity analysis
+4. Related concepts or patterns
+5. Practical examples when helpful
+
+Keep your response educational and engaging.`;
 
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
         method: "POST",
@@ -129,10 +140,13 @@ Problem: ${problemText}`;
           contents: [{ parts: [{ text: prompt }] }]
         }),
       });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
       const data = await res.json();
-      const answer =
-        data.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "Sorry, I couldn't process your request. Try again!";
+      const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't process your request. Try again!";
 
       const aiResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -141,18 +155,26 @@ Problem: ${problemText}`;
         timestamp: new Date()
       };
       setChatMessages(prev => [...prev, aiResponse]);
-      setIsLoading(false);
-    } catch {
+    } catch (error) {
+      console.error("Chat error:", error);
       setChatMessages(prev => [
         ...prev,
         {
           id: (Date.now() + 2).toString(),
           type: 'ai',
-          content: "Error: Could not fetch a response from Gemini AI.",
+          content: "Error: Could not connect to AI service. Please check your internet connection and try again.",
           timestamp: new Date()
         }
       ]);
+    } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
@@ -428,7 +450,7 @@ Problem: ${problemText}`;
                 type="text"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyPress={handleKeyPress}
                 placeholder="Ask about any DSA problem or concept..."
                 className="flex-1 px-4 py-3 bg-background border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary/50 text-foreground placeholder-muted-foreground transition-all duration-300"
               />
