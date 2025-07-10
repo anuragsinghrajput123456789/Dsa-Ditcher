@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Send, Bot, User, BookOpen, ExternalLink, Loader, FileText, Lightbulb, ArrowRight, Sparkles, Zap, Brain, Code2, Rocket } from "lucide-react";
 
@@ -54,7 +53,7 @@ const ProblemAnalyzerEnhanced = () => {
     }
   ];
 
-  const GEMINI_API_KEY = "AIzaSyAHI6dEYABoLBXht70PtS97_fPFruDipH8";
+  const GEMINI_API_KEY = "AIzaSyACSZhalZoLyybyZdvy48fzKdhosZRnclc";
 
   const analyzeProblem = async () => {
     if (!problemText.trim()) return;

@@ -1,8 +1,7 @@
-
 import { useState, useRef, useEffect } from "react";
 import { MessageSquare, Send, Minimize2, Bot, User, X } from "lucide-react";
 
-const GEMINI_API_KEY = "AIzaSyAHI6dEYABoLBXht70PtS97_fPFruDipH8";
+const GEMINI_API_KEY = "AIzaSyACSZhalZoLyybyZdvy48fzKdhosZRnclc";
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
