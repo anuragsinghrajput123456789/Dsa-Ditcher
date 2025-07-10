@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Book, Search, BookOpen, TrendingUp, Star, Timer, Calendar, Code, MessageSquare, Lightbulb, Map, Play, Target, Sparkles, Zap, Award, Trophy, Heart, Rocket, Clock, Pause } from "lucide-react";
+import { Book, Search, BookOpen, TrendingUp, Star, Timer, Calendar, Code, MessageSquare, Lightbulb, Map, Play, Target, Sparkles, Zap, Award, Trophy, Heart, Rocket, Clock, Pause, Medal, Crown, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
@@ -51,6 +52,41 @@ const Dashboard = () => {
       borderColor: "border-blue-200 dark:border-blue-700",
       isTimer: true
     },
+  ];
+
+  const achievements = [
+    { 
+      title: "First Steps", 
+      description: "Completed your first problem", 
+      icon: Trophy, 
+      color: "from-yellow-400 to-yellow-600", 
+      earned: true,
+      xp: "+50 XP"
+    },
+    { 
+      title: "Problem Solver", 
+      description: "Solved 10 problems", 
+      icon: Target, 
+      color: "from-blue-400 to-blue-600", 
+      earned: true,
+      xp: "+100 XP"
+    },
+    { 
+      title: "Streak Master", 
+      description: "7-day solving streak", 
+      icon: Flame, 
+      color: "from-orange-400 to-red-500", 
+      earned: true,
+      xp: "+150 XP"
+    },
+    { 
+      title: "Algorithm Expert", 
+      description: "Master 5 algorithm patterns", 
+      icon: Crown, 
+      color: "from-purple-400 to-purple-600", 
+      earned: false,
+      xp: "+200 XP"
+    }
   ];
 
   const quickActions = [
@@ -115,18 +151,18 @@ const Dashboard = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white/20 rounded-xl p-6 backdrop-blur-sm border border-white/10 hover:bg-white/25 transition-all duration-300 animate-fade-in" style={{animationDelay: '0.4s'}}>
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-2">
-                  <Target className="w-5 h-5" />
-                  <span className="text-sm font-medium">Progress to Level 4</span>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Medal className="w-6 h-6 animate-pulse" />
                 </div>
-                <span className="text-sm font-bold">1250 / 2000 XP</span>
+                <div>
+                  <div className="text-2xl font-bold">Level 3</div>
+                  <div className="text-sm opacity-90">Intermediate Solver</div>
+                </div>
               </div>
-              <div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
-                <div 
-                  className="bg-white rounded-full h-3 transition-all duration-1000 ease-out animate-scale-in shadow-lg"
-                  style={{ width: "62.5%", animationDelay: '0.6s' }}
-                ></div>
+              <div className="flex items-center gap-2 text-sm">
+                <Star className="w-4 h-4 text-yellow-300" />
+                <span>1250 XP earned</span>
               </div>
             </div>
             
@@ -209,6 +245,67 @@ const Dashboard = () => {
             </div>
           );
         })}
+      </div>
+
+      {/* Achievements Section */}
+      <div className="bg-card rounded-2xl p-8 shadow-xl border border-border animate-fade-in">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl">
+            <Trophy className="w-7 h-7 text-purple-500 animate-pulse" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground">Your Achievements</h2>
+          <div className="ml-auto">
+            <Sparkles className="w-6 h-6 text-purple-500 animate-bounce" />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {achievements.map((achievement, index) => {
+            const Icon = achievement.icon;
+            return (
+              <div 
+                key={index} 
+                className={`relative overflow-hidden rounded-xl p-6 border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 animate-scale-in ${
+                  achievement.earned 
+                    ? 'border-green-200 dark:border-green-700/50 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20' 
+                    : 'border-gray-200 dark:border-gray-700 bg-muted/30'
+                }`}
+                style={{animationDelay: `${index * 0.1}s`}}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r ${achievement.color} shadow-lg`}>
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+                  {achievement.earned && (
+                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                      <Star className="w-4 h-4 text-white fill-white" />
+                    </div>
+                  )}
+                </div>
+                <h3 className={`font-semibold mb-2 ${achievement.earned ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  {achievement.title}
+                </h3>
+                <p className={`text-sm mb-3 ${achievement.earned ? 'text-muted-foreground' : 'text-muted-foreground/70'}`}>
+                  {achievement.description}
+                </p>
+                <div className={`text-xs font-medium px-2 py-1 rounded-full inline-block ${
+                  achievement.earned 
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' 
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                }`}>
+                  {achievement.xp}
+                </div>
+                {!achievement.earned && (
+                  <div className="absolute inset-0 bg-muted/20 backdrop-blur-[1px] rounded-xl flex items-center justify-center">
+                    <div className="text-xs font-medium text-muted-foreground bg-background/80 px-3 py-1 rounded-full border">
+                      Locked
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Problem of the Day */}
