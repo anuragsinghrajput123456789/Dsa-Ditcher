@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Play, Pause, RotateCcw, Settings, ChevronRight } from "lucide-react";
 
@@ -156,16 +155,16 @@ const EnhancedVisualizations = () => {
       case "hash-insert":
         return [
           { description: "Insert key 'mango' with value 6", action: "insert", key: "mango", value: 6 },
-          { description: "Calculate hash: 'mango'.length % 4 = 5 % 4 = 1", action: "hash" },
-          { description: "Insert into bucket 1 (collision with 'banana')", action: "collision" },
-          { description: "Use chaining to resolve collision", action: "resolve" },
+          { description: "Calculate hash: 'mango'.length % 4 = 5 % 4 = 1", action: "hash", key: "mango" },
+          { description: "Insert into bucket 1 (collision with 'banana')", action: "collision", key: "mango" },
+          { description: "Use chaining to resolve collision", action: "resolve", key: "mango" },
         ];
       case "hash-search":
         return [
           { description: "Search for key 'orange'", action: "search", key: "orange" },
-          { description: "Calculate hash: 'orange'.length % 4 = 6 % 4 = 2", action: "hash" },
-          { description: "Check bucket 2", action: "check" },
-          { description: "Found 'orange' with value 8", action: "found" },
+          { description: "Calculate hash: 'orange'.length % 4 = 6 % 4 = 2", action: "hash", key: "orange" },
+          { description: "Check bucket 2", action: "check", key: "orange" },
+          { description: "Found 'orange' with value 8", action: "found", key: "orange" },
         ];
       default:
         return [
@@ -215,10 +214,11 @@ const EnhancedVisualizations = () => {
           const step = steps[currentStep];
           
           if (selectedCategory === "sorting") {
-            if (step.comparing) setComparing(step.comparing);
-            if (step.swapping) setSwapping(step.swapping);
+            // Type guard to check if step has comparing property
+            if ('comparing' in step && step.comparing) setComparing(step.comparing);
+            if ('swapping' in step && step.swapping) setSwapping(step.swapping);
             
-            if (step.action === "swap" && step.swapping && step.swapping.length === 2) {
+            if (step.action === "swap" && 'swapping' in step && step.swapping && step.swapping.length === 2) {
               const newArray = [...array];
               const [i, j] = step.swapping;
               [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
@@ -237,7 +237,8 @@ const EnhancedVisualizations = () => {
               }
             }
           } else if (selectedCategory === "trees") {
-            if (step.nodeId) {
+            // Type guard to check if step has nodeId property
+            if ('nodeId' in step && step.nodeId) {
               setTreeNodes(prev => prev.map(node => ({
                 ...node,
                 current: node.id === step.nodeId,
@@ -245,7 +246,8 @@ const EnhancedVisualizations = () => {
               })));
             }
           } else if (selectedCategory === "graphs") {
-            if (step.nodeId) {
+            // Type guard to check if step has nodeId property
+            if ('nodeId' in step && step.nodeId) {
               setGraphNodes(prev => prev.map(node => ({
                 ...node,
                 current: node.id === step.nodeId,
@@ -253,17 +255,18 @@ const EnhancedVisualizations = () => {
               })));
               
               if (selectedAlgorithm === "bfs-graph") {
-                setQueue(prev => [...prev, step.nodeId]);
+                setQueue(prev => [...prev, step.nodeId as string]);
               } else if (selectedAlgorithm === "dfs-graph") {
-                setStack(prev => [...prev, step.nodeId]);
+                setStack(prev => [...prev, step.nodeId as string]);
               }
             }
           } else if (selectedCategory === "hashing") {
-            if (step.key) {
+            // Type guard to check if step has key property
+            if ('key' in step && step.key) {
               setHashOperation({
                 type: step.action,
                 key: step.key,
-                value: step.value || '',
+                value: ('value' in step && step.value) ? step.value.toString() : '',
                 highlight: step.key.length % 4
               });
             }
