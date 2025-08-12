@@ -267,11 +267,12 @@ const TopicExplorer = () => {
         {filteredTopics.map((topic) => (
           <Card
             key={topic.id}
-            className="hover:shadow-lg transition-all duration-200 cursor-pointer hover:-translate-y-1 group"
+            className="hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-2 group border-2 hover:border-primary/20 overflow-hidden"
+            onClick={() => handleTopicSelect(topic.id)}
           >
             <CardHeader className="pb-4">
               <div className="flex justify-between items-start mb-4">
-                <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r ${topic.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
+                <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r ${topic.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                   <span className="text-xl sm:text-2xl">{topic.icon}</span>
                 </div>
                 <Button
@@ -281,18 +282,18 @@ const TopicExplorer = () => {
                     e.stopPropagation();
                     toggleTopicCompletion(topic.id);
                   }}
-                  className={`p-1 rounded-full transition-colors ${
+                  className={`p-1 rounded-full transition-all duration-200 ${
                     completedTopics.includes(topic.id) 
-                      ? 'text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-400' 
-                      : 'text-muted-foreground hover:text-green-600'
+                      ? 'text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-400 scale-110' 
+                      : 'text-muted-foreground hover:text-green-600 hover:bg-green-50'
                   }`}
                 >
                   <CheckCircle className="w-5 h-5" />
                 </Button>
               </div>
               
-              <CardTitle className="text-lg sm:text-xl">{topic.name}</CardTitle>
-              <p className="text-muted-foreground text-sm">{topic.description}</p>
+              <CardTitle className="text-lg sm:text-xl group-hover:text-primary transition-colors duration-200">{topic.name}</CardTitle>
+              <p className="text-muted-foreground text-sm leading-relaxed">{topic.description}</p>
             </CardHeader>
             
             <CardContent>
@@ -316,14 +317,10 @@ const TopicExplorer = () => {
                 >
                   {topic.difficulty}
                 </Badge>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleTopicSelect(topic.id)}
-                  className="text-primary hover:text-primary/80"
-                >
-                  Learn More →
-                </Button>
+                <div className="text-primary hover:text-primary/80 text-sm font-medium group-hover:translate-x-1 transition-transform duration-200 flex items-center">
+                  Learn More
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </div>
               </div>
             </CardContent>
           </Card>
