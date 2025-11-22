@@ -20,7 +20,7 @@ const ComplexityFinder = ({ code, language }: ComplexityFinderProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const GEMINI_API_KEY = "AIzaSyACSZhalZoLyybyZdvy48fzKdhosZRnclc";
+  const GEMINI_API_KEY = "AIzaSyDF152AJHVlqqnfzXWtu7QdQvplIwaC0rY";
 
   const analyzeComplexity = async () => {
     if (!code.trim()) {
