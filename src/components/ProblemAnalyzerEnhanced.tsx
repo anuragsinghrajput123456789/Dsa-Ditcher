@@ -309,7 +309,44 @@ Keep your response educational and engaging.`;
               <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
             </div>
           </div>
-          <div className="text-foreground leading-relaxed whitespace-pre-wrap bg-muted/30 p-6 rounded-xl border border-border">{analysis.summary}</div>
+          <div className="prose prose-slate dark:prose-invert max-w-none">
+            <div className="text-foreground leading-loose whitespace-pre-wrap bg-gradient-to-br from-muted/40 to-muted/20 p-8 rounded-2xl border-2 border-border/50 shadow-inner space-y-4">
+              {analysis.summary.split('\n\n').map((paragraph, idx) => {
+                // Check if it's a heading (starts with # or **)
+                if (paragraph.trim().startsWith('#')) {
+                  const level = paragraph.match(/^#+/)?.[0].length || 1;
+                  const text = paragraph.replace(/^#+\s*/, '');
+                  const HeadingTag = `h${Math.min(level + 1, 6)}` as keyof JSX.IntrinsicElements;
+                  return (
+                    <HeadingTag key={idx} className="font-bold text-primary mt-6 mb-3 first:mt-0">
+                      {text}
+                    </HeadingTag>
+                  );
+                }
+                // Check if it's a list item
+                if (paragraph.trim().match(/^[\d]+\.|^[-*•]/)) {
+                  return (
+                    <div key={idx} className="flex gap-3 pl-4">
+                      <span className="text-primary font-bold flex-shrink-0">•</span>
+                      <p className="text-foreground/90">{paragraph.replace(/^[\d]+\.|^[-*•]\s*/, '')}</p>
+                    </div>
+                  );
+                }
+                // Bold text
+                const formattedText = paragraph.split(/(\*\*.*?\*\*)/).map((part, i) => {
+                  if (part.startsWith('**') && part.endsWith('**')) {
+                    return <strong key={i} className="text-foreground font-semibold">{part.slice(2, -2)}</strong>;
+                  }
+                  return part;
+                });
+                return paragraph.trim() ? (
+                  <p key={idx} className="text-foreground/90 leading-relaxed">
+                    {formattedText}
+                  </p>
+                ) : null;
+              })}
+            </div>
+          </div>
         </div>
       )}
 
@@ -404,23 +441,82 @@ Keep your response educational and engaging.`;
             ) : (
               chatMessages.map((message) => (
                 <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
-                  <div className={`max-w-[80%] p-4 rounded-2xl ${
+                  <div className={`max-w-[85%] p-5 rounded-2xl ${
                     message.type === 'user' 
                       ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' 
-                      : 'bg-muted/50 text-foreground border border-border shadow-lg'
+                      : 'bg-gradient-to-br from-muted/60 to-muted/30 text-foreground border-2 border-border/50 shadow-lg'
                   }`}>
                     <div className="flex items-start space-x-3">
                       {message.type === 'ai' && (
-                        <div className="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                          <Bot className="w-4 h-4 text-emerald-500" />
+                        <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex-shrink-0">
+                          <Bot className="w-5 h-5 text-emerald-500" />
                         </div>
                       )}
                       {message.type === 'user' && (
-                        <div className="p-1 bg-white/20 rounded-lg">
-                          <User className="w-4 h-4" />
+                        <div className="p-1.5 bg-white/20 rounded-lg flex-shrink-0">
+                          <User className="w-5 h-5" />
                         </div>
                       )}
-                      <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
+                      <div className="flex-1 space-y-3">
+                        {message.content.split('\n\n').map((paragraph, idx) => {
+                          // Check if it's a heading
+                          if (paragraph.trim().startsWith('#')) {
+                            const text = paragraph.replace(/^#+\s*/, '');
+                            return (
+                              <h4 key={idx} className={`font-bold text-lg mb-2 ${message.type === 'user' ? 'text-white' : 'text-primary'}`}>
+                                {text}
+                              </h4>
+                            );
+                          }
+                          // Check if it's a list item
+                          if (paragraph.trim().match(/^[\d]+\.|^[-*•]/)) {
+                            return (
+                              <div key={idx} className="flex gap-2 pl-2">
+                                <span className={`font-bold flex-shrink-0 ${message.type === 'user' ? 'text-white/80' : 'text-primary'}`}>•</span>
+                                <span className={`leading-relaxed ${message.type === 'user' ? 'text-white/95' : 'text-foreground/90'}`}>
+                                  {paragraph.replace(/^[\d]+\.|^[-*•]\s*/, '')}
+                                </span>
+                              </div>
+                            );
+                          }
+                          // Bold text with **
+                          const formattedText = paragraph.split(/(\*\*.*?\*\*)/).map((part, i) => {
+                            if (part.startsWith('**') && part.endsWith('**')) {
+                              return (
+                                <strong key={i} className={message.type === 'user' ? 'text-white font-semibold' : 'text-foreground font-semibold'}>
+                                  {part.slice(2, -2)}
+                                </strong>
+                              );
+                            }
+                            return part;
+                          });
+                          // Code blocks with `
+                          const withCode = formattedText.map((part, i) => {
+                            if (typeof part === 'string') {
+                              return part.split(/(`[^`]+`)/).map((codePart, j) => {
+                                if (codePart.startsWith('`') && codePart.endsWith('`')) {
+                                  return (
+                                    <code key={`${i}-${j}`} className={`px-1.5 py-0.5 rounded text-xs font-mono ${
+                                      message.type === 'user' 
+                                        ? 'bg-white/20 text-white' 
+                                        : 'bg-primary/10 text-primary'
+                                    }`}>
+                                      {codePart.slice(1, -1)}
+                                    </code>
+                                  );
+                                }
+                                return codePart;
+                              });
+                            }
+                            return part;
+                          });
+                          return paragraph.trim() ? (
+                            <p key={idx} className={`leading-relaxed ${message.type === 'user' ? 'text-white/95' : 'text-foreground/90'}`}>
+                              {withCode}
+                            </p>
+                          ) : null;
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
