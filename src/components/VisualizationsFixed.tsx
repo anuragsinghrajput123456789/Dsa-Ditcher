@@ -18,6 +18,7 @@ const VisualizationsFixed = () => {
   const [customAlgorithmInput, setCustomAlgorithmInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [showCustomInput, setShowCustomInput] = useState(false);
+  const [geminiApiKey, setGeminiApiKey] = useState("");
   const [customAlgorithmInfo, setCustomAlgorithmInfo] = useState<{
     name: string;
     description: string;
@@ -90,10 +91,15 @@ const VisualizationsFixed = () => {
       return;
     }
 
+    if (!geminiApiKey.trim()) {
+      toast.error("Please enter your Gemini API key");
+      return;
+    }
+
     setIsGenerating(true);
     try {
       const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyDVWX6Nk3e-xpZN9OBaX5vCLsEXbpEkp1o",
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiApiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -136,7 +142,15 @@ Important:
       );
 
       if (!response.ok) {
-        throw new Error("Failed to generate visualization");
+        const errorData = await response.json().catch(() => null);
+        const errorMessage = errorData?.error?.message || `API Error: ${response.status}`;
+        console.error("Gemini API Error:", errorMessage);
+        toast.error(errorMessage.includes("API key") 
+          ? "Invalid API key. Please check your Gemini API key." 
+          : errorMessage
+        );
+        setIsGenerating(false);
+        return;
       }
 
       const data = await response.json();
@@ -170,7 +184,8 @@ Important:
       toast.success("Custom visualization generated!");
     } catch (error) {
       console.error("Error generating visualization:", error);
-      toast.error("Failed to generate visualization. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      toast.error(`Failed to generate visualization: ${errorMessage}`);
     } finally {
       setIsGenerating(false);
     }
@@ -447,19 +462,35 @@ Important:
           <div className="space-y-4 animate-in fade-in duration-300">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
+                Gemini API Key
+              </label>
+              <input
+                type="password"
+                value={geminiApiKey}
+                onChange={(e) => setGeminiApiKey(e.target.value)}
+                placeholder="Enter your Gemini API key (AIza...)"
+                className="w-full px-4 py-2 rounded-lg border border-purple-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-400 focus:outline-none"
+                disabled={isGenerating}
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                Get your free API key from <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">Google AI Studio</a>
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Describe the algorithm you want to visualize
               </label>
               <Textarea
                 value={customAlgorithmInput}
                 onChange={(e) => setCustomAlgorithmInput(e.target.value)}
-                placeholder="Example: 'Selection sort algorithm that finds the minimum element and swaps it to the front' or 'Quick sort with pivot selection'"
+                placeholder="Example: 'Selection sort algorithm that finds the minimum element and swaps it to the front' or paste your code here"
                 className="min-h-[120px] resize-none border-purple-200 focus:border-purple-400 focus:ring-purple-400"
                 disabled={isGenerating}
               />
             </div>
             <button
               onClick={generateCustomVisualization}
-              disabled={isGenerating || !customAlgorithmInput.trim()}
+              disabled={isGenerating || !customAlgorithmInput.trim() || !geminiApiKey.trim()}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isGenerating ? (
@@ -636,7 +667,7 @@ Important:
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
             <h4 className="font-semibold text-slate-800 mb-2">How it works</h4>
-            <p className="text-slate-600 text-sm">
+            <p className="text-slate-600 text-sm leading-relaxed">
               {customAlgorithmInfo ? customAlgorithmInfo.description : (
                 <>
                   {selectedAlgorithm === 'bubble-sort' && "Bubble sort repeatedly compares adjacent elements and swaps them if they're in the wrong order, 'bubbling' larger elements to the end."}
