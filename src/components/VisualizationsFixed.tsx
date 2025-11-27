@@ -143,12 +143,18 @@ Important:
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        const errorMessage = errorData?.error?.message || `API Error: ${response.status}`;
-        console.error("Gemini API Error:", errorMessage);
-        toast.error(errorMessage.includes("API key") 
-          ? "Invalid API key. Please check your Gemini API key." 
-          : errorMessage
-        );
+        console.error("Gemini API Error:", response.status, errorData);
+        
+        if (response.status === 429) {
+          toast.error("Your Gemini API quota has been exceeded. Please wait for it to reset or use a different API key with available quota.", {
+            duration: 6000
+          });
+        } else if (response.status === 400 && errorData?.error?.message?.includes("API key")) {
+          toast.error("Invalid API key. Please check your Gemini API key.");
+        } else {
+          const errorMessage = errorData?.error?.message || `API Error: ${response.status}`;
+          toast.error(errorMessage);
+        }
         setIsGenerating(false);
         return;
       }
