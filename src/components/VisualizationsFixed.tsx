@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from "react";
-import { Play, Pause, RotateCcw, Settings, ChevronRight } from "lucide-react";
+import { Play, Pause, RotateCcw, Settings, ChevronRight, Sparkles, Loader2 } from "lucide-react";
+import { Textarea } from "./ui/textarea";
+import { toast } from "sonner";
 
 const VisualizationsFixed = () => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState("bubble-sort");
@@ -11,6 +13,17 @@ const VisualizationsFixed = () => {
   const [comparing, setComparing] = useState<number[]>([]);
   const [swapping, setSwapping] = useState<number[]>([]);
   const [sorted, setSorted] = useState<number[]>([]);
+  
+  // Custom algorithm state
+  const [customAlgorithmInput, setCustomAlgorithmInput] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [customAlgorithmInfo, setCustomAlgorithmInfo] = useState<{
+    name: string;
+    description: string;
+    complexity: string;
+    spaceComplexity: string;
+  } | null>(null);
 
   const algorithms = [
     { id: "bubble-sort", name: "Bubble Sort", category: "Sorting", complexity: "O(n²)", visual: "array" },
@@ -70,6 +83,98 @@ const VisualizationsFixed = () => {
   };
 
   const [steps, setSteps] = useState(() => generateBubbleSortSteps(array));
+
+  const generateCustomVisualization = async () => {
+    if (!customAlgorithmInput.trim()) {
+      toast.error("Please enter an algorithm description");
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyDVWX6Nk3e-xpZN9OBaX5vCLsEXbpEkp1o",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `You are an algorithm visualization expert. Given an algorithm description, generate step-by-step visualization data.
+
+Algorithm Description: ${customAlgorithmInput}
+
+Generate a JSON response with the following structure:
+{
+  "algorithmName": "Name of the algorithm",
+  "description": "Brief description of how it works",
+  "timeComplexity": "Time complexity (e.g., O(n²))",
+  "spaceComplexity": "Space complexity (e.g., O(1))",
+  "visualType": "array" (always use array for now),
+  "initialArray": [array of 7 numbers between 1-100],
+  "steps": [
+    {
+      "comparing": [array of indices being compared],
+      "swapping": [array of indices being swapped],
+      "array": [current state of array],
+      "description": "Description of this step",
+      "sorted": [array of indices that are in final position]
+    }
+  ]
+}
+
+Important:
+- Generate 15-30 steps that show the algorithm execution
+- Each step should have a clear description
+- Make the visualization educational and easy to follow
+- Ensure the steps are accurate to the algorithm
+- Only respond with valid JSON, no additional text`
+              }]
+            }]
+          })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to generate visualization");
+      }
+
+      const data = await response.json();
+      const text = data.candidates[0].content.parts[0].text;
+      
+      // Extract JSON from markdown code blocks if present
+      const jsonMatch = text.match(/```json\n?([\s\S]*?)\n?```/) || text.match(/```\n?([\s\S]*?)\n?```/);
+      const jsonText = jsonMatch ? jsonMatch[1] : text;
+      
+      const result = JSON.parse(jsonText);
+
+      // Set custom algorithm info
+      setCustomAlgorithmInfo({
+        name: result.algorithmName,
+        description: result.description,
+        complexity: result.timeComplexity,
+        spaceComplexity: result.spaceComplexity
+      });
+
+      // Set visualization data
+      setArray(result.initialArray);
+      setSteps(result.steps);
+      setCurrentStep(0);
+      setComparing([]);
+      setSwapping([]);
+      setSorted([]);
+      setIsPlaying(false);
+      setSelectedAlgorithm("custom");
+      setShowCustomInput(false);
+
+      toast.success("Custom visualization generated!");
+    } catch (error) {
+      console.error("Error generating visualization:", error);
+      toast.error("Failed to generate visualization. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const resetVisualization = () => {
     const newArray = [64, 34, 25, 12, 22, 11, 90];
@@ -322,16 +427,70 @@ const VisualizationsFixed = () => {
         <p className="text-slate-600 text-lg">Interactive animations to understand how algorithms work</p>
       </div>
 
+      {/* Custom Algorithm Input */}
+      <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 shadow-lg border border-purple-200">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-purple-600" />
+            <h2 className="text-xl font-bold text-slate-800">AI-Powered Custom Visualizations</h2>
+          </div>
+          <button
+            onClick={() => setShowCustomInput(!showCustomInput)}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center gap-2 shadow-md"
+          >
+            <Sparkles className="w-4 h-4" />
+            {showCustomInput ? "Hide" : "Create Custom"}
+          </button>
+        </div>
+
+        {showCustomInput && (
+          <div className="space-y-4 animate-in fade-in duration-300">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Describe the algorithm you want to visualize
+              </label>
+              <Textarea
+                value={customAlgorithmInput}
+                onChange={(e) => setCustomAlgorithmInput(e.target.value)}
+                placeholder="Example: 'Selection sort algorithm that finds the minimum element and swaps it to the front' or 'Quick sort with pivot selection'"
+                className="min-h-[120px] resize-none border-purple-200 focus:border-purple-400 focus:ring-purple-400"
+                disabled={isGenerating}
+              />
+            </div>
+            <button
+              onClick={generateCustomVisualization}
+              disabled={isGenerating || !customAlgorithmInput.trim()}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Generating Visualization...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-5 h-5" />
+                  Generate Visualization
+                </>
+              )}
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Algorithm Selection */}
       <div className="bg-gradient-to-br from-white to-violet-50 rounded-xl p-6 shadow-lg border border-violet-200">
-        <h2 className="text-xl font-bold text-slate-800 mb-4">Choose Algorithm</h2>
+        <h2 className="text-xl font-bold text-slate-800 mb-4">Pre-built Algorithms</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
           {algorithms.map((algo) => (
             <button
               key={algo.id}
-              onClick={() => setSelectedAlgorithm(algo.id)}
+              onClick={() => {
+                setSelectedAlgorithm(algo.id);
+                setCustomAlgorithmInfo(null);
+              }}
               className={`p-4 rounded-lg border-2 transition-all duration-200 text-center group ${
-                selectedAlgorithm === algo.id
+                selectedAlgorithm === algo.id && !customAlgorithmInfo
                   ? "border-violet-500 bg-gradient-to-r from-violet-50 to-purple-50 text-violet-700 shadow-md"
                   : "border-slate-200 hover:border-violet-300 text-slate-700 hover:bg-slate-50"
               }`}
@@ -349,9 +508,18 @@ const VisualizationsFixed = () => {
       {/* Visualization Area */}
       <div className="bg-gradient-to-br from-white to-slate-50 rounded-xl p-6 shadow-lg border border-slate-200">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 space-y-4 lg:space-y-0">
-          <h2 className="text-xl font-bold text-slate-800">
-            {algorithms.find(a => a.id === selectedAlgorithm)?.name} Visualization
-          </h2>
+          <div>
+            <h2 className="text-xl font-bold text-slate-800">
+              {customAlgorithmInfo ? customAlgorithmInfo.name : algorithms.find(a => a.id === selectedAlgorithm)?.name} Visualization
+            </h2>
+            {customAlgorithmInfo && (
+              <div className="flex items-center gap-2 mt-1">
+                <span className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 text-xs px-2 py-1 rounded-full border border-purple-200">
+                  AI Generated
+                </span>
+              </div>
+            )}
+          </div>
           
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
@@ -469,33 +637,43 @@ const VisualizationsFixed = () => {
           <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
             <h4 className="font-semibold text-slate-800 mb-2">How it works</h4>
             <p className="text-slate-600 text-sm">
-              {selectedAlgorithm === 'bubble-sort' && "Bubble sort repeatedly compares adjacent elements and swaps them if they're in the wrong order, 'bubbling' larger elements to the end."}
-              {selectedAlgorithm === 'bfs-graph' && "BFS explores graph level by level, visiting all neighbors before moving to the next level. Uses a queue data structure."}
-              {selectedAlgorithm === 'dfs-graph' && "DFS explores as far as possible along each branch before backtracking. Uses a stack or recursion."}
-              {selectedAlgorithm === 'binary-tree-traversal' && "Tree traversal visits each node in a specific order: inorder (left-root-right), preorder (root-left-right), or postorder (left-right-root)."}
-              {selectedAlgorithm === 'hash-map-ops' && "HashMap uses a hash function to map keys to buckets, providing O(1) average-case lookup, insertion, and deletion."}
+              {customAlgorithmInfo ? customAlgorithmInfo.description : (
+                <>
+                  {selectedAlgorithm === 'bubble-sort' && "Bubble sort repeatedly compares adjacent elements and swaps them if they're in the wrong order, 'bubbling' larger elements to the end."}
+                  {selectedAlgorithm === 'bfs-graph' && "BFS explores graph level by level, visiting all neighbors before moving to the next level. Uses a queue data structure."}
+                  {selectedAlgorithm === 'dfs-graph' && "DFS explores as far as possible along each branch before backtracking. Uses a stack or recursion."}
+                  {selectedAlgorithm === 'binary-tree-traversal' && "Tree traversal visits each node in a specific order: inorder (left-root-right), preorder (root-left-right), or postorder (left-right-root)."}
+                  {selectedAlgorithm === 'hash-map-ops' && "HashMap uses a hash function to map keys to buckets, providing O(1) average-case lookup, insertion, and deletion."}
+                </>
+              )}
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
             <h4 className="font-semibold text-slate-800 mb-2">Time Complexity</h4>
             <p className="text-slate-600 text-sm">
-              <span className="font-mono bg-slate-100 px-2 py-1 rounded">Best: {algorithms.find(a => a.id === selectedAlgorithm)?.complexity}</span><br/>
-              <span className="font-mono bg-slate-100 px-2 py-1 rounded">Average: {algorithms.find(a => a.id === selectedAlgorithm)?.complexity}</span><br/>
-              <span className="font-mono bg-slate-100 px-2 py-1 rounded">Worst: {algorithms.find(a => a.id === selectedAlgorithm)?.complexity}</span>
+              <span className="font-mono bg-slate-100 px-2 py-1 rounded">
+                {customAlgorithmInfo ? customAlgorithmInfo.complexity : algorithms.find(a => a.id === selectedAlgorithm)?.complexity}
+              </span>
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
             <h4 className="font-semibold text-slate-800 mb-2">Space Complexity</h4>
             <p className="text-slate-600 text-sm">
               <span className="font-mono bg-slate-100 px-2 py-1 rounded">
-                {selectedAlgorithm.includes('graph') ? 'O(V)' : 
-                 selectedAlgorithm.includes('tree') ? 'O(h)' : 
-                 selectedAlgorithm.includes('hash') ? 'O(n)' : 'O(1)'}
-              </span> - 
-              {selectedAlgorithm.includes('graph') ? ' Space for visited array and queue/stack' :
-               selectedAlgorithm.includes('tree') ? ' Recursion stack depth (height of tree)' :
-               selectedAlgorithm.includes('hash') ? ' Space for storing key-value pairs' :
-               ' Only uses a constant amount of additional memory space for temporary variables.'}
+                {customAlgorithmInfo ? customAlgorithmInfo.spaceComplexity : (
+                  selectedAlgorithm.includes('graph') ? 'O(V)' : 
+                  selectedAlgorithm.includes('tree') ? 'O(h)' : 
+                  selectedAlgorithm.includes('hash') ? 'O(n)' : 'O(1)'
+                )}
+              </span>
+              {!customAlgorithmInfo && (
+                <span> - 
+                  {selectedAlgorithm.includes('graph') ? ' Space for visited array and queue/stack' :
+                   selectedAlgorithm.includes('tree') ? ' Recursion stack depth (height of tree)' :
+                   selectedAlgorithm.includes('hash') ? ' Space for storing key-value pairs' :
+                   ' Only uses a constant amount of additional memory space for temporary variables.'}
+                </span>
+              )}
             </p>
           </div>
         </div>
