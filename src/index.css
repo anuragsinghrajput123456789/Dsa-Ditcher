@@ -110,6 +110,10 @@
     background-size: 200% 200%;
     animation: gradientShift 3s ease infinite;
   }
+
+  .bg-size-200 {
+    background-size: 200% 200%;
+  }
 }
 
 @keyframes float {
