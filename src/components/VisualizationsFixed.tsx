@@ -1,10 +1,12 @@
 
 import { useState, useEffect } from "react";
-import { Play, Pause, RotateCcw, Settings, ChevronRight, Sparkles, Loader2 } from "lucide-react";
+import { Play, Pause, RotateCcw, Settings, ChevronRight, Sparkles, Loader2, Wand2 } from "lucide-react";
 import { Textarea } from "./ui/textarea";
 import { toast } from "sonner";
+import AlgorithmVisualizerAnimated from "./AlgorithmVisualizerAnimated";
 
 const VisualizationsFixed = () => {
+  const [viewMode, setViewMode] = useState<"preset" | "ai">("ai");
   const [selectedAlgorithm, setSelectedAlgorithm] = useState("bubble-sort");
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1000);
@@ -441,6 +443,35 @@ Important:
 
   return (
     <div className="space-y-6">
+      {/* View Mode Toggle */}
+      <div className="flex justify-center gap-2 p-1 bg-slate-100 rounded-xl w-fit mx-auto">
+        <button
+          onClick={() => setViewMode("ai")}
+          className={`px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 ${
+            viewMode === "ai"
+              ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
+              : "text-slate-600 hover:text-slate-800"
+          }`}
+        >
+          <Wand2 className="w-5 h-5" />
+          AI Visualizer
+        </button>
+        <button
+          onClick={() => setViewMode("preset")}
+          className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+            viewMode === "preset"
+              ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg"
+              : "text-slate-600 hover:text-slate-800"
+          }`}
+        >
+          Preset Algorithms
+        </button>
+      </div>
+
+      {viewMode === "ai" ? (
+        <AlgorithmVisualizerAnimated />
+      ) : (
+      <>
       <div className="text-center">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
           Algorithm Visualizations
@@ -715,6 +746,8 @@ Important:
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 };
