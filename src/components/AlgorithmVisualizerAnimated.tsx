@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, RotateCcw, SkipForward, SkipBack, Sparkles, Loader2, Zap } from "lucide-react";
-import { Textarea } from "./ui/textarea";
+// Using native textarea instead of Textarea component for reliability
 import { toast } from "sonner";
 
 interface Step {
@@ -239,11 +239,14 @@ Requirements:
           </div>
         </div>
 
-        <Textarea
+        <textarea
           value={customAlgorithmInput}
-          onChange={(e) => setCustomAlgorithmInput(e.target.value)}
+          onChange={(e) => {
+            console.log("Input changed:", e.target.value);
+            setCustomAlgorithmInput(e.target.value);
+          }}
           placeholder="Describe an algorithm... e.g., 'Bubble sort', 'Quick sort with pivot selection', 'Binary search on sorted array', 'Selection sort finding minimum each pass'"
-          className="min-h-[100px] bg-slate-900/50 border-purple-500/30 text-white placeholder:text-slate-400 focus:border-purple-400 focus:ring-purple-400/20 mb-4"
+          className="w-full min-h-[100px] bg-slate-900/50 border border-purple-500/30 text-white placeholder:text-slate-400 focus:border-purple-400 focus:ring-purple-400/20 focus:outline-none mb-4 p-3 rounded-lg resize-none"
           disabled={isGenerating}
         />
 
