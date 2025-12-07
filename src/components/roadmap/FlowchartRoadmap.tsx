@@ -32,24 +32,24 @@ const NodeCard = ({
   const hasChildren = node.children && node.children.length > 0;
 
   const getBorderColor = () => {
-    if (node.isOptional) return "border-purple-400";
-    if (node.isAlternative) return "border-green-400";
-    if (node.completed) return "border-emerald-500";
-    return "border-amber-400";
+    if (node.isOptional) return "border-pink-300 dark:border-pink-600";
+    if (node.isAlternative) return "border-indigo-300 dark:border-indigo-600";
+    if (node.completed) return "border-green-400 dark:border-green-500";
+    return "border-blue-300 dark:border-blue-500";
   };
 
   const getBgColor = () => {
-    if (node.isOptional) return "bg-purple-50 dark:bg-purple-950/30";
-    if (node.isAlternative) return "bg-green-50 dark:bg-green-950/30";
-    if (node.completed) return "bg-emerald-50 dark:bg-emerald-950/30";
-    return "bg-amber-50 dark:bg-amber-950/30";
+    if (node.isOptional) return "bg-pink-50 dark:bg-pink-900/20";
+    if (node.isAlternative) return "bg-indigo-50 dark:bg-indigo-900/20";
+    if (node.completed) return "bg-green-50 dark:bg-green-900/20";
+    return "bg-blue-50 dark:bg-blue-900/20";
   };
 
   const getTextColor = () => {
-    if (node.isOptional) return "text-purple-800 dark:text-purple-200";
-    if (node.isAlternative) return "text-green-800 dark:text-green-200";
-    if (node.completed) return "text-emerald-800 dark:text-emerald-200";
-    return "text-amber-900 dark:text-amber-100";
+    if (node.isOptional) return "text-pink-700 dark:text-pink-200";
+    if (node.isAlternative) return "text-indigo-700 dark:text-indigo-200";
+    if (node.completed) return "text-green-700 dark:text-green-200";
+    return "text-blue-700 dark:text-blue-200";
   };
 
   return (
@@ -71,10 +71,10 @@ const NodeCard = ({
         }}
       >
         <div className="flex items-center justify-center gap-2">
-          {node.completed ? (
-            <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+        {node.completed ? (
+            <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
           ) : (
-            <Circle className="w-4 h-4 text-amber-500 flex-shrink-0" />
+            <Circle className="w-4 h-4 text-blue-400 flex-shrink-0" />
           )}
           <span className={`text-sm font-medium ${getTextColor()}`}>
             {node.title}
@@ -92,11 +92,11 @@ const NodeCard = ({
 
       {/* Children nodes */}
       {hasChildren && isExpanded && (
-        <div className="mt-4 ml-6 pl-4 border-l-2 border-amber-300 dark:border-amber-600 space-y-3">
+        <div className="mt-4 ml-6 pl-4 border-l-2 border-blue-200 dark:border-blue-700 space-y-3">
           {node.children!.map((child, index) => (
             <div key={child.id} className="relative">
               {/* Connector line */}
-              <div className="absolute -left-4 top-1/2 w-4 h-0.5 bg-amber-300 dark:bg-amber-600" />
+              <div className="absolute -left-4 top-1/2 w-4 h-0.5 bg-blue-200 dark:bg-blue-700" />
               <NodeCard node={child} depth={depth + 1} onNodeClick={onNodeClick} />
             </div>
           ))}
@@ -126,19 +126,20 @@ const FlowchartSection = ({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className={`
-          px-6 py-3 rounded-xl border-2 border-amber-500 bg-amber-100 dark:bg-amber-900/40
+          px-6 py-3 rounded-xl border-2 border-purple-300 dark:border-purple-600 
+          bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/30 dark:to-blue-900/30
           cursor-pointer transition-all duration-200 hover:shadow-lg mb-4
           flex items-center justify-between
         `}
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3">
-          <div className="w-3 h-3 rounded-full bg-amber-500" />
-          <span className="font-bold text-amber-900 dark:text-amber-100">{title}</span>
+          <div className="w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 to-blue-500" />
+          <span className="font-bold text-purple-800 dark:text-purple-100">{title}</span>
         </div>
         {isExpanded ? 
-          <ChevronDown className="w-5 h-5 text-amber-700 dark:text-amber-300" /> : 
-          <ChevronRight className="w-5 h-5 text-amber-700 dark:text-amber-300" />
+          <ChevronDown className="w-5 h-5 text-purple-600 dark:text-purple-300" /> : 
+          <ChevronRight className="w-5 h-5 text-purple-600 dark:text-purple-300" />
         }
       </motion.div>
 
@@ -403,8 +404,8 @@ const FlowchartRoadmap = () => {
     <div className="w-full max-w-6xl mx-auto">
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-1 bg-amber-100 dark:bg-amber-900/40 rounded-full text-amber-800 dark:text-amber-200 text-sm mb-4">
-          <span className="w-2 h-2 rounded-full bg-amber-500" />
+        <div className="inline-flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full text-purple-700 dark:text-purple-200 text-sm mb-4">
+          <span className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
           Interactive Learning Path
         </div>
         <h2 className="text-3xl font-bold text-foreground mb-2">
@@ -416,21 +417,21 @@ const FlowchartRoadmap = () => {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center justify-center gap-4 mb-8 p-4 bg-muted/30 rounded-xl">
+      <div className="flex flex-wrap items-center justify-center gap-4 mb-8 p-4 bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded border-2 border-amber-400 bg-amber-50 dark:bg-amber-950/30" />
+          <div className="w-4 h-4 rounded border-2 border-blue-300 bg-blue-50 dark:bg-blue-900/20" />
           <span className="text-sm text-muted-foreground">Required</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded border-2 border-green-400 bg-green-50 dark:bg-green-950/30" />
+          <div className="w-4 h-4 rounded border-2 border-indigo-300 bg-indigo-50 dark:bg-indigo-900/20" />
           <span className="text-sm text-muted-foreground">Alternative</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded border-2 border-purple-400 bg-purple-50 dark:bg-purple-950/30" />
+          <div className="w-4 h-4 rounded border-2 border-pink-300 bg-pink-50 dark:bg-pink-900/20" />
           <span className="text-sm text-muted-foreground">Optional</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30" />
+          <div className="w-4 h-4 rounded border-2 border-green-400 bg-green-50 dark:bg-green-900/20" />
           <span className="text-sm text-muted-foreground">Completed</span>
         </div>
       </div>
@@ -448,9 +449,9 @@ const FlowchartRoadmap = () => {
       </div>
 
       {/* Footer tip */}
-      <div className="mt-8 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border border-amber-200 dark:border-amber-800">
-        <p className="text-sm text-amber-800 dark:text-amber-200 text-center">
-          💡 <strong>Tip:</strong> Click on any topic to expand and see subtopics. Purple items are optional but recommended for deeper understanding.
+      <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-200 dark:border-blue-700">
+        <p className="text-sm text-purple-700 dark:text-purple-200 text-center">
+          💡 <strong>Tip:</strong> Click on any topic to expand and see subtopics. Pink items are optional but recommended for deeper understanding.
         </p>
       </div>
     </div>
