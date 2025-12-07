@@ -3,6 +3,7 @@ import { useState } from "react";
 import RoadmapCard from "./roadmap/RoadmapCard";
 import RoadmapProgress from "./roadmap/RoadmapProgress";
 import RoadmapDetails from "./roadmap/RoadmapDetails";
+import FlowchartRoadmap from "./roadmap/FlowchartRoadmap";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import CustomRoadmap from "./CustomRoadmap";
 import { useSimulatedUser } from "./roadmap/useSimulatedUser";
@@ -38,16 +39,21 @@ const Roadmap = () => {
   }
 
   return (
-    <Tabs defaultValue="pre-written" className="w-full">
+    <Tabs defaultValue="flowchart" className="w-full">
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold text-foreground mb-4">Learning Roadmaps</h1>
         <p className="text-muted-foreground text-lg">Follow structured paths or create your own to master DSA concepts.</p>
       </div>
 
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="pre-written">Pre-written Roadmaps</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-3">
+        <TabsTrigger value="flowchart">DSA Roadmap</TabsTrigger>
+        <TabsTrigger value="pre-written">Topic Roadmaps</TabsTrigger>
         <TabsTrigger value="custom">Custom Roadmaps</TabsTrigger>
       </TabsList>
+
+      <TabsContent value="flowchart" className="mt-6">
+        <FlowchartRoadmap />
+      </TabsContent>
 
       <TabsContent value="pre-written" className="mt-6">
         <div className="space-y-6">
