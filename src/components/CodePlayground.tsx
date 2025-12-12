@@ -74,24 +74,24 @@ console.log(sortedNumbers);`;
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent mb-4 animate-fade-in">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent mb-4 animate-fade-in">
           Code Playground
         </h1>
-        <p className="text-slate-600 text-lg">
+        <p className="text-muted-foreground text-lg">
           Write, run, and analyze your JavaScript code with complexity insights and AI assistance.
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 animate-fade-in">
-        <div className="border-b border-slate-200">
+      <div className="bg-card rounded-xl shadow-lg border border-border animate-fade-in">
+        <div className="border-b border-border">
           <nav className="flex space-x-8 px-6">
             <button
               onClick={() => setActiveTab("editor")}
               className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === "editor"
-                  ? "border-emerald-500 text-emerald-600"
-                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted"
               }`}
             >
               <Code className="w-4 h-4 inline mr-2" />
@@ -101,8 +101,8 @@ console.log(sortedNumbers);`;
               onClick={() => setActiveTab("complexity")}
               className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === "complexity"
-                  ? "border-emerald-500 text-emerald-600"
-                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted"
               }`}
             >
               <Brain className="w-4 h-4 inline mr-2" />
@@ -118,15 +118,15 @@ console.log(sortedNumbers);`;
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
-                    <Settings className="w-4 h-4 text-slate-600" />
-                    <span className="text-sm font-medium text-slate-700">Language: JavaScript</span>
+                    <Settings className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">Language: JavaScript</span>
                   </div>
                 </div>
                 
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={handleResetCode}
-                    className="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors flex items-center space-x-2"
+                    className="bg-secondary text-secondary-foreground px-4 py-2 rounded-lg hover:bg-secondary/80 transition-colors flex items-center space-x-2"
                   >
                     <RotateCcw className="w-4 h-4" />
                     <span>Reset</span>
@@ -135,11 +135,11 @@ console.log(sortedNumbers);`;
                   <button
                     onClick={handleRunCode}
                     disabled={isRunning}
-                    className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-2 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 flex items-center space-x-2 shadow-lg disabled:opacity-50"
+                    className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-all duration-200 flex items-center space-x-2 shadow-lg disabled:opacity-50"
                   >
                     {isRunning ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>
                         <span>Running...</span>
                       </>
                     ) : (
@@ -175,20 +175,20 @@ console.log(sortedNumbers);`;
       </div>
 
       {/* Quick Tips */}
-      <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl p-6 shadow-lg border border-cyan-200">
-        <h3 className="text-xl font-bold text-slate-800 mb-4">💡 Quick Tips</h3>
+      <div className="bg-secondary/50 rounded-xl p-6 shadow-lg border border-border">
+        <h3 className="text-xl font-bold text-foreground mb-4">💡 Quick Tips</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg border border-cyan-200">
-            <h4 className="font-semibold text-slate-800 mb-2">🚀 Performance</h4>
-            <p className="text-sm text-slate-600">Use the Complexity Analysis tab to understand the time and space complexity of your algorithms.</p>
+          <div className="bg-card p-4 rounded-lg border border-border">
+            <h4 className="font-semibold text-foreground mb-2">🚀 Performance</h4>
+            <p className="text-sm text-muted-foreground">Use the Complexity Analysis tab to understand the time and space complexity of your algorithms.</p>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-cyan-200">
-            <h4 className="font-semibold text-slate-800 mb-2">📚 Learning</h4>
-            <p className="text-sm text-slate-600">Check the Resources tab for curated learning materials and practice problems.</p>
+          <div className="bg-card p-4 rounded-lg border border-border">
+            <h4 className="font-semibold text-foreground mb-2">📚 Learning</h4>
+            <p className="text-sm text-muted-foreground">Check the Resources tab for curated learning materials and practice problems.</p>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-cyan-200">
-            <h4 className="font-semibold text-slate-800 mb-2">🔧 Debug</h4>
-            <p className="text-sm text-slate-600">Use console.log() to debug your code step by step.</p>
+          <div className="bg-card p-4 rounded-lg border border-border">
+            <h4 className="font-semibold text-foreground mb-2">🔧 Debug</h4>
+            <p className="text-sm text-muted-foreground">Use console.log() to debug your code step by step.</p>
           </div>
         </div>
       </div>

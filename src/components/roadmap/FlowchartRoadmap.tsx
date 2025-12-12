@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Circle, ChevronDown, ChevronRight, ExternalLink } from "lucide-react";
+import { CheckCircle, Circle, ChevronDown, ChevronRight, ExternalLink, RotateCcw } from "lucide-react";
+import { useRoadmapProgress } from "@/hooks/useRoadmapProgress";
+import TopicDetailModal from "./TopicDetailModal";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 
 interface RoadmapNode {
   id: string;
@@ -22,33 +26,36 @@ interface FlowchartRoadmapProps {
 const NodeCard = ({ 
   node, 
   depth = 0, 
-  onNodeClick 
+  onNodeClick,
+  isCompleted 
 }: { 
   node: RoadmapNode; 
   depth?: number; 
-  onNodeClick?: (nodeId: string) => void;
+  onNodeClick?: (nodeId: string, title: string) => void;
+  isCompleted?: boolean;
 }) => {
   const [isExpanded, setIsExpanded] = useState(depth < 2);
   const hasChildren = node.children && node.children.length > 0;
+  const completed = isCompleted ?? node.completed;
 
   const getBorderColor = () => {
     if (node.isOptional) return "border-pink-300 dark:border-pink-600";
     if (node.isAlternative) return "border-indigo-300 dark:border-indigo-600";
-    if (node.completed) return "border-green-400 dark:border-green-500";
+    if (completed) return "border-green-400 dark:border-green-500";
     return "border-blue-300 dark:border-blue-500";
   };
 
   const getBgColor = () => {
     if (node.isOptional) return "bg-pink-50 dark:bg-pink-900/20";
     if (node.isAlternative) return "bg-indigo-50 dark:bg-indigo-900/20";
-    if (node.completed) return "bg-green-50 dark:bg-green-900/20";
+    if (completed) return "bg-green-50 dark:bg-green-900/20";
     return "bg-blue-50 dark:bg-blue-900/20";
   };
 
   const getTextColor = () => {
     if (node.isOptional) return "text-pink-700 dark:text-pink-200";
     if (node.isAlternative) return "text-indigo-700 dark:text-indigo-200";
-    if (node.completed) return "text-green-700 dark:text-green-200";
+    if (completed) return "text-green-700 dark:text-green-200";
     return "text-blue-700 dark:text-blue-200";
   };
 
@@ -63,15 +70,21 @@ const NodeCard = ({
           cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105
           min-w-[120px] text-center
         `}
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           if (hasChildren) {
             setIsExpanded(!isExpanded);
+          } else {
+            onNodeClick?.(node.id, node.title);
           }
-          onNodeClick?.(node.id);
+        }}
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          onNodeClick?.(node.id, node.title);
         }}
       >
         <div className="flex items-center justify-center gap-2">
-        {node.completed ? (
+        {completed ? (
             <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
           ) : (
             <Circle className="w-4 h-4 text-blue-400 flex-shrink-0" />
@@ -110,12 +123,14 @@ const FlowchartSection = ({
   title,
   nodes,
   color = "amber",
-  onNodeClick
+  onNodeClick,
+  isCompleted
 }: {
   title: string;
   nodes: RoadmapNode[];
   color?: string;
-  onNodeClick?: (nodeId: string) => void;
+  onNodeClick?: (nodeId: string, title: string) => void;
+  isCompleted: (id: string) => boolean;
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -147,7 +162,7 @@ const FlowchartSection = ({
       {isExpanded && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 ml-4 mb-6">
           {nodes.map((node) => (
-            <NodeCard key={node.id} node={node} onNodeClick={onNodeClick} />
+            <NodeCard key={node.id} node={node} onNodeClick={onNodeClick} isCompleted={isCompleted(node.id)} />
           ))}
         </div>
       )}
@@ -394,11 +409,24 @@ const dsaRoadmapData = {
   ]
 };
 
+// Count all nodes including children
+const countAllNodes = (nodes: RoadmapNode[]): number => {
+  return nodes.reduce((count, node) => {
+    return count + 1 + (node.children ? countAllNodes(node.children) : 0);
+  }, 0);
+};
+
+const totalTopics = dsaRoadmapData.sections.reduce((sum, section) => sum + countAllNodes(section.nodes), 0);
+
 const FlowchartRoadmap = () => {
-  const handleNodeClick = (nodeId: string) => {
-    console.log("Node clicked:", nodeId);
-    // Could navigate to topic details or mark as complete
+  const { isCompleted, toggleComplete, completedTopics, resetProgress } = useRoadmapProgress();
+  const [selectedTopic, setSelectedTopic] = useState<{ id: string; title: string } | null>(null);
+
+  const handleNodeClick = (nodeId: string, title: string) => {
+    setSelectedTopic({ id: nodeId, title });
   };
+
+  const progressPercent = Math.round((completedTopics.size / totalTopics) * 100);
 
   return (
     <div className="w-full max-w-6xl mx-auto">
@@ -414,6 +442,27 @@ const FlowchartRoadmap = () => {
         <p className="text-muted-foreground max-w-2xl mx-auto">
           {dsaRoadmapData.description}
         </p>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="mb-8 p-4 rounded-xl bg-card border border-border">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-foreground">
+            Progress: {completedTopics.size} / {totalTopics} topics
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-primary">{progressPercent}%</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetProgress}
+              className="text-muted-foreground hover:text-destructive"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+        <Progress value={progressPercent} className="h-2" />
       </div>
 
       {/* Legend */}
@@ -444,6 +493,7 @@ const FlowchartRoadmap = () => {
             title={section.title}
             nodes={section.nodes}
             onNodeClick={handleNodeClick}
+            isCompleted={isCompleted}
           />
         ))}
       </div>
@@ -451,9 +501,19 @@ const FlowchartRoadmap = () => {
       {/* Footer tip */}
       <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-200 dark:border-blue-700">
         <p className="text-sm text-purple-700 dark:text-purple-200 text-center">
-          💡 <strong>Tip:</strong> Click on any topic to expand and see subtopics. Pink items are optional but recommended for deeper understanding.
+          💡 <strong>Tip:</strong> Click on any topic to see resources and practice problems. Double-click nodes with children to open details.
         </p>
       </div>
+
+      {/* Topic Detail Modal */}
+      <TopicDetailModal
+        isOpen={!!selectedTopic}
+        onClose={() => setSelectedTopic(null)}
+        topicId={selectedTopic?.id || null}
+        topicTitle={selectedTopic?.title || ""}
+        isCompleted={selectedTopic ? isCompleted(selectedTopic.id) : false}
+        onToggleComplete={toggleComplete}
+      />
     </div>
   );
 };
