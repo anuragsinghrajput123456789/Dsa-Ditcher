@@ -28,12 +28,17 @@ const CodeEditor = ({
   language,
   languageName,
 }: CodeEditorProps) => {
-  // Detect system theme for Monaco, fallback to light
-  const theme =
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
+  // Detect theme from document class or system preference
+  const getTheme = () => {
+    if (typeof document !== "undefined") {
+      return document.documentElement.classList.contains("dark") ? "vs-dark" : "vs-light";
+    }
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "vs-dark"
       : "vs-light";
+  };
+
+  const theme = getTheme();
 
   // Editor height responsive to viewport on mobile, fixed on desktop
   const editorHeight =
@@ -42,13 +47,13 @@ const CodeEditor = ({
       : "28rem";
 
   return (
-    <div className="rounded-xl overflow-hidden shadow-xl border border-slate-200 dark:border-neutral-700 bg-slate-100 dark:bg-neutral-900 transition-colors">
-      <div className="bg-gradient-to-r from-indigo-700 via-emerald-800 to-slate-900 text-white flex items-center justify-between px-4 py-3">
+    <div className="rounded-xl overflow-hidden shadow-xl border border-border bg-card transition-colors">
+      <div className="bg-secondary text-foreground flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center space-x-2">
-          <Code className="w-5 h-5" />
+          <Code className="w-5 h-5 text-primary" />
           <span className="font-semibold tracking-wide">{languageName} Editor</span>
         </div>
-        <div className="flex items-center space-x-3 text-xs">
+        <div className="flex items-center space-x-3 text-xs text-muted-foreground">
           <span>Lines: {code.split('\n').length}</span>
           <span>Chars: {code.length}</span>
         </div>
