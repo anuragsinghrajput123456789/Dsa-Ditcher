@@ -35,8 +35,8 @@ const Navbar = () => {
                 <Sparkles className="w-2.5 h-2.5 text-yellow-900" />
               </div>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:to-purple-500 transition-all duration-300">
-              DSA Pathfinder
+            <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:to-purple-500 transition-all duration-300">
+              DSA Ditcher
             </span>
           </Link>
 

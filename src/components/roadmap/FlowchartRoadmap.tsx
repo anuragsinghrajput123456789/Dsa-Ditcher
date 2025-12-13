@@ -66,9 +66,9 @@ const NodeCard = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: depth * 0.05 }}
         className={`
-          relative px-4 py-2 rounded-lg border-2 ${getBorderColor()} ${getBgColor()}
+          relative px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border-2 ${getBorderColor()} ${getBgColor()}
           cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105
-          min-w-[120px] text-center
+          min-w-[100px] sm:min-w-[120px] text-center
         `}
         onClick={(e) => {
           e.stopPropagation();
@@ -141,26 +141,26 @@ const FlowchartSection = ({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className={`
-          px-6 py-3 rounded-xl border-2 border-purple-300 dark:border-purple-600 
+          px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 border-purple-300 dark:border-purple-600 
           bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/30 dark:to-blue-900/30
-          cursor-pointer transition-all duration-200 hover:shadow-lg mb-4
+          cursor-pointer transition-all duration-200 hover:shadow-lg mb-3 sm:mb-4
           flex items-center justify-between
         `}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center gap-3">
-          <div className="w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 to-blue-500" />
-          <span className="font-bold text-purple-800 dark:text-purple-100">{title}</span>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-gradient-to-r from-purple-500 to-blue-500" />
+          <span className="font-bold text-sm sm:text-base text-purple-800 dark:text-purple-100">{title}</span>
         </div>
         {isExpanded ? 
-          <ChevronDown className="w-5 h-5 text-purple-600 dark:text-purple-300" /> : 
-          <ChevronRight className="w-5 h-5 text-purple-600 dark:text-purple-300" />
+          <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 dark:text-purple-300" /> : 
+          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 dark:text-purple-300" />
         }
       </motion.div>
 
       {/* Nodes Grid */}
       {isExpanded && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 ml-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 ml-2 sm:ml-4 mb-4 sm:mb-6">
           {nodes.map((node) => (
             <NodeCard key={node.id} node={node} onNodeClick={onNodeClick} isCompleted={isCompleted(node.id)} />
           ))}
@@ -429,64 +429,64 @@ const FlowchartRoadmap = () => {
   const progressPercent = Math.round((completedTopics.size / totalTopics) * 100);
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
+    <div className="w-full max-w-6xl mx-auto px-2 sm:px-4">
       {/* Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full text-purple-700 dark:text-purple-200 text-sm mb-4">
+      <div className="text-center mb-6 sm:mb-8">
+        <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full text-purple-700 dark:text-purple-200 text-xs sm:text-sm mb-3 sm:mb-4">
           <span className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
           Interactive Learning Path
         </div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2">
           {dsaRoadmapData.title}
         </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-4">
           {dsaRoadmapData.description}
         </p>
       </div>
 
       {/* Progress Bar */}
-      <div className="mb-8 p-4 rounded-xl bg-card border border-border">
+      <div className="mb-6 sm:mb-8 p-3 sm:p-4 rounded-lg sm:rounded-xl bg-card border border-border">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-foreground">
+          <span className="text-xs sm:text-sm font-medium text-foreground">
             Progress: {completedTopics.size} / {totalTopics} topics
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-primary">{progressPercent}%</span>
+            <span className="text-xs sm:text-sm font-bold text-primary">{progressPercent}%</span>
             <Button
               variant="ghost"
               size="sm"
               onClick={resetProgress}
-              className="text-muted-foreground hover:text-destructive"
+              className="text-muted-foreground hover:text-destructive p-1 sm:p-2"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
           </div>
         </div>
-        <Progress value={progressPercent} className="h-2" />
+        <Progress value={progressPercent} className="h-1.5 sm:h-2" />
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center justify-center gap-4 mb-8 p-4 bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded border-2 border-blue-300 bg-blue-50 dark:bg-blue-900/20" />
-          <span className="text-sm text-muted-foreground">Required</span>
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mb-6 sm:mb-8 p-3 sm:p-4 bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg sm:rounded-xl border border-blue-100 dark:border-blue-800">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded border-2 border-blue-300 bg-blue-50 dark:bg-blue-900/20" />
+          <span className="text-xs sm:text-sm text-muted-foreground">Required</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded border-2 border-indigo-300 bg-indigo-50 dark:bg-indigo-900/20" />
-          <span className="text-sm text-muted-foreground">Alternative</span>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded border-2 border-indigo-300 bg-indigo-50 dark:bg-indigo-900/20" />
+          <span className="text-xs sm:text-sm text-muted-foreground">Alternative</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded border-2 border-pink-300 bg-pink-50 dark:bg-pink-900/20" />
-          <span className="text-sm text-muted-foreground">Optional</span>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded border-2 border-pink-300 bg-pink-50 dark:bg-pink-900/20" />
+          <span className="text-xs sm:text-sm text-muted-foreground">Optional</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded border-2 border-green-400 bg-green-50 dark:bg-green-900/20" />
-          <span className="text-sm text-muted-foreground">Completed</span>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded border-2 border-green-400 bg-green-50 dark:bg-green-900/20" />
+          <span className="text-xs sm:text-sm text-muted-foreground">Completed</span>
         </div>
       </div>
 
       {/* Roadmap Sections */}
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {dsaRoadmapData.sections.map((section) => (
           <FlowchartSection
             key={section.title}
@@ -499,8 +499,8 @@ const FlowchartRoadmap = () => {
       </div>
 
       {/* Footer tip */}
-      <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-200 dark:border-blue-700">
-        <p className="text-sm text-purple-700 dark:text-purple-200 text-center">
+      <div className="mt-6 sm:mt-8 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg sm:rounded-xl border border-blue-200 dark:border-blue-700">
+        <p className="text-xs sm:text-sm text-purple-700 dark:text-purple-200 text-center">
           💡 <strong>Tip:</strong> Click on any topic to see resources and practice problems. Double-click nodes with children to open details.
         </p>
       </div>
