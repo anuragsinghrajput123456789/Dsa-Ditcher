@@ -115,7 +115,7 @@ const Chatbot = () => {
 
       {/* Chatbot Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-80 h-[500px] bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col z-50 overflow-hidden animate-scale-in">
+        <div className="fixed bottom-24 right-4 left-4 sm:left-auto sm:right-6 sm:w-80 h-[70vh] sm:h-[500px] max-h-[500px] bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col z-50 overflow-hidden animate-scale-in">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 text-white p-4 rounded-t-2xl relative overflow-hidden">
             {/* Background pattern */}

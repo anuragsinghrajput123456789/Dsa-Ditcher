@@ -179,37 +179,37 @@ Keep your response educational and engaging.`;
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground space-y-8 p-6 animate-fade-in">
+    <div className="min-h-screen bg-background text-foreground space-y-6 sm:space-y-8 p-4 sm:p-6 animate-fade-in">
       {/* Header */}
       <div className="text-center animate-scale-in">
-        <div className="flex items-center justify-center gap-4 mb-6">
-          <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl shadow-lg animate-pulse">
-            <Brain className="w-10 h-10 text-white" />
+        <div className="flex items-center justify-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+          <div className="p-2 sm:p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl sm:rounded-2xl shadow-lg animate-pulse">
+            <Brain className="w-6 h-6 sm:w-10 sm:h-10 text-white" />
           </div>
-          <div className="p-4 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl shadow-lg animate-pulse" style={{animationDelay: '0.2s'}}>
-            <Zap className="w-10 h-10 text-white" />
+          <div className="p-2 sm:p-4 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl sm:rounded-2xl shadow-lg animate-pulse" style={{animationDelay: '0.2s'}}>
+            <Zap className="w-6 h-6 sm:w-10 sm:h-10 text-white" />
           </div>
-          <div className="p-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl shadow-lg animate-pulse" style={{animationDelay: '0.4s'}}>
-            <Sparkles className="w-10 h-10 text-white" />
+          <div className="p-2 sm:p-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl sm:rounded-2xl shadow-lg animate-pulse" style={{animationDelay: '0.4s'}}>
+            <Sparkles className="w-6 h-6 sm:w-10 sm:h-10 text-white" />
           </div>
         </div>
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
+        <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 sm:mb-4">
           DSA Problem Analyzer & AI Assistant
         </h1>
-        <p className="text-muted-foreground text-xl">Get step-by-step explanations and AI-powered help for any DSA problem</p>
+        <p className="text-muted-foreground text-sm sm:text-base md:text-xl">Get step-by-step explanations and AI-powered help for any DSA problem</p>
       </div>
 
       {/* DSA Sheets Section */}
-      <div className="bg-card rounded-2xl p-8 shadow-xl border border-border animate-fade-in">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-            <BookOpen className="w-7 h-7 text-purple-500" />
+      <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl border border-border animate-fade-in">
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-8">
+          <div className="p-2 sm:p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg sm:rounded-xl">
+            <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 text-purple-500" />
           </div>
-          <h2 className="text-3xl font-bold text-foreground">Popular DSA Practice Sheets</h2>
-          <Sparkles className="w-6 h-6 text-purple-500 animate-bounce ml-auto" />
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">Popular DSA Practice Sheets</h2>
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500 animate-bounce ml-auto" />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {dsaSheets.map((sheet, index) => {
             const Icon = sheet.icon;
             return (
@@ -218,17 +218,17 @@ Keep your response educational and engaging.`;
                 href={sheet.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-card border-2 border-border p-6 rounded-2xl hover:border-primary/50 hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in"
+                className="group bg-card border-2 border-border p-4 sm:p-6 rounded-xl sm:rounded-2xl hover:border-primary/50 hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in"
                 style={{animationDelay: `${index * 0.1}s`}}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 bg-gradient-to-r ${sheet.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                    <Icon className="w-6 h-6 text-white" />
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${sheet.color} rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <ExternalLink className="w-5 h-5 text-primary group-hover:text-primary/80 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                  <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 text-primary group-hover:text-primary/80 opacity-0 group-hover:opacity-100 transition-all duration-300" />
                 </div>
-                <h3 className="font-bold text-foreground group-hover:text-primary transition-colors duration-300 mb-2">{sheet.name}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{sheet.description}</p>
+                <h3 className="font-bold text-foreground group-hover:text-primary transition-colors duration-300 mb-1 sm:mb-2 text-sm sm:text-base">{sheet.name}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{sheet.description}</p>
               </a>
             );
           })}
@@ -236,12 +236,12 @@ Keep your response educational and engaging.`;
       </div>
 
       {/* Problem Input Section */}
-      <div className="bg-card rounded-2xl p-8 shadow-xl border border-border animate-fade-in">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-            <FileText className="w-7 h-7 text-blue-500" />
+      <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl border border-border animate-fade-in">
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg sm:rounded-xl">
+            <FileText className="w-5 h-5 sm:w-7 sm:h-7 text-blue-500" />
           </div>
-          <h2 className="text-3xl font-bold text-foreground">Analyze any DSA Problem</h2>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">Analyze any DSA Problem</h2>
         </div>
         
         <div className="space-y-4">
@@ -249,11 +249,11 @@ Keep your response educational and engaging.`;
             value={problemText}
             onChange={(e) => setProblemText(e.target.value)}
             placeholder="Paste your DSA problem here...&#10;&#10;For example: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.'"
-            className="w-full h-48 p-6 bg-muted/50 border-2 border-border rounded-2xl focus:ring-2 focus:ring-primary focus:border-primary/50 resize-none text-foreground placeholder-muted-foreground transition-all duration-300 hover:bg-muted/70"
+            className="w-full h-36 sm:h-48 p-4 sm:p-6 bg-muted/50 border-2 border-border rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-primary focus:border-primary/50 resize-none text-foreground placeholder-muted-foreground transition-all duration-300 hover:bg-muted/70 text-sm sm:text-base"
           />
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">{problemText.length} characters</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">{problemText.length} characters</span>
               {problemText.length > 0 && (
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               )}
@@ -261,16 +261,16 @@ Keep your response educational and engaging.`;
             <button
               onClick={analyzeProblem}
               disabled={!problemText.trim() || loadingAnalysis}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-white px-8 py-4 rounded-2xl font-medium hover:from-blue-700 hover:to-purple-700 dark:hover:from-blue-400 dark:hover:to-purple-400 transition-all duration-300 disabled:opacity-50 flex items-center space-x-3 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:hover:transform-none"
+              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-medium hover:from-blue-700 hover:to-purple-700 dark:hover:from-blue-400 dark:hover:to-purple-400 transition-all duration-300 disabled:opacity-50 flex items-center justify-center space-x-2 sm:space-x-3 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:hover:transform-none text-sm sm:text-base"
             >
               {loadingAnalysis ? (
                 <>
-                  <Loader className="w-5 h-5 animate-spin" />
+                  <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                   <span>Analyzing...</span>
                 </>
               ) : (
                 <>
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>Analyze Problem</span>
                 </>
               )}
@@ -403,23 +403,23 @@ Keep your response educational and engaging.`;
       )}
 
       {/* AI Chat Assistant */}
-      <div className="bg-card rounded-2xl p-6 shadow-xl border border-border animate-fade-in">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
-            <Bot className="w-7 h-7 text-emerald-500 animate-pulse" />
+      <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl border border-border animate-fade-in">
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="p-2 sm:p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg sm:rounded-xl">
+            <Bot className="w-5 h-5 sm:w-7 sm:h-7 text-emerald-500 animate-pulse" />
           </div>
-          <h2 className="text-3xl font-bold text-foreground">AI DSA Assistant</h2>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">AI DSA Assistant</h2>
         </div>
         
         <div className="bg-muted/30 rounded-xl border border-border mb-4">
-          <div className="h-80 overflow-y-auto p-4 space-y-4">
+          <div className="h-64 sm:h-80 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
             {chatMessages.length === 0 ? (
-              <div className="text-center text-foreground py-8">
-                <div className="mb-6">
-                  <Bot className="w-20 h-20 mx-auto text-emerald-500 animate-bounce" />
+              <div className="text-center text-foreground py-6 sm:py-8">
+                <div className="mb-4 sm:mb-6">
+                  <Bot className="w-14 h-14 sm:w-20 sm:h-20 mx-auto text-emerald-500 animate-bounce" />
                 </div>
-                <p className="text-2xl font-medium mb-3 text-foreground">Hi! I'm your DSA AI Assistant 🤖</p>
-                <p className="text-muted-foreground mb-6">Ask me anything about data structures and algorithms!</p>
+                <p className="text-lg sm:text-2xl font-medium mb-2 sm:mb-3 text-foreground">Hi! I'm your DSA AI Assistant 🤖</p>
+                <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">Ask me anything about data structures and algorithms!</p>
                 <div className="mt-8 text-sm text-left bg-emerald-50 dark:bg-emerald-900/20 p-6 rounded-xl border border-emerald-200 dark:border-emerald-700/50">
                   <p className="font-medium mb-3 text-emerald-700 dark:text-emerald-300">Try asking:</p>
                   <ul className="space-y-2 text-muted-foreground">

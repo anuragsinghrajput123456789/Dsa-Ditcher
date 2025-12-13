@@ -136,16 +136,16 @@ const Dashboard = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Welcome Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 dark:from-blue-700 dark:via-purple-700 dark:to-pink-700 rounded-3xl p-8 text-white shadow-2xl">
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 dark:from-blue-700 dark:via-purple-700 dark:to-pink-700 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 text-white shadow-2xl">
         <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm animate-pulse">
-              <Rocket className="w-8 h-8 text-white" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4">
+            <div className="p-2 sm:p-3 bg-white/20 rounded-xl sm:rounded-2xl backdrop-blur-sm animate-pulse">
+              <Rocket className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold mb-2 animate-scale-in">Welcome to DSA Pathfinder! 🚀</h1>
-              <p className="text-blue-100 text-lg mb-6 animate-fade-in" style={{animationDelay: '0.2s'}}>Your complete platform for mastering Data Structures and Algorithms</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 animate-scale-in">Welcome to DSA Ditcher! 🚀</h1>
+              <p className="text-blue-100 text-sm sm:text-base md:text-lg mb-4 sm:mb-6 animate-fade-in" style={{animationDelay: '0.2s'}}>Your complete platform for mastering Data Structures and Algorithms</p>
             </div>
           </div>
           
@@ -248,18 +248,18 @@ const Dashboard = () => {
       </div>
 
       {/* Achievements Section */}
-      <div className="bg-card rounded-2xl p-8 shadow-xl border border-border animate-fade-in">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl">
-            <Trophy className="w-7 h-7 text-purple-500 animate-pulse" />
+      <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl border border-border animate-fade-in">
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="p-2 sm:p-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-lg sm:rounded-xl">
+            <Trophy className="w-5 h-5 sm:w-7 sm:h-7 text-purple-500 animate-pulse" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground">Your Achievements</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Your Achievements</h2>
           <div className="ml-auto">
-            <Sparkles className="w-6 h-6 text-purple-500 animate-bounce" />
+            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500 animate-bounce" />
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {achievements.map((achievement, index) => {
             const Icon = achievement.icon;
             return (
@@ -309,78 +309,78 @@ const Dashboard = () => {
       </div>
 
       {/* Problem of the Day */}
-      <div className="bg-card rounded-2xl p-8 shadow-xl border border-border animate-fade-in">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl">
-            <Star className="w-7 h-7 text-yellow-500 animate-pulse" />
+      <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl border border-border animate-fade-in">
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="p-2 sm:p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg sm:rounded-xl">
+            <Star className="w-5 h-5 sm:w-7 sm:h-7 text-yellow-500 animate-pulse" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground">Problem of the Day</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Problem of the Day</h2>
           <div className="ml-auto">
-            <Sparkles className="w-6 h-6 text-yellow-500 animate-bounce" />
+            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 animate-bounce" />
           </div>
         </div>
         
-        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl p-6 border-2 border-yellow-200 dark:border-yellow-700/50">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-xl font-semibold text-foreground">{problemOfTheDay.title}</h3>
-            <span className="px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full text-sm font-medium border border-green-200 dark:border-green-700">
+        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg sm:rounded-xl p-4 sm:p-6 border-2 border-yellow-200 dark:border-yellow-700/50">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4 mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-foreground">{problemOfTheDay.title}</h3>
+            <span className="px-3 sm:px-4 py-1 sm:py-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full text-xs sm:text-sm font-medium border border-green-200 dark:border-green-700">
               {problemOfTheDay.difficulty}
             </span>
           </div>
-          <p className="text-muted-foreground mb-6 leading-relaxed">{problemOfTheDay.description}</p>
-          <div className="flex gap-4">
+          <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 leading-relaxed">{problemOfTheDay.description}</p>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Link
               to="/question-explainer"
-              className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 dark:hover:from-blue-300 dark:hover:to-blue-400 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 dark:hover:from-blue-300 dark:hover:to-blue-400 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm sm:text-base"
             >
-              <Lightbulb className="w-5 h-5" />
+              <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5" />
               Explain Problem
             </Link>
             <Link
               to="/playground"
-              className="bg-gradient-to-r from-green-500 to-green-600 dark:from-green-400 dark:to-green-500 text-white px-6 py-3 rounded-xl font-medium hover:from-green-600 hover:to-green-700 dark:hover:from-green-300 dark:hover:to-green-400 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2"
+              className="bg-gradient-to-r from-green-500 to-green-600 dark:from-green-400 dark:to-green-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-medium hover:from-green-600 hover:to-green-700 dark:hover:from-green-300 dark:hover:to-green-400 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm sm:text-base"
             >
-              <Play className="w-5 h-5" />
+              <Play className="w-4 h-4 sm:w-5 sm:h-5" />
               Try in Playground
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Quick Actions */}
         <div className="lg:col-span-2">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <Zap className="w-6 h-6 text-blue-500" />
+          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+            <div className="p-1.5 sm:p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+              <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
             </div>
-            <h2 className="text-3xl font-bold text-foreground">Explore Features</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Explore Features</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {quickActions.map((action, index) => {
               const Icon = action.icon;
               return (
                 <Link
                   key={index}
                   to={action.path}
-                  className="group bg-card rounded-2xl p-6 shadow-lg border border-border hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in"
+                  className="group bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-border hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in"
                   style={{animationDelay: `${index * 0.1}s`}}
                 >
-                  <div className="flex items-center mb-4">
-                    <div className={`w-14 h-14 bg-gradient-to-r ${action.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                      <Icon className="w-7 h-7 text-white" />
+                  <div className="flex items-center mb-3 sm:mb-4">
+                    <div className={`w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-r ${action.color} rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                      <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                     </div>
-                    <div className="ml-4 flex-1">
-                      <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors duration-300">{action.title}</h3>
+                    <div className="ml-3 sm:ml-4 flex-1">
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors duration-300">{action.title}</h3>
                     </div>
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:block">
                       <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                         <Play className="w-4 h-4 text-primary" />
                       </div>
                     </div>
                   </div>
-                  <p className="text-muted-foreground leading-relaxed">{action.description}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{action.description}</p>
                 </Link>
               );
             })}
@@ -388,31 +388,31 @@ const Dashboard = () => {
         </div>
 
         {/* Sidebar Content */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Recent Activity */}
-          <div className="bg-card rounded-2xl p-6 shadow-lg border border-border animate-fade-in">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-green-500" />
+          <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-border animate-fade-in">
+            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <div className="p-1.5 sm:p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">Recent Activity</h3>
+              <h3 className="text-base sm:text-lg font-bold text-foreground">Recent Activity</h3>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {recentActivity.map((activity, index) => {
                 const Icon = activity.icon;
                 return (
-                  <div key={index} className="flex items-center space-x-4 p-4 bg-muted/50 rounded-xl hover:bg-muted/70 transition-colors duration-200 group">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  <div key={index} className="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 bg-muted/50 rounded-lg sm:rounded-xl hover:bg-muted/70 transition-colors duration-200 group">
+                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
                       activity.type === 'completed' ? 'bg-green-100 dark:bg-green-900/30' :
                       activity.type === 'started' ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-orange-100 dark:bg-orange-900/30'
                     }`}>
-                      <Icon className={`w-5 h-5 ${
+                      <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${
                         activity.type === 'completed' ? 'text-green-500' :
                         activity.type === 'started' ? 'text-blue-500' : 'text-orange-500'
                       }`} />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-200">{activity.topic}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-200 truncate">{activity.topic}</p>
                       <p className="text-xs text-muted-foreground">{activity.time}</p>
                     </div>
                   </div>
@@ -422,7 +422,7 @@ const Dashboard = () => {
           </div>
 
           {/* Featured Content */}
-          <div className="bg-card rounded-2xl p-6 shadow-lg border border-border animate-fade-in">
+          <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-border animate-fade-in">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <Sparkles className="w-5 h-5 text-purple-500 animate-pulse" />
