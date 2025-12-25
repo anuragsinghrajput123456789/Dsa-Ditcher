@@ -26,6 +26,35 @@ const Dashboard = () => {
     return() => clearInterval(interval);
   }, [isTimerRunning]);
 
+  const [userStats, setUserStats] = useState({ level: "Beginner", problemsSolved: 0, loading: true });
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const { token } = JSON.parse(storedUser);
+        try {
+          const res = await fetch("http://localhost:5000/api/users/profile", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            const data = await res.json();
+             setUserStats({ 
+               level: data.level || "Beginner", 
+               problemsSolved: data.problemsSolved || 0,
+               loading: false
+             });
+          }
+        } catch (error) {
+          console.error("Failed to fetch user profile", error);
+        }
+      } else {
+         setUserStats(prev => ({ ...prev, loading: false }));
+      }
+    };
+    fetchUserProfile();
+  }, []);
+
   // Format time function
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -42,7 +71,7 @@ const Dashboard = () => {
   };
 
   const quickStats = [
-    { label: "Problems Solved", value: "23", icon: Star, color: "text-yellow-500", bgColor: "bg-yellow-50 dark:bg-yellow-900/20", borderColor: "border-yellow-200 dark:border-yellow-700" },
+    { label: "Problems Solved", value: userStats.problemsSolved.toString(), icon: Star, color: "text-yellow-500", bgColor: "bg-yellow-50 dark:bg-yellow-900/20", borderColor: "border-yellow-200 dark:border-yellow-700" },
     { 
       label: "Study Timer", 
       value: formatTime(studyTime), 
@@ -156,8 +185,8 @@ const Dashboard = () => {
                   <Medal className="w-6 h-6 animate-pulse" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold">Level 3</div>
-                  <div className="text-sm opacity-90">Intermediate Solver</div>
+                  <div className="text-2xl font-bold">{userStats.level}</div>
+                  <div className="text-sm opacity-90">Current Level</div>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm">

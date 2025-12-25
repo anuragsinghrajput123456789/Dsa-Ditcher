@@ -1,6 +1,7 @@
 
-import { useState } from "react";
-import { Send, Bot, User, BookOpen, ExternalLink, Loader, FileText, Lightbulb, ArrowRight, Sparkles, Zap, Brain, Code2, Rocket } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Send, Bot, User, BookOpen, ExternalLink, Loader, FileText, Lightbulb, ArrowRight, Sparkles, Zap, Brain, Code2, Rocket, Trash2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ChatMessage {
   id: string;
@@ -14,6 +15,8 @@ interface AnalysisResult {
   hints: string[];
 }
 
+
+
 const ProblemAnalyzerEnhanced = () => {
   const [problemText, setProblemText] = useState("");
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
@@ -22,6 +25,100 @@ const ProblemAnalyzerEnhanced = () => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const getToken = () => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      return JSON.parse(storedUser).token;
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      const token = getToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch("http://localhost:5000/api/chats", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const messages = data.map((msg: any) => ({
+            id: msg._id,
+            type: msg.role,
+            content: msg.content,
+            timestamp: new Date(msg.createdAt)
+          }));
+          setChatMessages(messages);
+        }
+      } catch (error) {
+        console.error("Failed to fetch chat history", error);
+      }
+    };
+    fetchHistory();
+  }, []);
+
+  const saveMessageToBackend = async (role: 'user' | 'ai', content: string) => {
+    const token = getToken();
+    if (!token) return null;
+
+    try {
+      const res = await fetch("http://localhost:5000/api/chats", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ role, content }),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (error) {
+      console.error("Failed to save chat", error);
+    }
+    return null;
+  };
+
+  const deleteChat = async (id: string) => {
+    const token = getToken();
+    if (!token) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/chats/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setChatMessages(prev => prev.filter(msg => msg.id !== id));
+        toast({ title: "Deleted", description: "Message deleted successfully." });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to delete message.", variant: "destructive" });
+    }
+  };
+
+  const clearHistory = async () => {
+    if (!window.confirm("Are you sure you want to delete all chat history?")) return;
+    const token = getToken();
+    if (!token) return;
+
+    try {
+      const res = await fetch("http://localhost:5000/api/chats", {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setChatMessages([]);
+        toast({ title: "Cleared", description: "Chat history cleared." });
+      }
+    } catch (error) {
+       toast({ title: "Error", description: "Failed to clear history.", variant: "destructive" });
+    }
+  };
 
   const dsaSheets = [
     {
@@ -107,8 +204,10 @@ Problem: ${problemText}`;
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
 
+    // Optimistic update
+    const tempId = Date.now().toString();
     const userMessage: ChatMessage = {
-      id: Date.now().toString(),
+      id: tempId,
       type: 'user',
       content: userInput,
       timestamp: new Date()
@@ -118,6 +217,13 @@ Problem: ${problemText}`;
     const currentInput = userInput;
     setUserInput("");
     setIsLoading(true);
+
+    // Save user message
+    saveMessageToBackend('user', currentInput).then(savedMsg => {
+        if (savedMsg) {
+             setChatMessages(prev => prev.map(msg => msg.id === tempId ? { ...msg, id: savedMsg._id } : msg));
+        }
+    });
 
     try {
       const prompt = `You are an expert DSA mentor specializing in Data Structures and Algorithms. Help the user understand concepts step by step with clear explanations. 
@@ -155,6 +261,11 @@ Keep your response educational and engaging.`;
         timestamp: new Date()
       };
       setChatMessages(prev => [...prev, aiResponse]);
+      saveMessageToBackend('ai', answer).then(savedMsg => {
+           if (savedMsg) {
+               setChatMessages(prev => prev.map(msg => msg.content === answer && msg.type === 'ai' ? { ...msg, id: savedMsg._id } : msg));
+           }
+      });
     } catch (error) {
       console.error("Chat error:", error);
       setChatMessages(prev => [
@@ -404,12 +515,22 @@ Keep your response educational and engaging.`;
 
       {/* AI Chat Assistant */}
       <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl border border-border animate-fade-in">
-        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-          <div className="p-2 sm:p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg sm:rounded-xl">
-            <Bot className="w-5 h-5 sm:w-7 sm:h-7 text-emerald-500 animate-pulse" />
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 flex-1">
+            <div className="p-2 sm:p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg sm:rounded-xl">
+              <Bot className="w-5 h-5 sm:w-7 sm:h-7 text-emerald-500 animate-pulse" />
+            </div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">AI DSA Assistant</h2>
           </div>
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">AI DSA Assistant</h2>
-        </div>
+          {chatMessages.length > 0 && (
+            <button 
+              onClick={clearHistory}
+              className="p-2 text-muted-foreground hover:text-destructive transition-colors duration-200"
+              title="Clear History"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          )} 
+
         
         <div className="bg-muted/30 rounded-xl border border-border mb-4">
           <div className="h-64 sm:h-80 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">

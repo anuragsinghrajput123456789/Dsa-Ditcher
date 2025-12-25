@@ -28,69 +28,167 @@ const DsaSheetManager = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    try {
-      const savedSheets = localStorage.getItem("dsa-sheets");
-      if (savedSheets) {
-        setSheets(JSON.parse(savedSheets));
+    const fetchSheets = async () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const { token } = JSON.parse(storedUser);
+        try {
+          const res = await fetch("http://localhost:5000/api/sheets", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            // Map _id to id for frontend compatibility
+            const mappedData = data.map((item: any) => ({ ...item, id: item._id }));
+            setSheets(mappedData);
+          } else {
+             // Fallback or error handling
+             console.error("Failed to fetch sheets");
+          }
+        } catch (error) {
+          console.error("Error fetching sheets:", error);
+          toast({ title: "Error", description: "Could not sync with backend.", variant: "destructive" });
+        }
+      } else {
+        // Fallback to local storage if not logged in
+        try {
+          const savedSheets = localStorage.getItem("dsa-sheets");
+          if (savedSheets) {
+            setSheets(JSON.parse(savedSheets));
+          }
+        } catch (error) {
+          console.error("Failed to load sheets from localStorage", error);
+        }
       }
-    } catch (error) {
-      console.error("Failed to load sheets from localStorage", error);
-      toast({
-        title: "Error",
-        description: "Could not load your DSA sheets.",
-        variant: "destructive",
-      });
-    }
+    };
+    fetchSheets();
   }, [toast]);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem("dsa-sheets", JSON.stringify(sheets));
-    } catch (error) {
-      console.error("Failed to save sheets to localStorage", error);
-      toast({
-        title: "Error",
-        description: "Could not save your DSA sheets.",
-        variant: "destructive",
-      });
-    }
-  }, [sheets, toast]);
+  // Sync to local storage only if NOT logged in (or optional: keep local backup?)
+  // For now, removing the auto-save to localStorage effect to avoid conflicts if we want backend-first source of truth.
+  // Instead, we will handle persistence in the save/delete functions directly.
 
   const handleOpenForm = (sheet: DsaSheet | null) => {
     setEditingSheet(sheet);
     setIsFormOpen(true);
   };
 
-  const handleSaveSheet = (formData: Omit<DsaSheet, "id">) => {
+  const handleSaveSheet = async (formData: Omit<DsaSheet, "id">) => {
+    const storedUser = localStorage.getItem("user");
+    let token = null;
+    if (storedUser) {
+       token = JSON.parse(storedUser).token;
+    }
+
     if (editingSheet) {
-      setSheets((sheets) =>
-        sheets.map((s) =>
-          s.id === editingSheet.id ? { ...editingSheet, ...formData } : s
-        )
-      );
-      toast({
-        title: "Success",
-        description: "Sheet updated successfully.",
-      });
+      // Update logic
+      if (token) {
+        try {
+          const res = await fetch(`http://localhost:5000/api/sheets/${editingSheet.id}`, {
+            method: "PUT",
+            headers: { 
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}` 
+            },
+            body: JSON.stringify(formData),
+          });
+          if (res.ok) {
+            const updatedSheet = await res.json();
+             setSheets((sheets) =>
+              sheets.map((s) =>
+                s.id === editingSheet.id ? { ...updatedSheet, id: updatedSheet._id } : s
+              )
+            );
+            toast({ title: "Success", description: "Sheet updated in backend." });
+          } else {
+             throw new Error("Failed to update");
+          }
+        } catch (err) {
+           toast({ title: "Error", description: "Failed to save to backend.", variant: "destructive" });
+        }
+      } else {
+         // Local update
+          setSheets((sheets) =>
+            sheets.map((s) =>
+              s.id === editingSheet.id ? { ...editingSheet, ...formData } : s
+            )
+          );
+          // Manually update local storage since we removed the effect
+          const updatedSheets = sheets.map(s => s.id === editingSheet.id ? { ...editingSheet, ...formData } : s);
+          localStorage.setItem("dsa-sheets", JSON.stringify(updatedSheets));
+          toast({ title: "Success", description: "Sheet updated locally." });
+      }
     } else {
-      const newSheet: DsaSheet = {
-        ...formData,
-        id: Date.now().toString(),
-      };
-      setSheets((sheets) => [newSheet, ...sheets]);
-      toast({
-        title: "Success",
-        description: "Sheet created successfully.",
-      });
+      // Create logic
+      if (token) {
+        try {
+          const res = await fetch("http://localhost:5000/api/sheets", {
+             method: "POST",
+             headers: { 
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}` 
+             },
+             body: JSON.stringify(formData),
+          });
+          if (res.ok) {
+             const newSheet = await res.json();
+             setSheets((sheets) => [{ ...newSheet, id: newSheet._id }, ...sheets]);
+             toast({ title: "Success", description: "Sheet created in backend." });
+          } else {
+             throw new Error("Failed to create");
+          }
+        } catch (err) {
+           toast({ title: "Error", description: "Failed to save to backend.", variant: "destructive" });
+        }
+      } else {
+        // Local create
+        const newSheet: DsaSheet = {
+          ...formData,
+          id: Date.now().toString(),
+        };
+        setSheets((sheets) => {
+           const updated = [newSheet, ...sheets];
+           localStorage.setItem("dsa-sheets", JSON.stringify(updated));
+           return updated;
+        });
+        toast({ title: "Success", description: "Sheet created locally." });
+      }
     }
     setIsFormOpen(false);
     setEditingSheet(null);
   };
 
-  const handleDeleteSheet = (id: string) => {
+  const handleDeleteSheet = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this sheet?")) {
-      setSheets((sheets) => sheets.filter((s) => s.id !== id));
-      toast({ title: "Success", description: "Sheet deleted." });
+      const storedUser = localStorage.getItem("user");
+      let token = null;
+      if (storedUser) {
+         token = JSON.parse(storedUser).token;
+      }
+
+      if (token) {
+        try {
+          const res = await fetch(`http://localhost:5000/api/sheets/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+             setSheets((sheets) => sheets.filter((s) => s.id !== id));
+             toast({ title: "Success", description: "Sheet deleted from backend." });
+          } else {
+             toast({ title: "Error", description: "Failed to delete from backend.", variant: "destructive" });
+          }
+        } catch (err) {
+            toast({ title: "Error", description: "Failed to delete from backend.", variant: "destructive" });
+        }
+      } else {
+        setSheets((sheets) => {
+           const updated = sheets.filter((s) => s.id !== id);
+           localStorage.setItem("dsa-sheets", JSON.stringify(updated));
+           return updated;
+        });
+        toast({ title: "Success", description: "Sheet deleted locally." });
+      }
     }
   };
 

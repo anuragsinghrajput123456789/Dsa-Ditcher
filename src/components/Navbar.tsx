@@ -1,13 +1,28 @@
 
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Code, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<{ name: string } | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
+  };
 
   const navigation = [
     { name: "Dashboard", href: "/" },
@@ -64,14 +79,32 @@ const Navbar = () => {
           {/* Desktop Right Side */}
           <div className="hidden md:flex items-center space-x-3">
             <ThemeToggle />
-            <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center animate-pulse">
-              <div className="w-3 h-3 bg-white rounded-full"></div>
-            </div>
+            {user ? (
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium hidden lg:inline-block animate-fade-in">Hi, {user.name}</span>
+                <Button variant="destructive" size="sm" onClick={handleLogout} className="animate-fade-in">Logout</Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 animate-fade-in">
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">Login</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button size="sm">Get Started</Button>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
             <ThemeToggle />
+            {user ? (
+               <Button variant="ghost" size="sm" onClick={handleLogout} className="text-destructive">
+                 <span className="sr-only">Logout</span>
+                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+               </Button>
+            ) : null}
             <Button
               variant="ghost"
               size="sm"

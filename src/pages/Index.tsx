@@ -13,6 +13,8 @@ import CodePlayground from "../components/CodePlayground";
 import ComplexityFinder from "../components/playground/ComplexityFinder";
 import ResourceManager from "../components/resources/ResourceManager";
 import DsaSheetManager from "../components/DsaSheetManager";
+import Login from "./Login";
+import Signup from "./Signup";
 
 const Index = () => {
   return (
@@ -31,6 +33,8 @@ const Index = () => {
           <Route path="/complexity-finder" element={<ComplexityFinder code="" language="python" />} />
           <Route path="/resources" element={<ResourceManager topic="general" />} />
           <Route path="/dsa-sheets" element={<DsaSheetManager />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
