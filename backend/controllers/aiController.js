@@ -5,7 +5,7 @@ const analyzeProblem = async (req, res, next) => {
   }
 
   try {
-    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "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";
+    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
     const prompt = `Analyze the following DSA problem and provide a detailed explanation with:
 1. Simple summary for beginners
 2. Input/Output examples with explanation
@@ -29,7 +29,8 @@ Problem: ${problemText}`;
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "user", content: prompt }
-        ]
+        ],
+        max_tokens: 2000
       }),
     });
 
@@ -50,7 +51,7 @@ const chatWithAI = async (req, res, next) => {
   const { message, prompt: customPrompt } = req.body;
   
   try {
-    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "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";
+    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
     
     let prompt = customPrompt;
     if (!prompt) {
@@ -83,7 +84,8 @@ Keep your response educational and engaging.`;
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "user", content: prompt }
-        ]
+        ],
+        max_tokens: 2000
       }),
     });
 
@@ -107,7 +109,7 @@ const analyzeComplexity = async (req, res, next) => {
   }
 
   try {
-    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "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";
+    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
     const prompt = `Analyze the time and space complexity of the following ${language} code. Provide your answer in a valid JSON format. The JSON object must have the following keys: "timeComplexity" (e.g., "O(n^2)"), "spaceComplexity" (e.g., "O(n)"), "explanation" (a brief one-liner), "details" (an array of strings explaining the analysis), "optimizations" (an array of strings with suggestions), and "confidence" (a string which must be one of 'high', 'medium', or 'low').
 
 Code:
@@ -132,7 +134,8 @@ Your response must be only the JSON object, without any surrounding text or mark
         ],
         response_format: {
           type: "json_object"
-        }
+        },
+        max_tokens: 2000
       }),
     });
 

@@ -33,6 +33,16 @@ const DSAChatGuide = () => {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get('query');
+    if (query && query.trim()) {
+      // Clear URL parameter so it doesn't trigger on refresh
+      window.history.replaceState({}, document.title, window.location.pathname);
+      sendMessage(query.trim());
+    }
+  }, []);
+
   const quickActions = [
     { text: "Explain Binary Search", category: 'explanation' },
     { text: "Help with Two Pointers technique", category: 'hint' },

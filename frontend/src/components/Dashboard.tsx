@@ -5,7 +5,7 @@ import {
   Book, Search, BookOpen, TrendingUp, Star, Timer, Calendar, 
   Code, MessageSquare, Lightbulb, Map, Play, Target, Sparkles, 
   Zap, Award, Trophy, Heart, Rocket, Clock, Pause, Medal, 
-  Crown, Flame, ArrowRight, Activity, Award as Shield 
+  Crown, Flame, ArrowRight, Activity, Award as Shield, Bot, Send 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/config";
@@ -356,6 +356,143 @@ const Dashboard = () => {
               })}
             </div>
           </div>
+
+          {/* NEW: AI Quest & Coding Companion Panel */}
+          <motion.div 
+            variants={itemVariants}
+            className="relative overflow-hidden glass-card rounded-2xl p-6 md:p-8 shadow-xl border border-border/50 group space-y-6"
+          >
+            {/* Ambient subtle light glow */}
+            <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/10 rounded-full filter blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
+            
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border/40 pb-5">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-indigo-100 dark:bg-indigo-950/40 rounded-xl group-hover:rotate-6 transition-transform duration-300">
+                  <Bot className="w-6 h-6 text-indigo-500" />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-indigo-500 tracking-wider uppercase">Active Companion</div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-foreground">Meet Aura - AI DSA Assistant</h2>
+                </div>
+              </div>
+              <span className="px-3.5 py-1 bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 rounded-full text-xs font-bold border border-indigo-200 dark:border-indigo-800 animate-pulse">
+                Online & Ready
+              </span>
+            </div>
+
+            <div className="bg-muted/40 dark:bg-muted/10 rounded-xl p-5 border border-border/40 space-y-3.5">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <Target className="w-4.5 h-4.5 text-pink-500" />
+                Daily Coding Quest
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Solve <span className="text-foreground font-semibold">1 Stack/Queue Medium challenge</span> today to claim your <span className="text-amber-500 font-bold">🔥 1.5x Streak Multiplier</span> and advance to the Silver tier!
+              </p>
+              <div className="w-full bg-muted dark:bg-muted/20 h-2 rounded-full overflow-hidden relative">
+                <div className="bg-gradient-to-r from-indigo-500 to-pink-500 h-full rounded-full w-2/3"></div>
+              </div>
+              <div className="flex justify-between text-[10px] text-muted-foreground font-semibold">
+                <span>Progress: 66% Complete</span>
+                <span>+120 XP Reward</span>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Quick AI Explainer</div>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  placeholder="Ask Aura anything... e.g. 'Explain Recursion'" 
+                  className="flex-1 bg-muted/40 dark:bg-muted/20 border border-border/60 hover:border-primary/40 focus:border-primary rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all duration-300"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const inputVal = (e.target as HTMLInputElement).value;
+                      if (inputVal.trim()) {
+                        window.location.href = `/chat-guide?query=${encodeURIComponent(inputVal)}`;
+                      }
+                    }
+                  }}
+                />
+                <Button 
+                  onClick={(e) => {
+                    const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                    if (input && input.value.trim()) {
+                      window.location.href = `/chat-guide?query=${encodeURIComponent(input.value)}`;
+                    } else {
+                      window.location.href = `/chat-guide`;
+                    }
+                  }}
+                  className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-bold rounded-xl px-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300"
+                >
+                  <Send className="w-4.5 h-4.5" />
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* NEW: Global Leaderboard & Tier Highlights */}
+          <motion.div 
+            variants={itemVariants}
+            className="glass-card rounded-2xl p-6 shadow-xl border border-border/50 space-y-6"
+          >
+            <div className="flex items-center justify-between border-b border-border/40 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-pink-100 dark:bg-pink-950/40 rounded-lg">
+                  <Trophy className="w-4.5 h-4.5 text-pink-500" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-foreground">Global Coding Arena</h3>
+              </div>
+              <span className="text-[10px] text-muted-foreground font-semibold bg-muted px-2 py-0.5 rounded-full">
+                Active Standings
+              </span>
+            </div>
+
+            <div className="space-y-3.5">
+              {/* Top 3 Users */}
+              <div className="flex items-center justify-between p-2.5 bg-yellow-500/5 hover:bg-yellow-500/10 border border-yellow-500/20 rounded-xl transition-colors duration-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-yellow-500/20 border border-yellow-500 flex items-center justify-center text-xs font-bold text-yellow-500">1</div>
+                  <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                    <span className="text-xs sm:text-sm font-bold text-foreground truncate">Siddharth Sharma</span>
+                    <Sparkles className="w-3.5 h-3.5 text-yellow-500 flex-shrink-0" />
+                  </div>
+                </div>
+                <span className="text-xs font-semibold text-yellow-500 flex-shrink-0">3,450 XP</span>
+              </div>
+
+              <div className="flex items-center justify-between p-2.5 bg-slate-500/5 hover:bg-slate-500/10 border border-slate-500/20 rounded-xl transition-colors duration-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-slate-400/20 border border-slate-400 flex items-center justify-center text-xs font-bold text-slate-400">2</div>
+                  <span className="text-xs sm:text-sm font-bold text-foreground truncate">Priyanjali Roy</span>
+                </div>
+                <span className="text-xs font-semibold text-slate-400 flex-shrink-0">3,120 XP</span>
+              </div>
+
+              <div className="flex items-center justify-between p-2.5 bg-amber-700/5 hover:bg-amber-700/10 border border-amber-700/20 rounded-xl transition-colors duration-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-amber-700/20 border border-amber-700 flex items-center justify-center text-xs font-bold text-amber-700">3</div>
+                  <span className="text-xs sm:text-sm font-bold text-foreground truncate">Nikhil Varma</span>
+                </div>
+                <span className="text-xs font-semibold text-amber-600 flex-shrink-0">2,880 XP</span>
+              </div>
+
+              {/* Current User Staging */}
+              <div className="flex items-center justify-between p-3.5 bg-indigo-500/10 border border-indigo-500/30 rounded-xl shadow-inner relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-indigo-500/20 to-transparent rounded-full filter blur-lg"></div>
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-extrabold shadow-md shadow-indigo-500/25 flex-shrink-0">12</div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-xs sm:text-sm font-extrabold text-foreground flex items-center gap-1">
+                      <span className="truncate">You (Stellar Pioneer)</span>
+                      <Flame className="w-3 h-3 text-pink-500 animate-bounce flex-shrink-0" />
+                    </span>
+                    <span className="text-[10px] text-muted-foreground truncate">Silver Tier Rank • Top 8%</span>
+                  </div>
+                </div>
+                <span className="text-xs font-black text-indigo-500 flex-shrink-0">1,450 XP</span>
+              </div>
+            </div>
+          </motion.div>
 
         </div>
 
