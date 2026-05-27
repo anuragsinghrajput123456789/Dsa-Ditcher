@@ -1,10 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Play, RotateCcw, Settings, Brain, Code } from "lucide-react";
 import ComplexityFinder from "./playground/ComplexityFinder";
 import CodeEditor from "./playground/CodeEditor";
 import IOPanel from "./playground/IOPanel";
 
 const CodePlayground = () => {
+  useEffect(() => {
+    document.title = "Interactive JavaScript Code Playground & Complexity Finder | DSA Ditcher";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", "Execute your JavaScript algorithms directly in your browser. Analyze Big O time and space complexity with AI guidance, and optimize execution structures.");
+    }
+  }, []);
   const javascriptExample = `function bubbleSort(arr) {
     let n = arr.length;
     for (let i = 0; i < n; i++) {

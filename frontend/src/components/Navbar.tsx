@@ -1,31 +1,76 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Code, Sparkles } from "lucide-react";
+import { Menu, X, Code, Sparkles, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { API_BASE_URL } from "@/config";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<{ name: string } | null>(null);
+  const [streak, setStreak] = useState<number>(0);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      // Fetch dynamic profile to get current real-time streak
+      const fetchProfile = async () => {
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
+            headers: { Authorization: `Bearer ${parsedUser.token}` },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setStreak(data.streak || 0);
+          }
+        } catch (error) {
+          console.error("Failed to fetch streak", error);
+        }
+      };
+      fetchProfile();
+    } else {
+      // Local/Guest streak logic
+      const todayStr = new Date().toDateString();
+      const lastActive = localStorage.getItem("guest-last-active");
+      const currentStreak = parseInt(localStorage.getItem("guest-streak") || "0");
+      if (lastActive) {
+        const lastActiveDate = new Date(lastActive);
+        const todayDate = new Date(todayStr);
+        const diffTime = todayDate.getTime() - lastActiveDate.getTime();
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays === 1) {
+          const newStreak = currentStreak + 1;
+          localStorage.setItem("guest-streak", newStreak.toString());
+          localStorage.setItem("guest-last-active", todayStr);
+          setStreak(newStreak);
+        } else if (diffDays > 1) {
+          localStorage.setItem("guest-streak", "1");
+          localStorage.setItem("guest-last-active", todayStr);
+          setStreak(1);
+        } else {
+          setStreak(currentStreak || 1);
+        }
+      } else {
+        localStorage.setItem("guest-streak", "1");
+        localStorage.setItem("guest-last-active", todayStr);
+        setStreak(1);
+      }
     }
-  }, []);
+  }, [location.pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
+    setStreak(0);
     navigate("/login");
   };
 
   const navigation = [
-    { name: "Dashboard", href: "/" },
     { name: "Topics", href: "/topics" },
     { name: "Analyzer", href: "/analyzer" },
     { name: "Visualizations", href: "/visualizations" },
@@ -51,7 +96,7 @@ const Navbar = () => {
               </div>
             </div>
             <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:to-purple-500 transition-all duration-300">
-              DSA Ditcher
+              AlgoSpark
             </span>
           </Link>
 
@@ -63,8 +108,8 @@ const Navbar = () => {
                 to={item.href}
                 className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 group ${
                   isActive(item.href)
-                    ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent/80"
+                    ? "bg-primary/95 text-primary-foreground shadow-[0_0_20px_rgba(139,92,246,0.25)] border border-primary/20 scale-105"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50 hover:scale-105"
                 }`}
               >
                 {item.name}
@@ -78,6 +123,12 @@ const Navbar = () => {
 
           {/* Desktop Right Side */}
           <div className="hidden md:flex items-center space-x-3">
+            {streak > 0 && (
+              <div className="flex items-center gap-1.5 text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/40 px-3 py-1.5 rounded-full border border-amber-200 dark:border-amber-900 shadow-sm">
+                <Flame className="w-4 h-4 fill-amber-500 text-amber-500 animate-bounce" />
+                <span>{streak} Day Streak</span>
+              </div>
+            )}
             <ThemeToggle />
             {user ? (
               <div className="flex items-center gap-3">
@@ -98,6 +149,12 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
+            {streak > 0 && (
+              <div className="flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/40 px-2 py-1 rounded-full border border-amber-200 dark:border-amber-900 shadow-sm">
+                <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                <span>{streak}d</span>
+              </div>
+            )}
             <ThemeToggle />
             {user ? (
                <Button variant="ghost" size="sm" onClick={handleLogout} className="text-destructive">

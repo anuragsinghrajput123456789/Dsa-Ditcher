@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Brain, Clock, Database, TrendingUp, AlertCircle, Loader, Wand2 } from "lucide-react";
+import { API_BASE_URL } from "@/config";
 
 interface ComplexityFinderProps {
   code: string;
@@ -20,8 +21,6 @@ const ComplexityFinder = ({ code, language }: ComplexityFinderProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const GEMINI_API_KEY = "AIzaSyA1qRYSYXo5fY88oGe-aVg0v9xUzMlx4Us";
-
   const analyzeComplexity = async () => {
     if (!code.trim()) {
       setError("Code is empty. Please write some code to analyze.");
@@ -32,39 +31,18 @@ const ComplexityFinder = ({ code, language }: ComplexityFinderProps) => {
     setError(null);
     setResult(null);
 
-    const prompt = `Analyze the time and space complexity of the following ${language} code. Provide your answer in a valid JSON format. The JSON object must have the following keys: "timeComplexity" (e.g., "O(n^2)"), "spaceComplexity" (e.g., "O(n)"), "explanation" (a brief one-liner), "details" (an array of strings explaining the analysis), "optimizations" (an array of strings with suggestions), and "confidence" (a string which must be one of 'high', 'medium', or 'low').
-
-Code:
-\`\`\`${language}
-${code}
-\`\`\`
-
-Your response must be only the JSON object, without any surrounding text or markdown formatting like \`\`\`json.`;
-
     try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      const res = await fetch(`${API_BASE_URL}/api/ai/complexity`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            responseMimeType: "application/json",
-          }
-        }),
+        body: JSON.stringify({ code, language }),
       });
 
       if (!res.ok) {
         throw new Error(`API request failed with status ${res.status}`);
       }
       
-      const data = await res.json();
-      const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      
-      if (!responseText) {
-        throw new Error("No response from AI.");
-      }
-      
-      const parsedResult: ComplexityResult = JSON.parse(responseText);
+      const parsedResult: ComplexityResult = await res.json();
       setResult(parsedResult);
 
     } catch (e: any) {

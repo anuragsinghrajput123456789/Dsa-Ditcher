@@ -15,16 +15,18 @@ import ResourceManager from "../components/resources/ResourceManager";
 import DsaSheetManager from "../components/DsaSheetManager";
 import Login from "./Login";
 import Signup from "./Signup";
+import Footer from "../components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-screen bg-background text-foreground transition-all duration-300">
       <Navbar />
-      <div className="container mx-auto px-4 py-4 sm:py-8">
+      <div className="flex-grow container mx-auto px-4 py-4 sm:py-8">
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/topics" element={<TopicExplorer />} />
           <Route path="/analyzer" element={<ProblemAnalyzerEnhanced />} />
+          <Route path="/question-explainer" element={<ProblemAnalyzerEnhanced />} />
           <Route path="/visualizations" element={<VisualizationsFixed />} />
           <Route path="/roadmap" element={<Roadmap />} />
           <Route path="/custom-roadmap" element={<CustomRoadmap />} />
@@ -38,6 +40,7 @@ const Index = () => {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
+      <Footer />
       <Chatbot />
     </div>
   );

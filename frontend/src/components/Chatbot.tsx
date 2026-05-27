@@ -1,8 +1,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { MessageSquare, Send, Bot, User, X, Sparkles, Brain } from "lucide-react";
-
-const GEMINI_API_KEY = "AIzaSyA1qRYSYXo5fY88oGe-aVg0v9xUzMlx4Us";
+import { API_BASE_URL } from "@/config";
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,17 +43,13 @@ const Chatbot = () => {
         "Answer the user's question clearly and with step-by-step reasoning, as if you are helping them get unstuck, and refer to DSA concepts and patterns when relevant.\n\n" +
         "User: " + inputMessage;
 
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      const res = await fetch(`${API_BASE_URL}/api/ai/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        }),
+        body: JSON.stringify({ prompt }),
       });
       const data = await res.json();
-      const answer =
-        data.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "Sorry, I couldn't process your request. Try again!";
+      const answer = data.text || "Sorry, I couldn't process your request. Try again!";
 
       const botMessage = {
         type: "bot",
