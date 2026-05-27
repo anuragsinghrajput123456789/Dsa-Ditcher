@@ -636,6 +636,7 @@ Keep your response educational and engaging.`;
         </div>
 
       </div>
+    </div>
   );
 };
 
