@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const sheetSchema = mongoose.Schema({
   user: {
@@ -22,4 +22,4 @@ const sheetSchema = mongoose.Schema({
 }, { timestamps: true });
 
 const Sheet = mongoose.model('Sheet', sheetSchema);
-module.exports = Sheet;
+export default Sheet;

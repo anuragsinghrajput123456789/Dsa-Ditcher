@@ -1,4 +1,4 @@
-const User = require('../models/User');
+import User from '../models/User.js';
 
 // Helper function to update active streak
 const updateStreak = async (user) => {
@@ -31,7 +31,7 @@ const updateStreak = async (user) => {
 // @desc    Get user profile
 // @route   GET /api/users/profile
 // @access  Private
-const getUserProfile = async (req, res) => {
+export const getUserProfile = async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -53,7 +53,7 @@ const getUserProfile = async (req, res) => {
 // @desc    Update user stats (problems solved)
 // @route   PUT /api/users/stats
 // @access  Private
-const updateUserStats = async (req, res) => {
+export const updateUserStats = async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -84,5 +84,3 @@ const updateUserStats = async (req, res) => {
     res.status(404).json({ message: 'User not found' });
   }
 };
-
-module.exports = { getUserProfile, updateUserStats };

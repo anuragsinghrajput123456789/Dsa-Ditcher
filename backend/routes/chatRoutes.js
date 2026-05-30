@@ -1,12 +1,13 @@
-const express = require('express');
-const router = express.Router();
-const {
+import express from 'express';
+import {
   getChats,
   saveChat,
   deleteChat,
   clearHistory
-} = require('../controllers/chatController');
-const { protect } = require('../middleware/authMiddleware');
+} from '../controllers/chatController.js';
+import { protect } from '../middleware/authMiddleware.js';
+
+const router = express.Router();
 
 router.route('/')
   .get(protect, getChats)
@@ -15,4 +16,4 @@ router.route('/')
 
 router.route('/:id').delete(protect, deleteChat);
 
-module.exports = router;
+export default router;

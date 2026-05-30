@@ -1567,12 +1567,36 @@ export const topicDataMap: Record<string, TopicData> = {
 };
 
 // Default topic data for topics not in the map
-export const getDefaultTopicData = (id: string, title: string): TopicData => ({
-  id,
-  title,
-  description: `Learn about ${title} - an important concept in Data Structures and Algorithms.`,
-  resources: [
-    { title: `${title} - GeeksforGeeks`, type: "article", url: `https://www.geeksforgeeks.org/${id.replace(/-/g, '-')}/` },
-  ],
-  practiceProblems: []
-});
+export const getDefaultTopicData = (id: string, title: string): TopicData => {
+  const formattedId = id.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
+  return {
+    id,
+    title,
+    description: `Master ${title} - a crucial component in Data Structures and Algorithms. Revise fundamental concepts, study standard implementations, and solve top interview problems.`,
+    resources: [
+      { 
+        title: `${title} Reference & Complete Guide`, 
+        type: "article", 
+        url: `https://www.geeksforgeeks.org/${formattedId}/` 
+      },
+      { 
+        title: `${title} Playlist (Striver / NeetCode)`, 
+        type: "video", 
+        url: `https://www.youtube.com/results?search_query=striver+neetcode+${encodeURIComponent(title)}` 
+      },
+      { 
+        title: `LeetCode ${title} Problems Hub`, 
+        type: "practice", 
+        url: `https://leetcode.com/problemset/all/?search=${encodeURIComponent(title)}` 
+      }
+    ],
+    practiceProblems: [
+      { 
+        title: `Solve ${title} Challenges on GeeksforGeeks`, 
+        platform: "GeeksforGeeks", 
+        url: `https://practice.geeksforgeeks.org/explore?page=1&search=${encodeURIComponent(title)}`,
+        difficulty: "medium" 
+      }
+    ]
+  };
+};

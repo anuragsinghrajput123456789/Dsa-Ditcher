@@ -1,17 +1,24 @@
-const express = require('express');
-const dotenv = require('dotenv');
-// Force override to ensure local .env is used
-dotenv.config({ override: true });
+import express from 'express';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import dotenv from 'dotenv';
 
-const cors = require('cors');
-const path = require('path');
-const connectDB = require('./config/db');
-const authRoutes = require('./routes/authRoutes');
-const sheetRoutes = require('./routes/sheetRoutes');
-const userRoutes = require('./routes/userRoutes');
-const chatRoutes = require('./routes/chatRoutes');
-const aiRoutes = require('./routes/aiRoutes');
-const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+// Resolve __dirname in ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Force override to ensure absolute path-resolved backend .env is used
+dotenv.config({ path: path.join(__dirname, '.env'), override: true });
+
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import sheetRoutes from './routes/sheetRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 // Connect to database
 connectDB();

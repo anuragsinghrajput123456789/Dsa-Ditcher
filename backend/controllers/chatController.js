@@ -1,9 +1,9 @@
-const Chat = require('../models/Chat');
+import Chat from '../models/Chat.js';
 
 // @desc    Get user chat history
 // @route   GET /api/chats
 // @access  Private
-const getChats = async (req, res) => {
+export const getChats = async (req, res) => {
   try {
     const chats = await Chat.find({ user: req.user._id }).sort({ createdAt: 1 });
     res.json(chats);
@@ -15,7 +15,7 @@ const getChats = async (req, res) => {
 // @desc    Save a chat message
 // @route   POST /api/chats
 // @access  Private
-const saveChat = async (req, res) => {
+export const saveChat = async (req, res) => {
   const { role, content } = req.body;
 
   if (!role || !content) {
@@ -37,7 +37,7 @@ const saveChat = async (req, res) => {
 // @desc    Delete a chat message
 // @route   DELETE /api/chats/:id
 // @access  Private
-const deleteChat = async (req, res) => {
+export const deleteChat = async (req, res) => {
   try {
     const chat = await Chat.findById(req.params.id);
 
@@ -66,19 +66,11 @@ const deleteChat = async (req, res) => {
 // @desc    Clear all chat history for user
 // @route   DELETE /api/chats
 // @access  Private
-const clearHistory = async (req, res) => {
+export const clearHistory = async (req, res) => {
   try {
     await Chat.deleteMany({ user: req.user._id });
     res.json({ message: 'History cleared' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
-
-
-module.exports = {
-  getChats,
-  saveChat,
-  deleteChat,
-  clearHistory
 };

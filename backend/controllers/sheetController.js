@@ -1,9 +1,9 @@
-const Sheet = require('../models/Sheet');
+import Sheet from '../models/Sheet.js';
 
 // @desc    Get all sheets for logged in user
 // @route   GET /api/sheets
 // @access  Private
-const getSheets = async (req, res) => {
+export const getSheets = async (req, res) => {
   try {
     const sheets = await Sheet.find({ user: req.user._id });
     res.json(sheets);
@@ -15,7 +15,7 @@ const getSheets = async (req, res) => {
 // @desc    Create a sheet
 // @route   POST /api/sheets
 // @access  Private
-const createSheet = async (req, res) => {
+export const createSheet = async (req, res) => {
   const { title, description, problems } = req.body;
 
   if (!title || !description) {
@@ -38,7 +38,7 @@ const createSheet = async (req, res) => {
 // @desc    Update a sheet
 // @route   PUT /api/sheets/:id
 // @access  Private
-const updateSheet = async (req, res) => {
+export const updateSheet = async (req, res) => {
   try {
     const sheet = await Sheet.findById(req.params.id);
 
@@ -71,7 +71,7 @@ const updateSheet = async (req, res) => {
 // @desc    Delete a sheet
 // @route   DELETE /api/sheets/:id
 // @access  Private
-const deleteSheet = async (req, res) => {
+export const deleteSheet = async (req, res) => {
   try {
     const sheet = await Sheet.findById(req.params.id);
 
@@ -96,11 +96,4 @@ const deleteSheet = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
-};
-
-module.exports = {
-  getSheets,
-  createSheet,
-  updateSheet,
-  deleteSheet,
 };

@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, BookOpen, Clock, CheckCircle, ArrowLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Search, BookOpen, Clock, CheckCircle, ArrowLeft, ChevronRight, Sparkles, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import ResourceManager from "./resources/ResourceManager";
+import DsaCheatSheet from "./DsaCheatSheet";
 
 const TopicExplorer = () => {
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [completedTopics, setCompletedTopics] = useState<string[]>([]);
+  const [showCheatSheet, setShowCheatSheet] = useState(false);
 
   const topics = [
     {
@@ -285,110 +287,160 @@ const TopicExplorer = () => {
         </div>
       </motion.div>
 
-      {/* Progress Card */}
+      {/* Interactive Toggle for SDE Cheat Sheets */}
       <motion.div variants={itemVariants}>
-        <Card className="glass-card border border-border/50 shadow-xl overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-full filter blur-2xl"></div>
-          
-          <div className="p-6">
-            <h2 className="text-lg font-bold text-foreground mb-4 uppercase tracking-wider text-muted-foreground">Your Progress Overview</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-muted/30 dark:bg-muted/10 p-5 rounded-2xl border border-border/30 shadow-sm">
-                <div className="text-3xl font-black text-foreground">{completedTopics.length}</div>
-                <div className="text-xs text-muted-foreground font-semibold mt-1">Concepts Completed</div>
-              </div>
-              <div className="bg-muted/30 dark:bg-muted/10 p-5 rounded-2xl border border-border/30 shadow-sm">
-                <div className="text-3xl font-black text-foreground">{topics.length}</div>
-                <div className="text-xs text-muted-foreground font-semibold mt-1">Total Available Tracks</div>
-              </div>
-              <div className="bg-muted/30 dark:bg-muted/10 p-5 rounded-2xl border border-border/30 shadow-sm">
-                <div className="text-3xl font-black text-primary">{Math.round((completedTopics.length / topics.length) * 100)}%</div>
-                <div className="text-xs text-muted-foreground font-semibold mt-1">Mastery Progress</div>
-              </div>
+        <Card className="overflow-hidden border border-border/50 shadow-xl bg-gradient-to-r from-purple-900/10 via-indigo-900/5 to-cyan-900/10 dark:from-purple-950/20 dark:via-indigo-955/10 dark:to-cyan-955/20">
+          <div className="p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="space-y-1">
+              <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-500 animate-pulse" />
+                SDE Revision Hub: Cheat Sheets & Flashcards
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground font-semibold">
+                Rapidly revise data structure complexities, algorithms checklists, and master 3D flashcards for the top SDE coding patterns.
+              </p>
             </div>
-            
-            <div className="mt-5 w-full bg-muted dark:bg-muted/20 h-2.5 rounded-full overflow-hidden">
-              <div 
-                className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 h-full rounded-full transition-all duration-500"
-                style={{ width: `${(completedTopics.length / topics.length) * 100}%` }}
-              ></div>
-            </div>
+            <Button
+              onClick={() => setShowCheatSheet(!showCheatSheet)}
+              className={`font-bold rounded-xl hover:scale-[1.02] active:scale-95 transition-all shadow-md shrink-0 ${
+                showCheatSheet
+                  ? "bg-amber-600 hover:bg-amber-500 text-white shadow-amber-500/15"
+                  : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-purple-500/15"
+              }`}
+            >
+              {showCheatSheet ? (
+                <>
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  View DSA Topic Tracks
+                </>
+              ) : (
+                <>
+                  <Layers className="w-4 h-4 mr-2" />
+                  Open SDE Revision Hub
+                </>
+              )}
+            </Button>
           </div>
         </Card>
       </motion.div>
 
-      {/* Grid listing */}
-      <motion.div 
-        variants={containerVariants}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        {filteredTopics.map((topic) => (
-          <motion.div
-            key={topic.id}
-            variants={itemVariants}
-            whileHover={{ y: -5 }}
-            transition={{ type: "spring", stiffness: 200 }}
-          >
-            <Card
-              className="glass-card hover:shadow-xl transition-all duration-300 cursor-pointer border hover:border-primary/30 overflow-hidden flex flex-col justify-between h-full group"
-              onClick={() => handleTopicSelect(topic.id)}
-            >
-              <CardHeader className="pb-4">
-                <div className="flex justify-between items-start mb-4">
-                  <div className={`w-14 h-14 bg-gradient-to-br ${topic.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <span className="text-2xl">{topic.icon}</span>
+      {showCheatSheet ? (
+        <motion.div
+          key="cheatsheet"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 100 }}
+        >
+          <DsaCheatSheet />
+        </motion.div>
+      ) : (
+        <>
+          {/* Progress Card */}
+          <motion.div variants={itemVariants}>
+            <Card className="glass-card border border-border/50 shadow-xl overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-full filter blur-2xl"></div>
+              
+              <div className="p-6">
+                <h2 className="text-lg font-bold text-foreground mb-4 uppercase tracking-wider text-muted-foreground">Your Progress Overview</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="bg-muted/30 dark:bg-muted/10 p-5 rounded-2xl border border-border/30 shadow-sm">
+                    <div className="text-3xl font-black text-foreground">{completedTopics.length}</div>
+                    <div className="text-xs text-muted-foreground font-semibold mt-1">Concepts Completed</div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleTopicCompletion(topic.id);
-                    }}
-                    className={`p-2 h-9 w-9 rounded-full transition-all duration-200 ${
-                      completedTopics.includes(topic.id) 
-                        ? 'text-green-600 bg-green-100 dark:bg-green-950/40 dark:text-green-400 scale-110' 
-                        : 'text-muted-foreground hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-950/20'
-                    }`}
-                  >
-                    <CheckCircle className="w-5.5 h-5.5" />
-                  </Button>
+                  <div className="bg-muted/30 dark:bg-muted/10 p-5 rounded-2xl border border-border/30 shadow-sm">
+                    <div className="text-3xl font-black text-foreground">{topics.length}</div>
+                    <div className="text-xs text-muted-foreground font-semibold mt-1">Total Available Tracks</div>
+                  </div>
+                  <div className="bg-muted/30 dark:bg-muted/10 p-5 rounded-2xl border border-border/30 shadow-sm">
+                    <div className="text-3xl font-black text-primary">{Math.round((completedTopics.length / topics.length) * 100)}%</div>
+                    <div className="text-xs text-muted-foreground font-semibold mt-1">Mastery Progress</div>
+                  </div>
                 </div>
                 
-                <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors duration-200 mb-1.5">{topic.name}</CardTitle>
-                <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{topic.description}</p>
-              </CardHeader>
-              
-              <CardContent className="pt-0">
-                <div className="space-y-2.5 mb-5 border-t border-border/40 pt-4">
-                  <div className="flex items-center text-xs font-semibold text-muted-foreground">
-                    <Clock className="w-4 h-4 mr-1.5 text-indigo-500" />
-                    Estimated Time: {topic.estimatedTime}
-                  </div>
-                  <div className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
-                    Prerequisites: {topic.prerequisites.join(", ")}
-                  </div>
+                <div className="mt-5 w-full bg-muted dark:bg-muted/20 h-2.5 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 h-full rounded-full transition-all duration-500"
+                    style={{ width: `${(completedTopics.length / topics.length) * 100}%` }}
+                  ></div>
                 </div>
-
-                <div className="flex justify-between items-center mt-auto">
-                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                    topic.difficulty === 'Beginner' ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300' :
-                    topic.difficulty === 'Intermediate' ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300' :
-                    'bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
-                  }`}>
-                    {topic.difficulty}
-                  </span>
-                  <div className="text-primary hover:text-primary/80 text-sm font-bold group-hover:translate-x-0.5 transition-transform duration-200 flex items-center gap-0.5">
-                    Explore Track
-                    <ChevronRight className="w-4.5 h-4.5" />
-                  </div>
-                </div>
-              </CardContent>
+              </div>
             </Card>
           </motion.div>
-        ))}
-      </motion.div>
+
+          {/* Grid listing */}
+          <motion.div 
+            variants={containerVariants}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {filteredTopics.map((topic) => (
+              <motion.div
+                key={topic.id}
+                variants={itemVariants}
+                whileHover={{ y: -5 }}
+                transition={{ type: "spring", stiffness: 200 }}
+              >
+                <Card
+                  className="glass-card hover:shadow-xl transition-all duration-300 cursor-pointer border hover:border-primary/30 overflow-hidden flex flex-col justify-between h-full group"
+                  onClick={() => handleTopicSelect(topic.id)}
+                >
+                  <CardHeader className="pb-4">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className={`w-14 h-14 bg-gradient-to-br ${topic.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                        <span className="text-2xl">{topic.icon}</span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleTopicCompletion(topic.id);
+                        }}
+                        className={`p-2 h-9 w-9 rounded-full transition-all duration-200 ${
+                          completedTopics.includes(topic.id) 
+                            ? 'text-green-600 bg-green-100 dark:bg-green-950/40 dark:text-green-400 scale-110' 
+                            : 'text-muted-foreground hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-950/20'
+                        }`}
+                      >
+                        <CheckCircle className="w-5.5 h-5.5" />
+                      </Button>
+                    </div>
+                    
+                    <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors duration-200 mb-1.5">{topic.name}</CardTitle>
+                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{topic.description}</p>
+                  </CardHeader>
+                  
+                  <CardContent className="pt-0">
+                    <div className="space-y-2.5 mb-5 border-t border-border/40 pt-4">
+                      <div className="flex items-center text-xs font-semibold text-muted-foreground">
+                        <Clock className="w-4 h-4 mr-1.5 text-indigo-500" />
+                        Estimated Time: {topic.estimatedTime}
+                      </div>
+                      <div className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                        Prerequisites: {topic.prerequisites.join(", ")}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center mt-auto">
+                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                        topic.difficulty === 'Beginner' ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300' :
+                        topic.difficulty === 'Intermediate' ? 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300' :
+                        'bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
+                      }`}>
+                        {topic.difficulty}
+                      </span>
+                      <div className="text-primary hover:text-primary/80 text-sm font-bold group-hover:translate-x-0.5 transition-transform duration-200 flex items-center gap-0.5">
+                        Explore Track
+                        <ChevronRight className="w-4.5 h-4.5" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        </>
+      )}
     </motion.div>
   );
 };

@@ -1,14 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const {
+import express from 'express';
+import {
   getSheets,
   createSheet,
   updateSheet,
   deleteSheet,
-} = require('../controllers/sheetController');
-const { protect } = require('../middleware/authMiddleware');
+} from '../controllers/sheetController.js';
+import { protect } from '../middleware/authMiddleware.js';
+
+const router = express.Router();
 
 router.route('/').get(protect, getSheets).post(protect, createSheet);
 router.route('/:id').put(protect, updateSheet).delete(protect, deleteSheet);
 
-module.exports = router;
+export default router;

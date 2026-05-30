@@ -11,6 +11,7 @@ import DsaSheetForm from "./dsa-sheet/DsaSheetForm";
 import SheetRoadmapViewer from "./dsa-sheet/SheetRoadmapViewer";
 import { PrewrittenDsaSheet } from "@/data/prewritten-dsa-sheets";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { API_BASE_URL } from "@/config";
 import { Plus, Upload, BookOpen, Sparkles, Trash2, Edit2, Share2, Award } from "lucide-react";
 
