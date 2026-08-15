@@ -41,9 +41,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   };
 
   const navItems = [
-    { id: "dashboard", label: "Dashboard", icon: Cpu },
     { id: "roadmap", label: "Roadmap", icon: Map },
-    { id: "analyzer", label: "AI Workbench", icon: BrainCircuit },
+    { id: "analyzer", label: "Problem Analyzer", icon: BrainCircuit },
     { id: "playground", label: "AI Workbench", icon: Terminal },
     { id: "visualizer", label: "Visualizer", icon: Activity },
     { id: "cheat-sheet", label: "Revision Hub", icon: Library },
@@ -59,7 +58,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
           <div className="flex items-center justify-between h-16">
             
             {/* Futuristic Brand Logo */}
-            <Link href="/" className="flex items-center space-x-3 group">
+            <Link 
+              href="/" 
+              onClick={() => {
+                if (setActiveTab) setActiveTab('dashboard');
+              }}
+              className="flex items-center space-x-3 group cursor-pointer"
+            >
               <div className="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 via-purple-600 to-magenta-500 p-0.5 shadow-[0_0_15px_rgba(139,92,246,0.4)] group-hover:scale-105 transition-transform duration-300">
                 <div className="w-full h-full bg-[#0E0A1F] rounded-[10px] flex items-center justify-center">
                   <Code2 className="w-4 h-4 text-violet-400 group-hover:rotate-12 transition-transform duration-300" />
