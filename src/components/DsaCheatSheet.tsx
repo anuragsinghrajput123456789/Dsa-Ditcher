@@ -1,161 +1,156 @@
 'use client';
 
 import { useState } from "react";
-import { 
-  Sparkles, Layers, ShieldCheck, Code, 
-  RefreshCw, Zap
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-
-interface Flashcard {
-  id: string;
-  patternName: string;
-  trigger: string;
-  summary: string;
-  timeComplexity: string;
-  spaceComplexity: string;
-  cheatCode: string;
-  snippet: string;
-  problems: { title: string; url: string }[];
-}
+import { Library, Sparkles, RefreshCw, ChevronRight, CheckCircle2, Code2, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function DsaCheatSheet() {
-  const [flippedCardId, setFlippedCardId] = useState<string | null>(null);
+  const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
 
-  const complexities = [
-    { name: "Array", access: "O(1)", search: "O(n)", insert: "O(n)", delete: "O(n)", space: "O(n)" },
-    { name: "Singly Linked List", access: "O(n)", search: "O(n)", insert: "O(1)", delete: "O(1)", space: "O(n)" },
-    { name: "Doubly Linked List", access: "O(n)", search: "O(n)", insert: "O(1)", delete: "O(1)", space: "O(n)" },
-    { name: "Stack", access: "O(n)", search: "O(n)", insert: "O(1)", delete: "O(1)", space: "O(n)" },
-    { name: "Queue", access: "O(n)", search: "O(n)", insert: "O(1)", delete: "O(1)", space: "O(n)" },
-    { name: "Hash Table", access: "N/A", search: "O(1)", insert: "O(1)", delete: "O(1)", space: "O(n)" },
-    { name: "Binary Search Tree", access: "O(log n)", search: "O(log n)", insert: "O(log n)", delete: "O(log n)", space: "O(n)" },
-    { name: "AVL Tree", access: "O(log n)", search: "O(log n)", insert: "O(log n)", delete: "O(log n)", space: "O(n)" },
-    { name: "Min/Max Heap", access: "N/A", search: "O(n)", insert: "O(log n)", delete: "O(log n)", space: "O(n)" },
-  ];
+  const toggleFlip = (id: number) => {
+    setFlippedCards((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
-  const flashcards: Flashcard[] = [
+  const flashcards = [
     {
-      id: "sliding-window",
-      patternName: "Sliding Window",
-      trigger: "Input is a linear structure (array, string) asking for subarray/substring satisfying a size constraint.",
-      summary: "Maintains a subset window using two boundaries (left and right) to eliminate redundant recalculations.",
-      timeComplexity: "O(N)",
-      spaceComplexity: "O(1) / O(K)",
-      cheatCode: "Expand right boundary to grow. Shrink left boundary as soon as constraint is violated.",
-      snippet: `let windowSum = 0, maxSum = 0;
-for (let i = 0; i < arr.length; i++) {
-  windowSum += arr[i];
-  if (i >= k - 1) {
-    maxSum = Math.max(maxSum, windowSum);
-    windowSum -= arr[i - (k - 1)];
-  }
-}`,
-      problems: [
-        { title: "Longest Substring Without Repeating Characters", url: "https://leetcode.com/problems/longest-substring-without-repeating-characters/" },
-        { title: "Minimum Size Subarray Sum", url: "https://leetcode.com/problems/minimum-size-subarray-sum/" }
-      ]
+      id: 1,
+      pattern: "Two Pointers",
+      category: "Array / String",
+      problem: "Two Sum II / Container With Most Water",
+      template: "left = 0, right = arr.length - 1; while(left < right)",
+      explanation: "Iterate from both ends of a sorted sequence towards the center to solve pair-matching or target bounds in O(n) time.",
+      leetcode: "LeetCode #11, #167"
     },
     {
-      id: "two-pointers",
-      patternName: "Two Pointers",
-      trigger: "Sorted array asking for pairs, triplets, or search values matching target formula.",
-      summary: "Two reference pointers move inwards or in parallel to bypass $O(N^2)$ brute force loops.",
-      timeComplexity: "O(N)",
-      spaceComplexity: "O(1)",
-      cheatCode: "If current sum < target move left pointer right; if current sum > target move right pointer left.",
-      snippet: `let left = 0, right = arr.length - 1;
-while (left < right) {
-  const sum = arr[left] + arr[right];
-  if (sum === target) return [left, right];
-  sum < target ? left++ : right--;
-}`,
-      problems: [
-        { title: "Two Sum II - Sorted", url: "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" },
-        { title: "Container With Most Water", url: "https://leetcode.com/problems/container-with-most-water/" }
-      ]
+      id: 2,
+      pattern: "Sliding Window",
+      category: "Array / Substring",
+      problem: "Minimum Size Subarray Sum",
+      template: "for(right = 0; right < n; right++) { expand; while(invalid) shrink; }",
+      explanation: "Maintain a dynamic window boundary over a continuous subsegment to compute running totals or maximum constraints in linear time.",
+      leetcode: "LeetCode #209, #3"
     },
     {
-      id: "fast-slow",
-      patternName: "Fast & Slow Pointers",
-      trigger: "Linked list cycle detection, middle node calculation, or cyclic sequence loops.",
-      summary: "Floyd's Tortoise and Hare algorithm: slow moves 1 step, fast moves 2 steps.",
-      timeComplexity: "O(N)",
-      spaceComplexity: "O(1)",
-      cheatCode: "If a loop exists, fast will eventually overlap slow pointer.",
-      snippet: `let slow = head, fast = head;
-while (fast && fast.next) {
-  slow = slow.next;
-  fast = fast.next.next;
-  if (slow === fast) return true;
-}`,
-      problems: [
-        { title: "Linked List Cycle", url: "https://leetcode.com/problems/linked-list-cycle/" },
-        { title: "Find the Duplicate Number", url: "https://leetcode.com/problems/find-the-duplicate-number/" }
-      ]
+      id: 3,
+      pattern: "Fast & Slow Pointers",
+      category: "Linked List",
+      problem: "Linked List Cycle Detection",
+      template: "slow = head, fast = head; while(fast && fast.next) slow = slow.next, fast = fast.next.next",
+      explanation: "Advance one pointer twice as fast as the other to detect linked list loops (Floyd's Tortoise and Hare algorithm).",
+      leetcode: "LeetCode #141, #142"
+    },
+    {
+      id: 4,
+      pattern: "BFS Traversal",
+      category: "Graph / Tree",
+      problem: "Binary Tree Level Order Traversal",
+      template: "queue = [root]; while(queue.length) { level = []; node = queue.shift(); }",
+      explanation: "Explore all neighbor nodes level-by-level using a FIFO queue. Guarantees finding the shortest unweighted path.",
+      leetcode: "LeetCode #102, #200"
+    },
+    {
+      id: 5,
+      pattern: "Top-Down Dynamic Programming",
+      category: "Dynamic Programming",
+      problem: "Climbing Stairs / Coin Change",
+      template: "dp = {}; memo(n) => if(n in dp) return dp[n]; dp[n] = solve(n-1)+solve(n-2)",
+      explanation: "Combine recursion with memoization tables to cache overlapping subproblems and transform O(2^n) complexity into linear O(n).",
+      leetcode: "LeetCode #70, #322"
+    },
+    {
+      id: 6,
+      pattern: "Prefix Sum",
+      category: "Array Range Queries",
+      problem: "Subarray Sum Equals K",
+      template: "prefix[i] = prefix[i-1] + arr[i]; rangeSum(l,r) = prefix[r] - prefix[l-1]",
+      explanation: "Precompute cumulative totals to evaluate any arbitrary subarray sum range in O(1) constant time.",
+      leetcode: "LeetCode #560, #303"
     }
   ];
 
+  const complexityData = [
+    { name: "Array", access: "O(1)", search: "O(n)", insertion: "O(n)", deletion: "O(n)", space: "O(n)" },
+    { name: "Singly Linked List", access: "O(n)", search: "O(n)", insertion: "O(1)", deletion: "O(1)", space: "O(n)" },
+    { name: "Hash Table", access: "N/A", search: "O(1)", insertion: "O(1)", deletion: "O(1)", space: "O(n)" },
+    { name: "Binary Search Tree", access: "O(log n)", search: "O(log n)", insertion: "O(log n)", deletion: "O(log n)", space: "O(n)" },
+    { name: "Heap (Priority Queue)", access: "N/A", search: "O(n)", insertion: "O(log n)", deletion: "O(log n)", space: "O(n)" },
+  ];
+
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 animate-fade-in">
+      
+      {/* Header */}
       <div className="text-center space-y-2">
-        <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white via-violet-200 to-violet-400 bg-clip-text text-transparent">
-          Premium SDE Revision Hub & 3D Flashcards
+        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-semibold">
+          <Library className="w-3.5 h-3.5 text-violet-400" />
+          <span>SDE REVISION KNOWLEDGE HUB</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
+          DSA Revision Matrix & 3D Flashcards
         </h1>
-        <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
-          Interactive 3D pattern flashcards and Big-O space/time complexity matrices for interview prep.
+        <p className="text-xs text-[#B8B1CC] max-w-2xl mx-auto">
+          Study essential interview patterns with 3D interactive flipping flashcards and quick Big-O complexity references.
         </p>
       </div>
 
-      {/* 3D Flashcards Deck */}
+      {/* 3D Flashcards Section */}
       <div className="space-y-4">
-        <div className="flex items-center space-x-2">
-          <Layers className="w-5 h-5 text-violet-400" />
-          <h2 className="text-xl font-bold">3D Pattern Flashcard Deck</h2>
-          <span className="text-xs text-muted-foreground">(Click any card to flip and reveal cheat code & template)</span>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+            <Sparkles className="w-4 h-4 text-violet-400" />
+            <span>Interactive 3D Pattern Flashcard Deck</span>
+          </h2>
+          <span className="text-xs text-[#77708D] italic">Click any card to flip and reveal technical details</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {flashcards.map((card) => {
-            const isFlipped = flippedCardId === card.id;
-
+            const isFlipped = flippedCards[card.id];
             return (
               <div
                 key={card.id}
-                onClick={() => setFlippedCardId(isFlipped ? null : card.id)}
-                className="h-80 perspective-1000 cursor-pointer group"
+                onClick={() => toggleFlip(card.id)}
+                className="h-64 cursor-pointer perspective-1000 group"
               >
-                <div className={`relative w-full h-full duration-700 transform-style-3d transition-transform ${isFlipped ? "rotate-y-180" : ""}`}>
-                  
+                <div
+                  className={`relative w-full h-full duration-500 transform-style-3d transition-transform ${
+                    isFlipped ? "rotate-y-180" : ""
+                  }`}
+                >
                   {/* Front Side */}
-                  <div className="absolute inset-0 w-full h-full rounded-2xl bg-card border border-border/80 p-6 flex flex-col justify-between backface-hidden shadow-xl group-hover:border-violet-500/50 transition-colors">
-                    <div className="space-y-3">
+                  <div className="absolute inset-0 glass-panel glass-panel-hover p-6 rounded-2xl border border-violet-500/25 flex flex-col justify-between backface-hidden shadow-xl">
+                    <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <Badge variant="violet">{card.patternName}</Badge>
-                        <RefreshCw className="w-4 h-4 text-muted-foreground group-hover:rotate-180 transition-transform duration-500" />
+                        <span className="text-[10px] font-mono text-violet-300 bg-violet-500/15 border border-violet-500/30 px-2.5 py-0.5 rounded-md">
+                          {card.category}
+                        </span>
+                        <RefreshCw className="w-4 h-4 text-[#77708D] group-hover:text-violet-400 transition-colors" />
                       </div>
-                      <h3 className="font-bold text-lg">{card.patternName}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{card.trigger}</p>
+                      <h3 className="text-lg font-bold text-white pt-2">{card.pattern}</h3>
+                      <p className="text-xs text-[#B8B1CC] line-clamp-2">{card.explanation}</p>
                     </div>
 
-                    <div className="flex items-center justify-between text-xs pt-4 border-t border-border/60">
-                      <span className="text-emerald-400 font-mono">Time: {card.timeComplexity}</span>
-                      <span className="text-violet-400 font-mono">Space: {card.spaceComplexity}</span>
+                    <div className="pt-4 border-t border-violet-500/15 flex items-center justify-between text-xs text-violet-400 font-semibold">
+                      <span>Click to reveal template</span>
+                      <ChevronRight className="w-4 h-4" />
                     </div>
                   </div>
 
                   {/* Back Side */}
-                  <div className="absolute inset-0 w-full h-full rounded-2xl bg-gradient-to-br from-violet-950/90 to-indigo-950/90 border border-violet-500/40 p-6 flex flex-col justify-between rotate-y-180 backface-hidden shadow-2xl text-xs space-y-3">
-                    <div>
-                      <div className="flex items-center space-x-1.5 text-amber-400 font-bold mb-1">
-                        <Zap className="w-4 h-4" />
-                        <span>Cheat Strategy</span>
+                  <div className="absolute inset-0 bg-[#0E0A1F] p-6 rounded-2xl border border-magenta-500/30 flex flex-col justify-between backface-hidden rotate-y-180 shadow-2xl space-y-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between border-b border-magenta-500/20 pb-2">
+                        <span className="text-xs font-bold text-magenta-300">{card.pattern} Template</span>
+                        <span className="text-[10px] font-mono text-cyan-400">{card.leetcode}</span>
                       </div>
-                      <p className="text-violet-200 text-[11px] leading-relaxed">{card.cheatCode}</p>
+                      <div className="p-2.5 rounded-xl bg-[#05030D] border border-violet-500/30 font-mono text-[10px] text-violet-300 leading-relaxed overflow-x-auto">
+                        {card.template}
+                      </div>
+                      <p className="text-[11px] text-[#B8B1CC] leading-tight">{card.problem}</p>
                     </div>
 
-                    <div className="bg-black/60 p-2.5 rounded-xl border border-white/10 font-mono text-[10px] text-emerald-300 overflow-x-auto">
-                      <pre>{card.snippet}</pre>
+                    <div className="text-[10px] text-[#77708D] text-right italic">
+                      Click to flip back
                     </div>
                   </div>
 
@@ -166,40 +161,41 @@ while (fast && fast.next) {
         </div>
       </div>
 
-      {/* Complexity Matrix Table */}
-      <div className="bg-card rounded-2xl p-6 border border-border/80 shadow-xl space-y-4">
-        <div className="flex items-center space-x-2">
-          <ShieldCheck className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-xl font-bold">Big-O Complexity Matrix</h2>
-        </div>
+      {/* Big-O Complexity Matrix Table */}
+      <div className="glass-panel rounded-2xl p-6 border border-violet-500/20 shadow-2xl space-y-4">
+        <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+          <BookOpen className="w-5 h-5 text-violet-400" />
+          <span>Data Structure Complexity Matrix</span>
+        </h2>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full text-left text-xs font-mono">
             <thead>
-              <tr className="border-b border-border/80 text-muted-foreground uppercase text-[10px] tracking-wider">
-                <th className="py-3 px-4">Data Structure</th>
-                <th className="py-3 px-4">Access</th>
-                <th className="py-3 px-4">Search</th>
-                <th className="py-3 px-4">Insertion</th>
-                <th className="py-3 px-4">Deletion</th>
-                <th className="py-3 px-4">Space</th>
+              <tr className="border-b border-violet-500/20 text-violet-300 bg-[#05030D]/60">
+                <th className="p-3">Data Structure</th>
+                <th className="p-3">Access</th>
+                <th className="p-3">Search</th>
+                <th className="p-3">Insertion</th>
+                <th className="p-3">Deletion</th>
+                <th className="p-3">Space Worst</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/40">
-              {complexities.map((row, idx) => (
-                <tr key={idx} className="hover:bg-muted/30 transition-colors">
-                  <td className="py-3 px-4 font-semibold text-foreground">{row.name}</td>
-                  <td className="py-3 px-4 font-mono text-emerald-400">{row.access}</td>
-                  <td className="py-3 px-4 font-mono text-amber-400">{row.search}</td>
-                  <td className="py-3 px-4 font-mono text-indigo-400">{row.insert}</td>
-                  <td className="py-3 px-4 font-mono text-rose-400">{row.delete}</td>
-                  <td className="py-3 px-4 font-mono text-violet-400">{row.space}</td>
+            <tbody className="divide-y divide-violet-500/10 text-[#F5F3FF]">
+              {complexityData.map((row, idx) => (
+                <tr key={idx} className="hover:bg-violet-500/5 transition-colors">
+                  <td className="p-3 font-bold text-white font-sans">{row.name}</td>
+                  <td className="p-3 text-emerald-400">{row.access}</td>
+                  <td className="p-3 text-amber-400">{row.search}</td>
+                  <td className="p-3 text-violet-300">{row.insertion}</td>
+                  <td className="p-3 text-magenta-400">{row.deletion}</td>
+                  <td className="p-3 text-cyan-300">{row.space}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
+
     </div>
   );
 }

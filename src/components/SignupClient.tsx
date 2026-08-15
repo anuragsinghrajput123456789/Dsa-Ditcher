@@ -3,14 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Code, ArrowRight } from "lucide-react";
+import { Code2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { IUser } from "@/types";
+import FuturisticBackground from "@/components/backgrounds/FuturisticBackground";
 
 export default function SignupClient() {
   const [name, setName] = useState("");
@@ -41,88 +40,91 @@ export default function SignupClient() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4 relative overflow-hidden">
-      <div className="w-full max-w-md relative z-10">
-        <Card className="glass-card shadow-2xl border border-border/50 rounded-3xl overflow-hidden">
-          <div className="h-1.5 w-full bg-gradient-to-r from-violet-500 via-indigo-600 to-purple-500"></div>
+    <FuturisticBackground>
+      <div className="flex items-center justify-center min-h-screen p-4 relative">
+        <div className="w-full max-w-md relative z-10 animate-fade-in">
+          <div className="glass-panel rounded-3xl overflow-hidden border border-violet-500/30 shadow-2xl space-y-6">
+            <div className="h-1.5 w-full bg-gradient-to-r from-violet-600 via-purple-600 to-magenta-600"></div>
 
-          <CardHeader className="space-y-3 pt-8 pb-6">
-            <div className="flex justify-center mb-1">
-              <div className="w-14 h-14 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/20">
-                <Code className="w-8 h-8 text-white" />
+            <div className="px-8 pt-4 pb-2 text-center space-y-3">
+              <div className="flex justify-center">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-violet-600 to-magenta-600 p-0.5 shadow-[0_0_20px_rgba(139,92,246,0.5)]">
+                  <div className="w-full h-full bg-[#0E0A1F] rounded-[14px] flex items-center justify-center">
+                    <Code2 className="w-7 h-7 text-violet-400" />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-extrabold text-white tracking-tight">
+                  Create Laboratory Account
+                </h1>
+                <p className="text-xs text-[#B8B1CC] mt-1">
+                  Track active streaks & master technical algorithms
+                </p>
               </div>
             </div>
-            <div className="space-y-1">
-              <CardTitle className="text-3xl font-black text-center tracking-tight">
-                Create Account
-              </CardTitle>
-              <CardDescription className="text-center font-semibold text-xs sm:text-sm text-muted-foreground">
-                Join AlgoSpark to track streaks and master DSA algorithms
-              </CardDescription>
+
+            <div className="px-8">
+              <form onSubmit={handleSignup} className="space-y-3.5 text-xs">
+                <div className="space-y-1">
+                  <label className="font-bold text-[#B8B1CC] uppercase tracking-wider text-[10px]">Full Name</label>
+                  <input 
+                    id="name" 
+                    type="text" 
+                    placeholder="Developer Name" 
+                    value={name} 
+                    onChange={(e) => setName(e.target.value)} 
+                    required 
+                    className="w-full h-10 px-3 rounded-xl bg-[#05030D] border border-violet-500/30 text-white focus:ring-1 focus:ring-violet-500 outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-[#B8B1CC] uppercase tracking-wider text-[10px]">Email Address</label>
+                  <input 
+                    id="email" 
+                    type="email" 
+                    placeholder="developer@algospark.local" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    required 
+                    className="w-full h-10 px-3 rounded-xl bg-[#05030D] border border-violet-500/30 text-white focus:ring-1 focus:ring-violet-500 outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-[#B8B1CC] uppercase tracking-wider text-[10px]">Password</label>
+                  <input 
+                    id="password" 
+                    type="password" 
+                    placeholder="••••••••" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                    required 
+                    className="w-full h-10 px-3 rounded-xl bg-[#05030D] border border-violet-500/30 text-white focus:ring-1 focus:ring-violet-500 outline-none"
+                  />
+                </div>
+
+                <Button 
+                  type="submit" 
+                  disabled={loading}
+                  className="w-full h-10 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-bold text-xs shadow-[0_0_15px_rgba(139,92,246,0.3)] gap-2 mt-2"
+                >
+                  <span>{loading ? "Creating Account..." : "Create Account"}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </form>
             </div>
-          </CardHeader>
 
-          <CardContent className="px-6 sm:px-8">
-            <form onSubmit={handleSignup} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Full Name</label>
-                <Input 
-                  id="name" 
-                  type="text" 
-                  placeholder="John Doe" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                  required 
-                  className="rounded-xl border-border/80 h-10 focus:border-violet-500"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Email Address</label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  placeholder="name@example.com" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                  required 
-                  className="rounded-xl border-border/80 h-10 focus:border-violet-500"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Password</label>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  placeholder="••••••••" 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)} 
-                  required 
-                  className="rounded-xl border-border/80 h-10 focus:border-violet-500"
-                />
-              </div>
-
-              <Button 
-                type="submit" 
-                variant="gradient"
-                disabled={loading}
-                className="w-full h-11 rounded-xl font-bold shadow-lg shadow-violet-500/20 text-sm gap-2 mt-2"
-              >
-                <span>{loading ? "Creating Account..." : "Create Account"}</span>
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </form>
-          </CardContent>
-
-          <div className="p-6 bg-secondary/30 border-t border-border/40 text-center text-xs text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="text-violet-400 font-bold hover:underline">
-              Sign In
-            </Link>
+            <div className="p-5 bg-[#05030D]/80 border-t border-violet-500/15 text-center text-xs text-[#B8B1CC]">
+              Already have an account?{" "}
+              <Link href="/login" className="text-violet-300 font-bold hover:underline">
+                Sign In
+              </Link>
+            </div>
           </div>
-        </Card>
+        </div>
       </div>
-    </div>
+    </FuturisticBackground>
   );
 }

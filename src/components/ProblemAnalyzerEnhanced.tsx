@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Send, Bot, User, BookOpen, ExternalLink, Loader, Lightbulb, ArrowRight, Sparkles, Brain, Trash2 } from "lucide-react";
+import { Send, Bot, BookOpen, Loader, Lightbulb, ArrowRight, Sparkles, Brain, Trash2, Cpu, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -43,7 +43,7 @@ export function ProblemAnalyzerEnhanced() {
           );
         }
       } catch (error) {
-        // Unauthenticated or network error - ignore gracefully
+        // Ignore unauthenticated network errors
       }
     };
     fetchHistory();
@@ -51,7 +51,7 @@ export function ProblemAnalyzerEnhanced() {
 
   const handleAnalyze = async () => {
     if (!problemText.trim()) {
-      toast.error("Please enter a problem description.");
+      toast.error("Please enter a problem statement to analyze.");
       return;
     }
 
@@ -91,10 +91,10 @@ export function ProblemAnalyzerEnhanced() {
         hints: hintsArr.length > 0 ? hintsArr : ["Draw a small input array on paper.", "Identify any subproblems or repeat recursive states.", "Consider sorting if pair comparison is needed."],
       });
 
-      toast.success("Problem analysis generated!");
+      toast.success("Problem analysis generated successfully!");
     } catch (error) {
       console.error("Failed to analyze problem:", error);
-      toast.error("Analysis failed. Reverting to local mentor rules.");
+      toast.error("Analysis failed. Using local mentor fallback engine.");
     } finally {
       setLoadingAnalysis(false);
     }
@@ -118,12 +118,15 @@ export function ProblemAnalyzerEnhanced() {
     setIsLoading(true);
 
     try {
-      // Save message to chat history DB if logged in
       api.post('/api/chats', { role: 'user', content: userText }).catch(() => {});
 
+      const openrouterKey = typeof window !== 'undefined' ? localStorage.getItem("openrouter_api_key") || "" : "";
       const res = await fetch("/api/ai/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "x-openrouter-key": openrouterKey
+        },
         body: JSON.stringify({
           message: userText,
           history: chatMessages.slice(-6).map((m) => ({ role: m.type, content: m.content })),
@@ -160,13 +163,19 @@ export function ProblemAnalyzerEnhanced() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
+      
+      {/* Module Title */}
       <div className="text-center space-y-2">
-        <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white via-violet-200 to-violet-400 bg-clip-text text-transparent">
-          AI DSA Problem Analyzer & Tutor
+        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-semibold">
+          <Brain className="w-3.5 h-3.5 text-violet-400" />
+          <span>SDE ANALYSIS WORKBENCH</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
+          AI Problem Analyzer & Mentor Tutor
         </h1>
-        <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
-          Paste any algorithm query for step-by-step guidance, progressive hints, and live mentor AI responses.
+        <p className="text-xs text-[#B8B1CC] max-w-2xl mx-auto">
+          Deconstruct LeetCode questions, receive progressive hints, and query live Big-O time & space complexities.
         </p>
       </div>
 
@@ -174,35 +183,33 @@ export function ProblemAnalyzerEnhanced() {
         
         {/* Left Analyzer Panel */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="bg-card rounded-2xl p-6 border border-border/80 shadow-xl space-y-4">
-            <div className="flex items-center space-x-2">
-              <Brain className="w-5 h-5 text-violet-400" />
-              <h2 className="font-bold text-lg">Problem Statement</h2>
+          <div className="glass-panel rounded-2xl p-6 border border-violet-500/20 shadow-xl space-y-4">
+            <div className="flex items-center space-x-2 border-b border-violet-500/15 pb-3">
+              <Cpu className="w-5 h-5 text-violet-400" />
+              <h2 className="font-bold text-sm text-white">Problem Statement Input</h2>
             </div>
 
             <textarea
               value={problemText}
               onChange={(e) => setProblemText(e.target.value)}
-              placeholder="Paste LeetCode question or custom problem statement here..."
-              className="w-full h-40 p-4 rounded-xl bg-background border border-input text-xs font-mono focus:ring-1 focus:ring-violet-500 outline-none resize-none"
+              placeholder="Paste LeetCode question, custom problem parameters, or constraints here..."
+              className="w-full h-44 p-4 rounded-xl bg-[#05030D] border border-violet-500/30 text-xs font-mono text-white focus:ring-1 focus:ring-violet-500 outline-none resize-none"
             />
 
             <div className="flex justify-end">
               <Button
-                variant="gradient"
-                size="sm"
                 onClick={handleAnalyze}
                 disabled={loadingAnalysis}
-                className="gap-2 text-xs"
+                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-bold text-xs h-9 px-5 rounded-xl shadow-[0_0_15px_rgba(139,92,246,0.3)] transition-all"
               >
                 {loadingAnalysis ? (
                   <>
-                    <Loader className="w-4 h-4 animate-spin" />
-                    <span>Analyzing...</span>
+                    <Loader className="w-4 h-4 animate-spin mr-2" />
+                    <span>Analyzing Statement...</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4" />
+                    <Sparkles className="w-4 h-4 mr-2" />
                     <span>Analyze Problem</span>
                   </>
                 )}
@@ -210,27 +217,30 @@ export function ProblemAnalyzerEnhanced() {
             </div>
           </div>
 
-          {/* Analysis Results & Progressive Hints */}
+          {/* Analysis Breakdown & Progressive Hints */}
           {analysis && (
-            <div className="bg-card rounded-2xl p-6 border border-border/80 shadow-xl space-y-6 animate-fade-in">
-              <div className="p-4 rounded-xl bg-muted/40 border border-border text-xs leading-relaxed space-y-2">
-                <h3 className="font-semibold text-violet-300">Analysis Breakdown</h3>
-                <div className="whitespace-pre-wrap text-muted-foreground">{analysis.summary}</div>
+            <div className="glass-panel rounded-2xl p-6 border border-violet-500/20 shadow-xl space-y-6 animate-fade-in">
+              <div className="p-4 rounded-xl bg-[#05030D]/80 border border-violet-500/20 text-xs leading-relaxed space-y-2">
+                <h3 className="font-bold text-violet-300 flex items-center space-x-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>Analytical Breakdown</span>
+                </h3>
+                <div className="whitespace-pre-wrap text-[#B8B1CC] font-mono text-[11px]">{analysis.summary}</div>
               </div>
 
               {/* Progressive Hints Section */}
-              <div className="space-y-3 pt-2 border-t border-border/60">
+              <div className="space-y-3 pt-2 border-t border-violet-500/15">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Lightbulb className="w-4 h-4 text-amber-400" />
-                    <h3 className="font-bold text-sm">Progressive Hints</h3>
+                    <h3 className="font-bold text-sm text-white">Progressive Pedagogical Hints</h3>
                   </div>
                   {visibleHintIndex < analysis.hints.length - 1 && (
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setVisibleHintIndex((prev) => prev + 1)}
-                      className="text-xs gap-1 border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                      className="text-xs h-8 border-amber-500/30 text-amber-300 hover:bg-amber-500/10 gap-1"
                     >
                       <span>Show Next Hint</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -245,7 +255,7 @@ export function ProblemAnalyzerEnhanced() {
                     </div>
                   ))}
                   {visibleHintIndex === -1 && (
-                    <p className="text-xs text-muted-foreground italic">Click "Show Next Hint" to reveal progressive hints without leaking the full code.</p>
+                    <p className="text-xs text-[#77708D] italic">Click "Show Next Hint" to reveal step-by-step guidance without leaking the complete algorithm.</p>
                   )}
                 </div>
               </div>
@@ -253,17 +263,17 @@ export function ProblemAnalyzerEnhanced() {
           )}
         </div>
 
-        {/* Right AI Chat Tutor */}
-        <div className="lg:col-span-5 bg-card rounded-2xl p-6 border border-border/80 shadow-xl flex flex-col h-[600px]">
-          <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
+        {/* Right AI Mentor Tutor Chat */}
+        <div className="lg:col-span-5 glass-panel rounded-2xl p-6 border border-violet-500/20 shadow-xl flex flex-col h-[620px]">
+          <div className="flex items-center justify-between border-b border-violet-500/15 pb-3 mb-4">
             <div className="flex items-center space-x-2">
               <Bot className="w-5 h-5 text-violet-400" />
-              <h2 className="font-bold text-base">AlgoSpark AI Guide</h2>
+              <h2 className="font-bold text-sm text-white">AlgoSpark AI Mentor Guide</h2>
             </div>
             {chatMessages.length > 0 && (
               <button
                 onClick={handleClearHistory}
-                className="p-1.5 text-muted-foreground hover:text-destructive rounded-lg transition-colors"
+                className="p-1.5 text-[#B8B1CC] hover:text-red-400 rounded-lg transition-colors"
                 title="Clear chat history"
               >
                 <Trash2 className="w-4 h-4" />
@@ -273,10 +283,10 @@ export function ProblemAnalyzerEnhanced() {
 
           <div className="flex-1 overflow-y-auto space-y-3 pr-2 text-xs">
             {chatMessages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-2 text-muted-foreground">
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-2 text-[#77708D]">
                 <Bot className="w-8 h-8 text-violet-400/60 mb-2" />
-                <p className="font-medium text-foreground">Have a question about DSA?</p>
-                <p className="text-[11px]">Ask about Big-O complexities, sliding window techniques, or graph traversals!</p>
+                <p className="font-medium text-white">Have a DSA question?</p>
+                <p className="text-[11px] text-[#B8B1CC]">Ask about Big-O complexity bounds, sliding window patterns, or dynamic programming memoization!</p>
               </div>
             ) : (
               chatMessages.map((msg) => (
@@ -287,8 +297,8 @@ export function ProblemAnalyzerEnhanced() {
                   <div
                     className={`p-3 rounded-2xl max-w-[85%] leading-relaxed ${
                       msg.type === 'user'
-                        ? 'bg-violet-600 text-white rounded-tr-none'
-                        : 'bg-muted/80 text-foreground border border-border rounded-tl-none whitespace-pre-wrap'
+                        ? 'bg-violet-600 text-white rounded-tr-none font-medium'
+                        : 'bg-[#05030D] text-[#F5F3FF] border border-violet-500/25 rounded-tl-none whitespace-pre-wrap font-mono text-[11px]'
                     }`}
                   >
                     {msg.content}
@@ -299,20 +309,20 @@ export function ProblemAnalyzerEnhanced() {
             {isLoading && (
               <div className="flex items-center space-x-2 text-violet-400 text-xs">
                 <Loader className="w-3.5 h-3.5 animate-spin" />
-                <span>Mentor AI is typing...</span>
+                <span>Mentor AI is typing response...</span>
               </div>
             )}
           </div>
 
-          <form onSubmit={handleSendMessage} className="pt-4 border-t border-border/60 flex space-x-2 mt-2">
+          <form onSubmit={handleSendMessage} className="pt-4 border-t border-violet-500/15 flex space-x-2 mt-2">
             <input
               type="text"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              placeholder="Ask a question..."
-              className="flex-1 h-9 px-3 rounded-xl bg-background border border-input text-xs focus:ring-1 focus:ring-violet-500 outline-none"
+              placeholder="Ask mentor a question..."
+              className="flex-1 h-9 px-3 rounded-xl bg-[#05030D] border border-violet-500/30 text-xs text-white focus:ring-1 focus:ring-violet-500 outline-none"
             />
-            <Button type="submit" size="sm" variant="gradient" disabled={isLoading} className="h-9 w-9 p-0">
+            <Button type="submit" size="sm" disabled={isLoading} className="h-9 w-9 p-0 bg-violet-600 hover:bg-violet-500 text-white rounded-xl">
               <Send className="w-4 h-4" />
             </Button>
           </form>

@@ -10,25 +10,28 @@ import { CodePlayground } from '@/components/CodePlayground';
 import { VisualizationsFixed } from '@/components/VisualizationsFixed';
 import { DsaCheatSheet } from '@/components/DsaCheatSheet';
 import { DsaSheetManager } from '@/components/DsaSheetManager';
+import FuturisticBackground from '@/components/backgrounds/FuturisticBackground';
 
 export default function HomePageClient() {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <FuturisticBackground>
+      <div className="min-h-screen flex flex-col pt-3">
+        <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
-        {activeTab === 'roadmap' && <FlowchartRoadmap />}
-        {activeTab === 'analyzer' && <ProblemAnalyzerEnhanced />}
-        {activeTab === 'playground' && <CodePlayground />}
-        {activeTab === 'visualizer' && <VisualizationsFixed />}
-        {activeTab === 'cheat-sheet' && <DsaCheatSheet />}
-        {activeTab === 'sheet-manager' && <DsaSheetManager />}
-      </main>
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
+          {activeTab === 'roadmap' && <FlowchartRoadmap />}
+          {activeTab === 'analyzer' && <ProblemAnalyzerEnhanced />}
+          {activeTab === 'playground' && <CodePlayground />}
+          {activeTab === 'visualizer' && <VisualizationsFixed />}
+          {activeTab === 'cheat-sheet' && <DsaCheatSheet />}
+          {activeTab === 'sheet-manager' && <DsaSheetManager />}
+        </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </FuturisticBackground>
   );
 }

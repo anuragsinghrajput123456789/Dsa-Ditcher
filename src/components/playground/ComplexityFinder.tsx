@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { Brain, Clock, Database, AlertCircle, Loader, Wand2 } from "lucide-react";
+import { Brain, Clock, Database, AlertCircle, Loader, Wand2, Sparkles, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ComplexityResponse } from "@/types";
@@ -18,7 +18,7 @@ export default function ComplexityFinder({ code, language }: ComplexityFinderPro
 
   const analyzeComplexity = async () => {
     if (!code.trim()) {
-      setError("Code is empty. Please write some code to analyze.");
+      setError("Code is empty. Please enter code in the Monaco Editor.");
       return;
     }
     
@@ -45,7 +45,7 @@ export default function ComplexityFinder({ code, language }: ComplexityFinderPro
       setResult(parsedResult);
     } catch (e: any) {
       console.error("Complexity analysis error:", e);
-      setError("Failed to analyze complexity. Using local fallback rules.");
+      setError("Network or API issue. Utilizing local AST fallback analysis engine.");
       toast.error("Network issue. Reverting to local analysis engine.");
     } finally {
       setIsLoading(false);
@@ -53,41 +53,39 @@ export default function ComplexityFinder({ code, language }: ComplexityFinderPro
   };
 
   return (
-    <div className="bg-card rounded-xl shadow-lg border border-border p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="glass-panel rounded-2xl border border-violet-500/20 p-6 space-y-6 shadow-xl">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-violet-500/15 pb-4">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+          <div className="w-10 h-10 rounded-xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-400">
             <Brain className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-semibold text-lg">AI Big-O Complexity Finder</h3>
-            <p className="text-xs text-muted-foreground">Instantly compute time and space complexity O-notation</p>
+            <h3 className="font-bold text-base text-white">AI Big-O Complexity Finder</h3>
+            <p className="text-xs text-[#B8B1CC]">Compute exact time and space complexity O-notation bounds</p>
           </div>
         </div>
 
         <Button
           onClick={analyzeComplexity}
           disabled={isLoading}
-          variant="gradient"
-          size="sm"
-          className="flex items-center space-x-2"
+          className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-bold text-xs h-9 px-4 rounded-xl shadow-[0_0_15px_rgba(139,92,246,0.3)]"
         >
           {isLoading ? (
             <>
-              <Loader className="w-4 h-4 animate-spin" />
-              <span>Analyzing...</span>
+              <Loader className="w-4 h-4 animate-spin mr-2" />
+              <span>Scanning AST...</span>
             </>
           ) : (
             <>
-              <Wand2 className="w-4 h-4" />
-              <span>Find Big-O</span>
+              <Wand2 className="w-4 h-4 mr-2" />
+              <span>Compute Big-O</span>
             </>
           )}
         </Button>
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center space-x-2">
+        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs flex items-center space-x-2">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -96,32 +94,42 @@ export default function ComplexityFinder({ code, language }: ComplexityFinderPro
       {result && (
         <div className="space-y-4 animate-fade-in">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl bg-violet-500/10 border border-violet-500/20 space-y-1">
-              <div className="flex items-center space-x-2 text-violet-400 text-xs font-semibold uppercase">
+            
+            {/* Time Complexity Card */}
+            <div className="p-5 rounded-2xl bg-[#05030D] border border-violet-500/30 space-y-1 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+              <div className="flex items-center space-x-2 text-violet-400 text-xs font-bold uppercase tracking-wider">
                 <Clock className="w-4 h-4" />
                 <span>Time Complexity</span>
               </div>
-              <p className="text-2xl font-bold text-violet-300">{result.timeComplexity}</p>
+              <p className="text-3xl font-extrabold text-white glow-text-violet font-mono">{result.timeComplexity}</p>
             </div>
 
-            <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 space-y-1">
-              <div className="flex items-center space-x-2 text-indigo-400 text-xs font-semibold uppercase">
+            {/* Space Complexity Card */}
+            <div className="p-5 rounded-2xl bg-[#05030D] border border-magenta-500/30 space-y-1 shadow-[0_0_20px_rgba(217,70,239,0.15)]">
+              <div className="flex items-center space-x-2 text-magenta-400 text-xs font-bold uppercase tracking-wider">
                 <Database className="w-4 h-4" />
                 <span>Space Complexity</span>
               </div>
-              <p className="text-2xl font-bold text-indigo-300">{result.spaceComplexity}</p>
+              <p className="text-3xl font-extrabold text-white glow-text-magenta font-mono">{result.spaceComplexity}</p>
             </div>
+
           </div>
 
-          <div className="p-4 rounded-xl bg-muted/50 border border-border/60 space-y-2">
-            <h4 className="font-semibold text-sm">Explanation</h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">{result.explanation}</p>
+          <div className="p-4 rounded-xl bg-[#05030D]/80 border border-violet-500/20 space-y-2 text-xs">
+            <h4 className="font-bold text-white flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-violet-400" />
+              <span>Structural Explanation</span>
+            </h4>
+            <p className="text-[#B8B1CC] font-mono leading-relaxed">{result.explanation}</p>
           </div>
 
           {result.optimizations && result.optimizations.length > 0 && (
-            <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-2">
-              <h4 className="font-semibold text-sm text-emerald-400">Optimization Suggestions</h4>
-              <ul className="list-disc list-inside text-xs text-emerald-300/80 space-y-1">
+            <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-2 text-xs">
+              <h4 className="font-bold text-emerald-300 flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Optimization Recommendations</span>
+              </h4>
+              <ul className="list-disc list-inside text-emerald-200/80 font-mono text-[11px] space-y-1">
                 {result.optimizations.map((tip, idx) => (
                   <li key={idx}>{tip}</li>
                 ))}

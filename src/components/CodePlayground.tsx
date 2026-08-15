@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { Play, RotateCcw, Settings, Brain, Code } from "lucide-react";
+import { Play, RotateCcw, Settings, Brain, Code2 } from "lucide-react";
 import ComplexityFinder from "./playground/ComplexityFinder";
 import CodeEditor from "./playground/CodeEditor";
 import IOPanel from "./playground/IOPanel";
@@ -20,7 +20,7 @@ export function CodePlayground() {
     return arr;
 }
 
-// Example usage
+// Example execution
 const numbers = [64, 34, 25, 12, 22, 11, 90];
 const sortedNumbers = bubbleSort(numbers);
 console.log(sortedNumbers);`;
@@ -51,14 +51,14 @@ console.log(sortedNumbers);`;
 
         try {
           new Function(code)();
-          setOutput(capturedOutput.trim() || "Code executed successfully with no console output.");
+          setOutput(capturedOutput.trim() || "Code executed cleanly with zero errors.");
         } catch (e: any) {
-          setOutput(`Runtime Error: ${e instanceof Error ? e.message : String(e)}`);
+          setOutput(`Runtime Execution Error: ${e instanceof Error ? e.message : String(e)}`);
         } finally {
           console.log = originalConsoleLog;
         }
       } catch (error) {
-        setOutput("An unexpected error occurred during execution.");
+        setOutput("An unexpected execution exception occurred.");
       } finally {
         setIsRunning(false);
       }
@@ -71,39 +71,43 @@ console.log(sortedNumbers);`;
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white via-violet-200 to-violet-400 bg-clip-text text-transparent">
-          Code Playground & Monaco Editor
+        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-semibold">
+          <Code2 className="w-3.5 h-3.5 text-violet-400" />
+          <span>IN-BROWSER MONACO IDE</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
+          Code Playground & Big-O Analyzer
         </h1>
-        <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
-          Write, execute, and analyze your custom JavaScript algorithms directly in your browser.
+        <p className="text-xs text-[#B8B1CC] max-w-2xl mx-auto">
+          Execute JavaScript algorithms directly in your browser with real-time AST & AI Big-O complexity analysis.
         </p>
       </div>
 
-      <div className="bg-card rounded-2xl shadow-xl border border-border/80 overflow-hidden">
-        <div className="border-b border-border bg-muted/30">
+      <div className="glass-panel rounded-2xl border border-violet-500/20 shadow-2xl overflow-hidden">
+        <div className="border-b border-violet-500/15 bg-[#05030D]/60">
           <nav className="flex space-x-6 px-6">
             <button
               onClick={() => setActiveTab("editor")}
-              className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`py-3 px-1 border-b-2 font-semibold text-xs transition-colors flex items-center space-x-2 ${
                 activeTab === "editor"
-                  ? "border-violet-500 text-violet-400"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  ? "border-violet-500 text-violet-300"
+                  : "border-transparent text-[#B8B1CC] hover:text-white"
               }`}
             >
-              <Code className="w-4 h-4" />
+              <Code2 className="w-4 h-4 text-violet-400" />
               <span>Monaco Editor</span>
             </button>
             <button
               onClick={() => setActiveTab("complexity")}
-              className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`py-3 px-1 border-b-2 font-semibold text-xs transition-colors flex items-center space-x-2 ${
                 activeTab === "complexity"
-                  ? "border-violet-500 text-violet-400"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  ? "border-violet-500 text-violet-300"
+                  : "border-transparent text-[#B8B1CC] hover:text-white"
               }`}
             >
-              <Brain className="w-4 h-4" />
+              <Brain className="w-4 h-4 text-magenta-400" />
               <span>Big-O Complexity Finder</span>
             </button>
           </nav>
@@ -113,9 +117,9 @@ console.log(sortedNumbers);`;
           {activeTab === "editor" && (
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                  <Settings className="w-4 h-4" />
-                  <span>Language: <strong className="text-foreground">JavaScript (ES6+)</strong></span>
+                <div className="flex items-center space-x-2 text-xs text-[#B8B1CC]">
+                  <Settings className="w-4 h-4 text-violet-400" />
+                  <span>Language Engine: <strong className="text-white">JavaScript (ES6+)</strong></span>
                 </div>
                 
                 <div className="flex items-center space-x-3">
@@ -123,21 +127,20 @@ console.log(sortedNumbers);`;
                     variant="outline"
                     size="sm"
                     onClick={handleResetCode}
-                    className="flex items-center space-x-2 text-xs"
+                    className="border-violet-500/20 text-xs text-[#B8B1CC] hover:text-white h-9"
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Reset</span>
+                    <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+                    <span>Reset Code</span>
                   </Button>
                   
                   <Button
-                    variant="gradient"
                     size="sm"
                     onClick={handleRunCode}
                     disabled={isRunning}
-                    className="flex items-center space-x-2 text-xs"
+                    className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-bold text-xs h-9 px-4 rounded-xl shadow-[0_0_15px_rgba(139,92,246,0.3)]"
                   >
-                    <Play className="w-3.5 h-3.5" />
-                    <span>{isRunning ? "Running..." : "Run Code"}</span>
+                    <Play className="w-3.5 h-3.5 mr-1.5" />
+                    <span>{isRunning ? "Executing..." : "Run Code"}</span>
                   </Button>
                 </div>
               </div>
