@@ -6,7 +6,7 @@ import { Footer } from '@/components/Footer';
 import { Dashboard } from '@/components/Dashboard';
 import { FlowchartRoadmap } from '@/components/roadmap/FlowchartRoadmap';
 import { ProblemAnalyzerEnhanced } from '@/components/ProblemAnalyzerEnhanced';
-import { CodePlayground } from '@/components/CodePlayground';
+import { ApproachWorkbench } from '@/components/workbench/ApproachWorkbench';
 import { VisualizationsFixed } from '@/components/VisualizationsFixed';
 import { DsaCheatSheet } from '@/components/DsaCheatSheet';
 import { DsaSheetManager } from '@/components/DsaSheetManager';
@@ -24,7 +24,7 @@ export default function HomePageClient() {
           {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
           {activeTab === 'roadmap' && <FlowchartRoadmap />}
           {activeTab === 'analyzer' && <ProblemAnalyzerEnhanced />}
-          {activeTab === 'playground' && <CodePlayground />}
+          {activeTab === 'playground' && <ApproachWorkbench />}
           {activeTab === 'visualizer' && <VisualizationsFixed />}
           {activeTab === 'cheat-sheet' && <DsaCheatSheet />}
           {activeTab === 'sheet-manager' && <DsaSheetManager />}

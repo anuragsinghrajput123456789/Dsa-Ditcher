@@ -64,3 +64,53 @@ export interface RoadmapNode {
   prerequisites: string[];
   leetcodeCount: number;
 }
+
+export interface IAlgorithmStep {
+  id: string;
+  stepNumber: number;
+  title: string;
+  explanation: string;
+  note?: string;
+}
+
+export interface IAIReviewResponse {
+  correctness: {
+    score: number;
+    status: string;
+    feedback: string;
+  };
+  logicIssues: string[];
+  missingCases: string[];
+  edgeCases: string[];
+  optimizationSuggestions: string[];
+  timeComplexity: {
+    value: string;
+    explanation: string;
+  };
+  spaceComplexity: {
+    value: string;
+    explanation: string;
+  };
+  hints: string[];
+  nextStep: string;
+}
+
+export interface IWorkbenchData {
+  _id?: string;
+  problemTitle: string;
+  problemDifficulty?: string;
+  problemDescription?: string;
+  constraints?: string;
+  examples?: string;
+  approachText: string;
+  algorithmSteps: IAlgorithmStep[];
+  pseudocode: string;
+  diagramData: any;
+  aiReview?: IAIReviewResponse | null;
+  complexityAnalysis?: any;
+  generatedCode?: {
+    language: string;
+    code: string;
+  };
+  updatedAt?: string;
+}

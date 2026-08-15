@@ -44,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
     { id: "dashboard", label: "Dashboard", icon: Cpu },
     { id: "roadmap", label: "Roadmap", icon: Map },
     { id: "analyzer", label: "AI Workbench", icon: BrainCircuit },
-    { id: "playground", label: "Playground", icon: Terminal },
+    { id: "playground", label: "AI Workbench", icon: Terminal },
     { id: "visualizer", label: "Visualizer", icon: Activity },
     { id: "cheat-sheet", label: "Revision Hub", icon: Library },
     { id: "sheet-manager", label: "Problem Sheets", icon: FileSpreadsheet },

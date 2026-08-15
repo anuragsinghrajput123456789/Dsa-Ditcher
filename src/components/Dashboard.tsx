@@ -54,7 +54,7 @@ export function Dashboard({ setActiveTab }: DashboardProps) {
   const quickFeatures = [
     { id: "roadmap", title: "Connected SVG Roadmap", desc: "Interactive flowchart prerequisites", icon: Map, color: "text-violet-400 bg-violet-500/10 border-violet-500/20" },
     { id: "analyzer", title: "AI Problem Workbench", desc: "Optimal code & progressive hints", icon: BrainCircuit, color: "text-purple-400 bg-purple-500/10 border-purple-500/20" },
-    { id: "playground", title: "Code Playground", desc: "Monaco Editor with Big-O analysis", icon: Terminal, color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
+    { id: "playground", title: "Approach & Algorithm Workbench", desc: "Interactive whiteboard, pseudocode, and AI mentor", icon: Terminal, color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
     { id: "visualizer", title: "Algorithm Visualizer", desc: "Sorting & BFS/DFS state machines", icon: Activity, color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20" },
     { id: "cheat-sheet", title: "3D Revision Deck", desc: "Pattern cards & Big-O matrix", icon: Library, color: "text-magenta-400 bg-magenta-500/10 border-magenta-500/20" },
     { id: "sheet-manager", title: "Problem Sheets", desc: "Striver 75 & custom sheet manager", icon: FileSpreadsheet, color: "text-amber-400 bg-amber-500/10 border-amber-500/20" },
