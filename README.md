@@ -1,108 +1,100 @@
-# 🚀 AlgoSpark - Full-Stack MERN AI-Powered Learning Hub
+# 🚀 AlgoSpark - AI-Powered DSA Learning & SDE Preparation Platform
 
 <p align="center">
   <img src="algospark_banner.png" alt="AlgoSpark Banner" width="100%" />
 </p>
 
 <p align="center">
-  <a href="#-primary-visual--functional-features"><img src="https://img.shields.io/badge/MERN-Full--Stack-blueviolet?style=for-the-badge&logo=mongodb" alt="MERN Stack" /></a>
-  <a href="#-native-es-modules-esm-backend-architecture"><img src="https://img.shields.io/badge/Node.js-ES%20Modules-339933?style=for-the-badge&logo=node.js" alt="Node ESM" /></a>
-  <a href="#-resilient-ai-fallback--local-sandbox"><img src="https://img.shields.io/badge/OpenRouter-AI--Powered-FF6C37?style=for-the-badge&logo=openai" alt="OpenRouter AI" /></a>
-  <a href="#-design-aesthetics--visual-system"><img src="https://img.shields.io/badge/Vite-React%20%26%20TS-646CFF?style=for-the-badge&logo=vite" alt="Vite React TS" /></a>
-  <a href="#-search-engine-optimization-seo"><img src="https://img.shields.io/badge/SEO-Rank%20%231-008F58?style=for-the-badge" alt="SEO Optimized" /></a>
+  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-14_App_Router-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js 14" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" /></a>
+  <a href="https://openrouter.ai/"><img src="https://img.shields.io/badge/OpenRouter-AI_Powered-FF6C37?style=for-the-badge&logo=openai&logoColor=white" alt="OpenRouter AI" /></a>
+  <a href="https://www.mongodb.com/"><img src="https://img.shields.io/badge/MongoDB-Serverless_Pool-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" /></a>
+  <a href="https://vercel.com/"><img src="https://img.shields.io/badge/Vercel-Deployment_Ready-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel Ready" /></a>
 </p>
 
-**AlgoSpark** is an all-in-one, highly interactive, and visually stunning full-stack MERN learning platform designed to help developers master Data Structures and Algorithms with advanced, state-of-the-art AI tutoring. Featuring an **electric violet glassmorphic design system**, interactive visualizers, dynamic roadmap pathing, a custom browser-based Monaco editor, and a modern backend architecture, AlgoSpark provides a world-class coding environment.
+---
+
+## 🌟 Overview
+
+**AlgoSpark** is an all-in-one, highly interactive, and visually stunning Data Structures and Algorithms (DSA) learning platform. Designed for developers preparing for technical coding interviews, AlgoSpark combines an **electric violet glassmorphic design system** with real-time AI mentoring, step-by-step algorithm visualizers, an interactive SVG roadmap, custom problem sheets, and an in-browser Monaco code editor with Big-O complexity analysis.
+
+Built on **Next.js 14 App Router**, **TypeScript**, **Tailwind CSS**, and **MongoDB**, AlgoSpark is fully optimized for production deployment on **Vercel** with serverless database pooling and resilient zero-downtime AI fallbacks.
 
 ---
 
-## 🏗️ Platform System Architecture
+## 🏗️ System Architecture & Workflow
 
-Below is the workflow showing the resilient full-stack lifecycle, highlighting our secure AI router fallback:
+Below is the system architecture illustrating request routing, Vercel serverless database connection caching, and the resilient multi-model AI fallback cascade:
 
 ```mermaid
 graph TD
-    UserCode[User's Custom Code / Chat Request] --> Route[Express AI Route]
-    Route --> APIKeyCheck{OpenRouter Key Configured?}
-    APIKeyCheck -- Yes --> GatewayCall[Fetch OpenRouter API Gateway]
-    APIKeyCheck -- No --> SandboxCall[Trigger Local Sandbox Fallback]
+    Client[User / Web Browser Client] --> NextRouter[Next.js 14 App Router API Routes]
     
-    GatewayCall --> APIResponse{Response Success?}
-    APIResponse -- 200 OK --> ReturnSuccess[Return Live AI Response]
-    APIResponse -- 401/403/500 Error --> SandboxCall
-    
-    SandboxCall --> LocalAnalyzer[Execute Regex Complexity Analyzer / Mentor Rules Engine]
-    LocalAnalyzer --> MockResponse[Return High-Utility Structured Response 200 OK]
+    subgraph Database Layer
+        NextRouter --> DBCache{Check Cached Mongoose Pool?}
+        DBCache -- Valid readyState == 1 --> DBReuse[Reuse Serverless Connection]
+        DBCache -- Stale / Disconnected --> DBConnect[Establish New MongoDB Connection]
+    end
+
+    subgraph AI Service Layer
+        NextRouter --> KeyExtract{Custom API Key Header?}
+        KeyExtract -- Header x-openrouter-key Present --> CustomKey[Use User Client Key]
+        KeyExtract -- Header Omitted --> ServerKey[Use System OPENROUTER_API_KEY]
+        
+        CustomKey --> ModelCascade[OpenRouter Model Cascade Call]
+        ServerKey --> ModelCascade
+        
+        ModelCascade -- Primary Model: Qwen 2.5 Coder --> AIResponse{Response 200 OK?}
+        ModelCascade -- Fallback Model: GPT-4o-mini / DeepSeek --> AIResponse
+        
+        AIResponse -- Success --> ReturnAI[Return Live AI Response]
+        AIResponse -- Key Invalid / Offline / Error --> LocalEngine[Trigger Offline AST & Mentoring Sandbox]
+        LocalEngine --> ReturnFallback[Return High-Utility Local Analysis]
+    end
 ```
 
 ---
 
-## ✨ Primary Visual & Functional Features
+## ✨ Key Features
 
-### 1. 🔥 Real-Time Active Streak Tracking (Full-Stack & Guest Fallback)
-* **Full-Stack DB Sync**: Persists user `streak` and `lastActiveDate` properties inside MongoDB via [User.js](file:///c:/Users/91836/Downloads/Mern-Ai-Projects/Dsa-Ditcher/backend/models/User.js).
-* **Automated Calculations**: Express profile controllers automatically recalculate user streaks on login/action. Consecutive daily practices increment the streak, multiple same-day practices are safely preserved, and missed days reset the count.
-* **Guest Storage Fallback**: Incorporates robust `localStorage` daily active computations so guest accounts get fully functioning offline streaks immediately.
-* **Glow Navbar Flame**: Displays an active, animated orange flame badge (🔥) next to your profile to gamify your learning journey.
-* **Dynamic Streak Calendar**: The weekly tracker grid on the dashboard automatically queries user statistics and highlights active weekdays ending with today.
+### 🧠 1. AI DSA Problem Analyzer & Progressive Hints
+* **LeetCode-Style Split Workspace**: Responsive dual-column layout with real-time markdown parsing.
+* **Step-by-Step Problem Breakdown**: Paste any algorithm query to get beginner summaries, brute force vs optimal approaches, and Big-O time/space complexity notes.
+* **Progressive Hints System**: Reveal progressive pedagogical hints one by one without spoiling full code solutions.
 
-### 2. 🌲 Connected Roadmap Pathways & Interactive Filters
-* **SVG Interconnected Trackways**: Connects learning chapters (Languages ➔ Basics ➔ Data Structures ➔ Algorithms ➔ Advanced ➔ Prep) via flowing vertical vector paths.
-* **Interactive Category Filters**: Toggle filters to dynamically show/hide Required, Alternative, or Optional nodes.
-* **Progressive Status Glows**: Solved topics shine in emerald-500 outlines, while active topics show subtle violet elevations.
-* **Mastery Progress Widget**: Sleek circular progress indicator showing absolute completion progress across the entire DSA curriculum.
+### ⏱️ 2. AI & Local AST Big-O Complexity Finder
+* **Instant O-Notation Computation**: Calculates worst-case time complexity (e.g. $O(n)$, $O(n \log n)$, $O(n^2)$) and space requirements for custom code.
+* **Dual-Engine Execution**: Queries OpenRouter models for deep structural code analysis, automatically falling back to an offline AST regex analyzer for zero 500 server crashes.
 
-### 3. 🧠 AI DSA Assistant & Split SDE Workspace
-* **LeetCode-Style Split Workspace**: Restructured the problem analyzer into a balanced responsive grid that prevents stretched blank spaces on large displays while collapsing logically on mobile devices.
-* **Problem Analyzer:** Paste any algorithm query and get optimal/suboptimal approaches, complexities, and edge cases.
-* **Progressive Hints System:** Receive progressive, educational hints that encourage active thinking rather than immediate code leaks.
-* **History DB Sync:** Saved chats persist securely inside MongoDB, enabling students to revisit past questions.
-* **Floating Assistant Widget:** A global chat guide available on every view to answer general DSA concepts.
+### 🤖 3. AlgoSpark AI Mentor Chatbot
+* **Context-Aware SDE Tutor**: Ask questions about array techniques, sliding window patterns, tree traversals, dynamic programming, or graph algorithms.
+* **Persistent History**: Authenticated users store past mentor conversations securely inside MongoDB.
 
-### 4. 🍿 Resilient AI Fallback & Local Sandbox (100% Uptime)
-* **Zero 500 Crashes**: When the OpenRouter API key is expired, missing, or hitting credit limits, the backend automatically intercepts the exception (401/403 errors) and falls back to our high-fidelity offline local mentor engine.
-* **Local Complexity Analyzer**: Natively parses custom developer code using an advanced AST-like regex analyzer to compute nesting factors, recursive trees, and binary divisions, outputting O-notation details instantly.
-* **Offline Topic Guides**: Generates beautiful step-by-step mentoring explanations based on the target DSA keywords.
+### 🌲 4. Interconnected SVG Roadmap & Curriculum Mastery
+* **SVG Vector Flowcharts**: Visual pathways connecting learning topics from basic recursion to advanced Dijkstra & Dynamic Programming.
+* **Filterable Nodes**: Dynamic filters for Required, Alternative languages (C++, Java, Python, JS), and Optional deep dives.
+* **Live Mastery Tracker**: Displays real-time completion percentage and progress badges.
 
-### 5. 📊 Premium SDE Revision Hub & 3D Flashcards
-* **Interactive Complexity Matrix**: An elegant color-coded table grouping common DSA structures and sorting algorithms by best, average, and worst-case space/time complexities.
-* **3D-Flipping Flashcard Deck**: Interactive learning cards designed to study patterns (Sliding Window, Two Pointers, Fast & Slow Pointers). Click to flip the card in a smooth 3D transform animation and reveal templates, LeetCode examples, and optimized strategies.
+### 📊 5. SDE Revision Hub & 3D Interactive Flashcards
+* **Complexity Matrix**: Quick-reference cheat sheet for standard data structures and sorting algorithms across best, average, and worst cases.
+* **3D-Flipping Flashcards**: Interactive cards covering interview patterns (Two Pointers, Fast & Slow Pointers, Sliding Window, Prefix Sums).
 
-### 6. 🎬 High-Fidelity Algorithm Visualizer
-* **Sorting Algorithms:** Step-by-step interactive animations of Bubble Sort, Merge Sort, and Quick Sort.
-* **Graph Traversals:** Visual rendering of node exploration during Breadth-First (BFS) and Depth-First (DFS) searches.
-* **Complex Data Structures:** High-fidelity diagrams illustrating Binary Trees and HashMap Chaining collisions.
+### 🎬 6. Interactive Algorithm Visualizer
+* **Sorting Animations**: Real-time step-by-step state animations for Bubble Sort, Merge Sort, and Quick Sort.
+* **Graph Traversals**: Animated node exploration for Breadth-First Search (BFS) and Depth-First Search (DFS).
+* **HashMap Collisions**: Visual explanation of chaining and hash index calculations.
 
-### 7. 💻 Code Playground & Monaco Editor
-* **Monaco Editor:** Write and execute code directly in your browser with full reset capability.
-* **AI Complexity Finder:** Analyze custom code for Big O space and time complexities, receiving granular structural optimization tips.
+### 💻 7. Browser Code Playground & Monaco Editor
+* **Full Monaco Integration**: In-browser code editor with syntax highlighting, line numbers, automatic formatting, and console output capture.
+* **Integrated Analysis**: Switch tabs instantly between code execution and Big-O complexity analysis.
 
-### 8. 🎨 Design Aesthetics & Visual System
-* **HSL Electric Violet Dark Mode:** A deep luxury design tokens configuration inside `.css` files giving a modern, high-end cosmic-purple feel.
-* **Advanced Glassmorphism**: Translucent panels with glowing hover borders, dynamic transformations, custom scrollbars, and micro-animations.
-* **Spring Entrance Physics**: Staggered entry animations for grids and checklist items.
+### 📁 8. Custom & Curated Problem Sheet Manager
+* **Curated SDE Sheets**: Includes pre-built templates for **Striver 75**, **Blind 75**, and **NeetCode 150**.
+* **Custom Sheet Creator**: Save custom problem collections to your profile or local storage.
 
----
-
-## ⚡ Native ES Modules (ESM) Backend Architecture
-
-The backend has been modernly restructured from CommonJS (`require` / `module.exports`) to **native ES Modules** (`import` / `export`). 
-
-```mermaid
-graph TD
-    Server[server.js - Entrypoint] --> Env[dotenv.config absolute path]
-    Server --> Config[config/db.js]
-    Server --> Routes[routes/*.js]
-    
-    Routes --> Controllers[controllers/*.js]
-    Controllers --> Models[models/*.js]
-    Controllers --> Middleware[middleware/*.js]
-```
-
-### Why ESM?
-1. **Frontend-Backend Parity**: Aligning the backend with the frontend's Vite and React syntax removes developer context switching.
-2. **Performance**: Static import loading allows the JavaScript engine to pre-parse the imports and improve bootstrap times.
-3. **Future Compatibility**: Native ESM is now the standardized JavaScript runtime module format.
+### 🔥 9. Gamified Active Streak Tracking
+* **DB & Local Storage Sync**: Automatically calculates active study days, tracking daily progress with an animated orange flame badge (🔥) in the navigation bar.
 
 ---
 
@@ -110,97 +102,117 @@ graph TD
 
 ```text
 Dsa-Ditcher/
-├── backend/                # Express API server (Native ES Modules)
-│   ├── config/             # Database connection setups (db.js)
-│   ├── controllers/        # Express handlers (Auth, Sheets, Users, Chat, AI)
-│   ├── middleware/         # Token checks, exception handlers, and 404 logs
-│   ├── models/             # Mongoose schemas (User.js, Sheet.js, Chat.js)
-│   ├── routes/             # API routing setups mapped to controllers
-│   ├── server.js           # Server starter file & static production serving
-│   └── .env                # Absolute-path loaded environment configurations
-├── frontend/               # React Client SPA built with Vite & TS
-│   ├── public/             # Static public assets (icons, logo)
-│   ├── src/                # Modular React tsx source components
-│   │   ├── components/     # Custom sheets, visualizers, editor, dashboard panels
-│   │   ├── pages/          # Authentication layouts & main index router
-│   │   ├── config.ts       # Environment-friendly dynamic API base URLs
-│   │   └── index.css       # Core design system HSL variables & animation helpers
-│   ├── index.html          # Shell container with SEO metadata
-│   └── package.json        # Frontend node packages
-├── algospark_banner.png    # Modern tech banner for the landing page
-├── README.md               # Master full-stack project landing documentation
-└── .gitignore              # Master repository git ignore
+├── src/
+│   ├── app/                    # Next.js 14 App Router pages & API routes
+│   │   ├── api/
+│   │   │   ├── ai/             # AI endpoints (analyze, chat, complexity)
+│   │   │   ├── auth/           # Authentication endpoints (login, register)
+│   │   │   ├── chats/          # Mentor chat history CRUD
+│   │   │   ├── sheets/         # Custom problem sheet CRUD
+│   │   │   └── users/          # User profile & streak stats
+│   │   ├── globals.css         # HSL electric violet design tokens & Tailwind imports
+│   │   ├── layout.tsx          # Master layout wrapper with AuthProvider & Toast notifications
+│   │   ├── page.tsx            # Main application landing entrypoint
+│   │   ├── login/              # Login route
+│   │   └── signup/             # Signup route
+│   ├── components/             # Reusable React components
+│   │   ├── Dashboard.tsx       # Main user stats & streak overview
+│   │   ├── ProblemAnalyzerEnhanced.tsx # AI analyzer & chat panel
+│   │   ├── CodePlayground.tsx  # Monaco editor & runner
+│   │   ├── VisualizationsFixed.tsx # Interactive sorting & graph visualizers
+│   │   ├── DsaCheatSheet.tsx   # Complexity matrix & 3D flashcards
+│   │   ├── DsaSheetManager.tsx # Curated & custom problem sheet tracker
+│   │   ├── Navbar.tsx          # Navigation bar & AI Settings modal
+│   │   └── roadmap/            # SVG roadmap components & topic modal
+│   ├── context/                # React AuthContext state provider
+│   ├── data/                   # Curated sheets & roadmap topic metadata
+│   ├── hooks/                  # Custom hooks (roadmap progress tracking)
+│   ├── lib/                    # Core utilities, API fetcher, & MongoDB connection
+│   ├── server/                 # Server services, auth utils, & Mongoose models
+│   └── types/                  # TypeScript interfaces & type definitions
+├── public/                     # Static public assets
+├── algospark_banner.png        # Landing banner graphic
+├── next.config.mjs             # Next.js build configuration
+├── tailwind.config.ts          # Tailwind CSS custom themes & animation keyframes
+├── tsconfig.json               # TypeScript compiler config
+├── vercel.json                 # Vercel serverless deployment manifest
+└── README.md                   # Master project documentation
 ```
 
 ---
 
-## 🛠️ Installation & Setup Guide
+## ⚙️ Environment Variables Reference
+
+Create a `.env` file in the root directory:
+
+```env
+# Database Configuration
+MONGODB_URI=mongodb://127.0.0.1:27017/dsa-ditcher
+
+# Authentication Secret (Minimum 32 characters)
+JWT_SECRET=your_super_strong_jwt_secret_min_32_chars
+
+# OpenRouter AI API Key (Optional - Offline local sandbox activates if omitted)
+OPENROUTER_API_KEY=sk-or-v1-your-openrouter-key
+
+# Client Base URL
+NEXT_PUBLIC_API_URL=/api
+```
+
+---
+
+## 🛠️ Quickstart Guide
 
 ### Prerequisites
-* **Node.js:** Ensure Node.js 18+ is installed on your computer.
-* **MongoDB:** Ensure you have MongoDB running locally (`mongodb://127.0.0.1:27017/dsa-ditcher`) or have an online Atlas connection string.
+* **Node.js**: v18.0.0 or higher
+* **npm**: v9.0.0 or higher
+* **MongoDB**: Local MongoDB instance or MongoDB Atlas connection URI
+
+### Installation & Local Run
+
+1. **Clone Repository & Install Dependencies**:
+   ```bash
+   git clone https://github.com/anuragsinghrajput123456789/algo-spark-guide.git
+   cd Dsa-Ditcher
+   npm install
+   ```
+
+2. **Configure Environment Variables**:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Start Development Server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Access Platform**:
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-### Local Development Setup
+## 🚀 Deploying to Vercel
 
-#### 1. Setup the Backend API
-Navigate to the `backend/` folder and install packages:
-```bash
-cd backend
-npm install
-```
-Create a `.env` file inside the `backend/` folder:
-```env
-PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/dsa-ditcher
-JWT_SECRET=your_super_strong_jwt_secret
-OPENROUTER_API_KEY=your_openrouter_api_key
-```
-Launch the backend dev server (Nodemon):
-```bash
-npm run dev
-```
+AlgoSpark is pre-configured for one-click deployment on **Vercel**:
 
-#### 2. Setup the Frontend Client
-Navigate to the `frontend/` folder in a new terminal and install packages:
-```bash
-cd frontend
-npm install
-```
-Launch the frontend client (Vite):
-```bash
-npm run dev
-```
-Open your browser and navigate to `http://localhost:5173`. You are ready to start coding!
+1. **Push Code to GitHub**:
+   Ensure all changes are committed and pushed to your GitHub repository.
+
+2. **Import Repository in Vercel**:
+   Go to [Vercel Dashboard](https://vercel.com/new) -> **Import Project** -> Select your repository.
+
+3. **Configure Environment Variables in Vercel Settings**:
+   - `MONGODB_URI`: `mongodb+srv://<user>:<password>@cluster.mongodb.net/dsa-ditcher`
+   - `JWT_SECRET`: `your_production_secret_key`
+   - `OPENROUTER_API_KEY`: `sk-or-v1-...`
+   - `NEXT_PUBLIC_API_URL`: `/api`
+
+4. **Deploy**:
+   Click **Deploy**. Vercel will automatically build the Next.js App Router project!
 
 ---
 
-## 🚀 Unified Production Serving
+## 📜 License
 
-In production mode, the backend automatically hosts the compiled static files from the frontend `dist` directory, completely eliminating CORS configurations and structural hosting overhead.
-
-#### 1. Build Frontend Static Assets
-Inside the `frontend/` directory, compile the production build:
-```bash
-cd frontend
-npm run build
-```
-This generates the optimized bundle inside `/frontend/dist/`.
-
-#### 2. Start the Production Server
-Navigate to the `backend/` folder, set your environment variables to production, and start:
-```bash
-cd backend
-npm start
-```
-Your full-stack MERN platform will be fully functional, served on a single port (e.g. `http://localhost:5000`)!
-
----
-
-## 🔍 Search Engine Optimization (SEO) Built-In
-To maximize search visibility and Google ranking upon deployment, the client incorporates:
-* **Dynamic Title Tags:** Lifecycle hooks update document titles in response to active routes.
-* **Optimized Meta Descriptions:** Crawler-friendly descriptions change dynamically based on the current SPA page (e.g., visualizer, editor, analyzer) to ensure comprehensive search indexing.
-* **Semantic HTML5:** Strict semantic tags (`<header>`, `<nav>`, `<main>`, `<h1>`, `<article>`) provide appropriate context weights.
-* **Asset Optimization:** Minimal layout shifts (CLS), fast asset packaging (Vite), and clean structural rendering (React TS).
+This project is licensed under the **MIT License**.
